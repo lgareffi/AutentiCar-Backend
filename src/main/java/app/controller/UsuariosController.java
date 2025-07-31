@@ -26,7 +26,7 @@ public class UsuariosController {
     private IUsuariosDAO usuariosDAO;
 
     @GetMapping("/usuarios/{usuarioId}")
-    public ResponseEntity<?> getVecino(@PathVariable long usuarioId) {
+    public ResponseEntity<?> getUsuario(@PathVariable long usuarioId) {
         try {
             Usuarios usuario = usuariosService.findById(usuarioId);
             UsuariosDTO dto = new UsuariosDTO(usuario);

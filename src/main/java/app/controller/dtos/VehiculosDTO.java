@@ -55,20 +55,20 @@ public class VehiculosDTO {
         super();
     }
 
-    public long getIdVehiculo() {
-        return idVehiculo;
-    }
-
-    public void setIdVehiculo(long idVehiculo) {
-        this.idVehiculo = idVehiculo;
-    }
-
     public String getVin() {
         return vin;
     }
 
     public void setVin(String vin) {
         this.vin = vin;
+    }
+
+    public long getIdVehiculo() {
+        return idVehiculo;
+    }
+
+    public void setIdVehiculo(long idVehiculo) {
+        this.idVehiculo = idVehiculo;
     }
 
     public String getMarca() {
@@ -79,20 +79,20 @@ public class VehiculosDTO {
         this.marca = marca;
     }
 
-    public int getAnio() {
-        return anio;
-    }
-
-    public void setAnio(int anio) {
-        this.anio = anio;
-    }
-
     public String getModelo() {
         return modelo;
     }
 
     public void setModelo(String modelo) {
         this.modelo = modelo;
+    }
+
+    public int getAnio() {
+        return anio;
+    }
+
+    public void setAnio(int anio) {
+        this.anio = anio;
     }
 
     public int getKilometraje() {
@@ -151,20 +151,20 @@ public class VehiculosDTO {
         this.fechaAlta = fechaAlta;
     }
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
     public Long getIdUsuario() {
         return idUsuario;
     }
 
     public void setIdUsuario(Long idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public List<Long> getIdsDocumentos() {

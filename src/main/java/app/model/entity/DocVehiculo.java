@@ -46,15 +46,16 @@ public class DocVehiculo {
         super();
     }
 
-    public DocVehiculo(long idDocVehiculo, String urlDoc, String nombre, int nivelRiesgo,
-                       boolean validadoIA, LocalDate fechaSubida, TipoDoc tipoDoc,
+
+    public DocVehiculo(long idDocVehiculo, String nombre, String urlDoc, int nivelRiesgo,
+                       LocalDate fechaSubida, boolean validadoIA, TipoDoc tipoDoc,
                        Vehiculos vehiculo, EventoVehicular eventoVehicular) {
         this.idDocVehiculo = idDocVehiculo;
-        this.urlDoc = urlDoc;
         this.nombre = nombre;
+        this.urlDoc = urlDoc;
         this.nivelRiesgo = nivelRiesgo;
-        this.validadoIA = validadoIA;
         this.fechaSubida = fechaSubida;
+        this.validadoIA = validadoIA;
         this.tipoDoc = tipoDoc;
         this.vehiculo = vehiculo;
         this.eventoVehicular = eventoVehicular;
@@ -123,13 +124,6 @@ public class DocVehiculo {
         this.fechaSubida = fechaSubida;
     }
 
-    public TipoDoc getTipo() {
-        return tipoDoc;
-    }
-
-    public void setTipo(TipoDoc tipoDoc) {
-        this.tipoDoc = tipoDoc;
-    }
 
     public Vehiculos getVehiculo() {
         return vehiculo;
@@ -145,5 +139,13 @@ public class DocVehiculo {
 
     public void setEventoVehicular(EventoVehicular eventoVehicular) {
         this.eventoVehicular = eventoVehicular;
+    }
+
+    public TipoDoc getTipoDoc() {
+        return tipoDoc;
+    }
+
+    public void setTipoDoc(TipoDoc tipoDoc) {
+        this.tipoDoc = tipoDoc;
     }
 }
