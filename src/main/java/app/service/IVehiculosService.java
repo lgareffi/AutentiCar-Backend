@@ -13,7 +13,7 @@ public interface IVehiculosService {
 
     public List<Vehiculos> findAll();
 
-    public List<DocVehiculo> getDocsVehiculo(long id);
+    public List<DocVehiculo> getDocVehiculo(long id);
 
-    public List<EventoVehicular> getEventosVehiculo(long id);
+    public List<EventoVehicular> getEventoVehicular(long id);
 }

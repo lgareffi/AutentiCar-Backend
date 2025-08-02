@@ -49,9 +49,9 @@ public class VehiculosController {
     }
 
     @GetMapping("/vehiculos/{vehiculoId}/documentos")
-    public ResponseEntity<?> getDocsVehiculo(@PathVariable long vehiculosId) {
+    public ResponseEntity<?> getDocVehiculo(@PathVariable long vehiculoId) {
         try {
-            List<DocVehiculo> docsVehiculo = this.vehiculosService.getDocsVehiculo(vehiculosId);
+            List<DocVehiculo> docsVehiculo = this.vehiculosService.getDocVehiculo(vehiculoId);
             List<DocVehiculoDTO> docsDTO = docsVehiculo.stream()
                     .map(DocVehiculoDTO::new)
                     .toList();
@@ -62,9 +62,9 @@ public class VehiculosController {
     }
 
     @GetMapping("/vehiculos/{vehiculoId}/eventos")
-    public ResponseEntity<?> getEventosVehiculo(@PathVariable long vehiculosId) {
+    public ResponseEntity<?> getEventoVehicular(@PathVariable long vehiculoId) {
         try {
-            List<EventoVehicular> eventosVehiculo = this.vehiculosService.getEventosVehiculo(vehiculosId);
+            List<EventoVehicular> eventosVehiculo = this.vehiculosService.getEventoVehicular(vehiculoId);
             List<EventoVehicularDTO> eventosDTO = eventosVehiculo.stream()
                     .map(EventoVehicularDTO::new)
                     .toList();

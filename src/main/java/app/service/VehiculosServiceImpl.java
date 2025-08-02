@@ -46,7 +46,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
-    public List<DocVehiculo> getDocsVehiculo(long id){
+    public List<DocVehiculo> getDocVehiculo(long id){
         try {
             Vehiculos v = this.vehiculosDAO.findById(id);
             if (v == null)
@@ -60,7 +60,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
-    public List<EventoVehicular> getEventosVehiculo(long id){
+    public List<EventoVehicular> getEventoVehicular(long id){
         try {
             Vehiculos v = this.vehiculosDAO.findById(id);
             if (v == null)

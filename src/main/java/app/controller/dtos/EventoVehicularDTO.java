@@ -42,5 +42,85 @@ public class EventoVehicularDTO {
     public EventoVehicularDTO() {
         super();
     }
+
+    public long getIdEvento() {
+        return idEvento;
+    }
+
+    public void setIdEvento(long idEvento) {
+        this.idEvento = idEvento;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public int getKilometrajeEvento() {
+        return kilometrajeEvento;
+    }
+
+    public void setKilometrajeEvento(int kilometrajeEvento) {
+        this.kilometrajeEvento = kilometrajeEvento;
+    }
+
+    public boolean isValidadoPorTercero() {
+        return validadoPorTercero;
+    }
+
+    public void setValidadoPorTercero(boolean validadoPorTercero) {
+        this.validadoPorTercero = validadoPorTercero;
+    }
+
+    public LocalDate getFechaEvento() {
+        return fechaEvento;
+    }
+
+    public void setFechaEvento(LocalDate fechaEvento) {
+        this.fechaEvento = fechaEvento;
+    }
+
+    public String getTipoEvento() {
+        return tipoEvento;
+    }
+
+    public void setTipoEvento(String tipoEvento) {
+        this.tipoEvento = tipoEvento;
+    }
+
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public Long getIdVehiculo() {
+        return idVehiculo;
+    }
+
+    public void setIdVehiculo(Long idVehiculo) {
+        this.idVehiculo = idVehiculo;
+    }
+
+    public List<Long> getIdsDocumentos() {
+        return idsDocumentos;
+    }
+
+    public void setIdsDocumentos(List<Long> idsDocumentos) {
+        this.idsDocumentos = idsDocumentos;
+    }
 }
 
