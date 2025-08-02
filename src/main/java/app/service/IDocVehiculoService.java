@@ -1,11 +1,10 @@
-package app.model.dao;
+package app.service;
 
 import app.model.entity.DocVehiculo;
 
-import java.util.List;
-
-public interface IDocVehiculoDAO {
+public interface IDocVehiculoService {
     public DocVehiculo findById(long id);
 
     public void save(DocVehiculo docVehiculo);
+
 }
