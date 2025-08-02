@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/documentos")
 public class DocVehiculoController {
     @Autowired
     private IDocVehiculoService docVehiculoService;
 
-    @GetMapping("/documentos/{documentoId}")
+    @GetMapping("/{documentoId}")
     public ResponseEntity<?> getDocVehiculo(@PathVariable long documentoId) {
         try {
             DocVehiculo docVehiculo = docVehiculoService.findById(documentoId);

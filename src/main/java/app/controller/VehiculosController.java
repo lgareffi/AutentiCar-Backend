@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/vehiculos")
 public class VehiculosController {
     @Autowired
     private IVehiculosService vehiculosService;
 
-    @GetMapping("/vehiculos/{vehiculoId}")
+    @GetMapping("/{vehiculoId}")
     public ResponseEntity<?> getVehiculo(@PathVariable long vehiculoId) {
         try {
             Vehiculos vehiculo = vehiculosService.findById(vehiculoId);
@@ -33,7 +33,7 @@ public class VehiculosController {
         }
     }
 
-    @GetMapping("/vehiculos")
+    @GetMapping("")
     public ResponseEntity<?> getVehiculos() {
         try {
             List<Vehiculos> vehiculos = vehiculosService.findAll();
@@ -48,7 +48,7 @@ public class VehiculosController {
         }
     }
 
-    @GetMapping("/vehiculos/{vehiculoId}/documentos")
+    @GetMapping("/{vehiculoId}/documentos")
     public ResponseEntity<?> getDocVehiculo(@PathVariable long vehiculoId) {
         try {
             List<DocVehiculo> docsVehiculo = this.vehiculosService.getDocVehiculo(vehiculoId);
@@ -61,7 +61,7 @@ public class VehiculosController {
         }
     }
 
-    @GetMapping("/vehiculos/{vehiculoId}/eventos")
+    @GetMapping("/{vehiculoId}/eventos")
     public ResponseEntity<?> getEventoVehicular(@PathVariable long vehiculoId) {
         try {
             List<EventoVehicular> eventosVehiculo = this.vehiculosService.getEventoVehicular(vehiculoId);
