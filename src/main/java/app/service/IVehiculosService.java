@@ -1,5 +1,6 @@
 package app.service;
 
+import app.controller.dtos.AddVehiculoDTO;
 import app.model.entity.DocVehiculo;
 import app.model.entity.EventoVehicular;
 import app.model.entity.Vehiculos;
@@ -16,4 +17,6 @@ public interface IVehiculosService {
     public List<DocVehiculo> getDocVehiculo(long id);
 
     public List<EventoVehicular> getEventoVehicular(long id);
+
+    public void saveVehiculoDesdeDTO(AddVehiculoDTO dto);
 }

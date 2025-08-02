@@ -74,4 +74,14 @@ public class VehiculosController {
         }
     }
 
+    @PostMapping
+    public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO vehiculoDTO) {
+        try {
+            vehiculosService.saveVehiculoDesdeDTO(vehiculoDTO);
+            return new ResponseEntity<>("Vehículo agregado correctamente", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

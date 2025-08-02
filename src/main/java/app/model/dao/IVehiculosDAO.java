@@ -12,4 +12,6 @@ public interface IVehiculosDAO {
 
     public List<Vehiculos> findAll();
 
+    public Vehiculos findByVin(String vin);
+
 }

@@ -43,4 +43,15 @@ public class VehiculosDAOImpl  implements IVehiculosDAO{
         return list;
     }
 
+    @Override
+    @Transactional
+    public Vehiculos findByVin(String vin) {
+        Session currentSession = entityManager.unwrap(Session.class);
+        Query<Vehiculos> query = currentSession.createQuery("FROM Vehiculos WHERE lower(vin) = :vin", Vehiculos.class);
+        query.setParameter("vin", vin.toLowerCase());
+        List<Vehiculos> result = query.getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+
 }

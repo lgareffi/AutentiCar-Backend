@@ -1,6 +1,8 @@
 package app.service;
 
 import app.Errors.NotFoundError;
+import app.controller.dtos.AddVehiculoDTO;
+import app.model.dao.IUsuariosDAO;
 import app.model.dao.IVehiculosDAO;
 import app.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,9 @@ import java.util.List;
 public class VehiculosServiceImpl implements IVehiculosService{
     @Autowired
     private IVehiculosDAO vehiculosDAO;
+
+    @Autowired
+    private IUsuariosDAO usuariosDAO;
 
     @Override
     public Vehiculos findById(long id) {
@@ -72,6 +77,38 @@ public class VehiculosServiceImpl implements IVehiculosService{
             throw new Error(e.getMessage());
         }
     }
+
+    @Override
+    public void saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
+        // Verifica si el VIN ya existe
+        Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);
+        if (existente != null)
+            throw new RuntimeException("Auto con VIN ya existente");
+
+        // Buscar el usuario
+        Usuarios usuario = this.usuariosDAO.findById(dto.usuarioId);
+        if (usuario == null)
+            throw new RuntimeException("No se encontró el usuario");
+
+        // Crear y guardar el nuevo vehículo
+        Vehiculos vehiculo = new Vehiculos();
+        vehiculo.setVin(dto.vin);
+        vehiculo.setMarca(dto.marca);
+        vehiculo.setModelo(dto.modelo);
+        vehiculo.setAnio(dto.anio);
+        vehiculo.setKilometraje(dto.kilometraje);
+        vehiculo.setPuertas(dto.puertas);
+        vehiculo.setMotor(dto.motor);
+        vehiculo.setColor(dto.color);
+        vehiculo.setTipoCombustible(dto.tipoCombustible);
+        vehiculo.setTipoTransmision(dto.tipoTransmision);
+        vehiculo.setFechaAlta(dto.fechaAlta);
+        vehiculo.setEstado(Vehiculos.Estado.valueOf(dto.estado.toUpperCase()));
+        vehiculo.setUsuario(usuario);
+
+        this.vehiculosDAO.save(vehiculo);
+    }
+
 
 
 }
