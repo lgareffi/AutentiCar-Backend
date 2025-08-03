@@ -1,9 +1,7 @@
 package app.service;
 
 import app.Errors.NotFoundError;
-import app.controller.dtos.AddDocumentoDTO;
 import app.controller.dtos.AddPublicacionDTO;
-import app.model.dao.IDocVehiculoDAO;
 import app.model.dao.IPublicacionDAO;
 import app.model.dao.IUsuariosDAO;
 import app.model.dao.IVehiculosDAO;
@@ -78,4 +76,5 @@ public class PublicacionServiceImpl implements IPublicacionService{
 
         publicacionDAO.save(post);
     }
+
 }

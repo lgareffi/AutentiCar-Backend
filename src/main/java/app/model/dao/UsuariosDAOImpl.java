@@ -16,14 +16,21 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
+//    @Override
+//    @Transactional
+//    public Usuarios findById(long id){
+//        Session currentSession = entityManager.unwrap(Session.class);
+//        Usuarios usuario = currentSession.get(Usuarios.class, id);
+//        if (usuario != null)
+//            return usuario;
+//        throw new NotFoundError("No se encontro al usuario");
+//    }
     @Override
     @Transactional
     public Usuarios findById(long id){
         Session currentSession = entityManager.unwrap(Session.class);
         Usuarios usuario = currentSession.get(Usuarios.class, id);
-        if (usuario != null)
-            return usuario;
-        throw new NotFoundError("No se encontro al usuario");
+        return usuario;
     }
 
     @Override
