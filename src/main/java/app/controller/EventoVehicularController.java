@@ -1,5 +1,6 @@
 package app.controller;
 
+import app.controller.dtos.AddEventoDTO;
 import app.controller.dtos.DocVehiculoDTO;
 import app.controller.dtos.EventoVehicularDTO;
 import app.controller.dtos.VehiculosDTO;
@@ -10,10 +11,7 @@ import app.service.IEventoVehicularService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -47,4 +45,16 @@ public class EventoVehicularController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
     }
+
+    @PostMapping
+    public ResponseEntity<?> agregarEvento(@RequestBody AddEventoDTO eventoDTO) {
+        try {
+            eventoVehicularService.saveEventoDesdeDTO(eventoDTO);
+            return new ResponseEntity<>("Evento agregado correctamente", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
+
