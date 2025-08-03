@@ -1,9 +1,6 @@
 package app.service;
 
-import app.model.entity.EventoVehicular;
-import app.model.entity.Usuarios;
-import app.model.entity.Vehiculos;
-import app.model.entity.Ventas;
+import app.model.entity.*;
 
 import java.util.List;
 
@@ -23,6 +20,8 @@ public interface IUsuariosService {
     public List<Vehiculos> getVehiculos(long id);
 
     public List<EventoVehicular> getEventoVehicular(long id);
+
+    public List<Publicacion> getPublicaciones(long id);
 
     public void update(long id, Usuarios datos); // para cambiar la contraseña (probar si funciona)
 }

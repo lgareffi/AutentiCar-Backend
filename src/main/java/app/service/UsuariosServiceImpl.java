@@ -3,10 +3,7 @@ package app.service;
 
 import app.Errors.NotFoundError;
 import app.model.dao.IUsuariosDAO;
-import app.model.entity.EventoVehicular;
-import app.model.entity.Usuarios;
-import app.model.entity.Vehiculos;
-import app.model.entity.Ventas;
+import app.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -105,6 +102,20 @@ public class UsuariosServiceImpl implements IUsuariosService {
             if (u.getEventoVehicular().isEmpty())
                 throw new Error("No se encontraron eventos hechos por este usuario");
             return u.getEventoVehicular();
+        } catch(Throwable e) {
+            throw new Error(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Publicacion> getPublicaciones(long id){
+        try {
+            Usuarios u = this.usuariosDAO.findById(id);
+            if (u == null)
+                throw new NotFoundError("No se encontro al usuario");
+            if (u.getPublicaciones().isEmpty())
+                throw new Error("No se encontraron publicaciones hechas por el usuario");
+            return u.getPublicaciones();
         } catch(Throwable e) {
             throw new Error(e.getMessage());
         }

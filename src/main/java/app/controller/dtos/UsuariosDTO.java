@@ -12,6 +12,8 @@ public class UsuariosDTO {
     private List<Long> comprasRealizadas;
     private List<Long> ventasRealizadas;
     private List<Long> vehiculos;
+    private List<Long> eventos;
+    private List<Long> publicaciones;
 
     public UsuariosDTO(Usuarios usuario) {
         super();
@@ -29,6 +31,14 @@ public class UsuariosDTO {
         this.vehiculos = usuario.getVehiculos()
                 .stream()
                 .map(v -> v.getIdVehiculo())
+                .collect(Collectors.toList());
+        this.eventos = usuario.getEventoVehicular()
+                .stream()
+                .map(e -> e.getIdEvento())
+                .collect(Collectors.toList());
+        this.publicaciones = usuario.getPublicaciones()
+                .stream()
+                .map(p -> p.getIdPublicacion())
                 .collect(Collectors.toList());
 
     }
@@ -83,5 +93,21 @@ public class UsuariosDTO {
 
     public void setVehiculos(List<Long> vehiculos) {
         this.vehiculos = vehiculos;
+    }
+
+    public List<Long> getEventos() {
+        return eventos;
+    }
+
+    public void setEventos(List<Long> eventos) {
+        this.eventos = eventos;
+    }
+
+    public List<Long> getPublicaciones() {
+        return publicaciones;
+    }
+
+    public void setPublicaciones(List<Long> publicaciones) {
+        this.publicaciones = publicaciones;
     }
 }

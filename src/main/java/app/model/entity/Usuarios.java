@@ -52,27 +52,32 @@ public class Usuarios {
     @OneToMany(mappedBy = "usuarioVendedor", cascade = CascadeType.ALL) // 1 usuario puede realizar muchas ventas
     List<Ventas> ventasRealizadas;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede realizar muchas ventas
+    List<Publicacion> publicaciones;
+
 
     public Usuarios() {
         super();
     }
 
-    public Usuarios(String nombre, long idUsuario, String apellido, int dni, String mail,
-                    String password, LocalDate fechaRegistro, Rol rol,
+    public Usuarios(long idUsuario, String nombre, String apellido, int dni,
+                    String mail, String password, Rol rol, LocalDate fechaRegistro,
                     List<Vehiculos> vehiculos, List<EventoVehicular> eventoVehicular,
-                    List<Ventas> ventasRealizadas, List<Ventas> comprasRealizadas) {
-        this.nombre = nombre;
+                    List<Ventas> comprasRealizadas, List<Ventas> ventasRealizadas,
+                    List<Publicacion> publicaciones) {
         this.idUsuario = idUsuario;
+        this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
         this.mail = mail;
         this.password = password;
-        this.fechaRegistro = fechaRegistro;
         this.rol = rol;
+        this.fechaRegistro = fechaRegistro;
         this.vehiculos = vehiculos;
         this.eventoVehicular = eventoVehicular;
-        this.ventasRealizadas = ventasRealizadas;
         this.comprasRealizadas = comprasRealizadas;
+        this.ventasRealizadas = ventasRealizadas;
+        this.publicaciones = publicaciones;
     }
 
     @Override
@@ -90,6 +95,7 @@ public class Usuarios {
                 ", eventoVehicular=" + eventoVehicular +
                 ", comprasRealizadas=" + comprasRealizadas +
                 ", ventasRealizadas=" + ventasRealizadas +
+                ", publicaciones=" + publicaciones +
                 '}';
     }
 
@@ -187,5 +193,13 @@ public class Usuarios {
 
     public void setVentasRealizadas(List<Ventas> ventasRealizadas) {
         this.ventasRealizadas = ventasRealizadas;
+    }
+
+    public List<Publicacion> getPublicaciones() {
+        return publicaciones;
+    }
+
+    public void setPublicaciones(List<Publicacion> publicaciones) {
+        this.publicaciones = publicaciones;
     }
 }

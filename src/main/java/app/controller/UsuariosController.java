@@ -1,15 +1,9 @@
 package app.controller;
 
 import app.Errors.NotFoundError;
-import app.controller.dtos.EventoVehicularDTO;
-import app.controller.dtos.UsuariosDTO;
-import app.controller.dtos.VehiculosDTO;
-import app.controller.dtos.VentasDTO;
+import app.controller.dtos.*;
 import app.model.dao.IUsuariosDAO;
-import app.model.entity.EventoVehicular;
-import app.model.entity.Usuarios;
-import app.model.entity.Vehiculos;
-import app.model.entity.Ventas;
+import app.model.entity.*;
 import app.service.IUsuariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -87,6 +81,19 @@ public class UsuariosController {
                     .map(EventoVehicularDTO::new)
                     .toList();
             return new ResponseEntity<>(eventosDTO, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @GetMapping("/usuarios/{usuarioId}/publicaciones")
+    public ResponseEntity<?> getPublicaciones(@PathVariable long usuarioId) {
+        try {
+            List<Publicacion> publicaciones = this.usuariosService.getPublicaciones(usuarioId);
+            List<PublicacionDTO> publicacionDTO = publicaciones.stream()
+                    .map(PublicacionDTO::new)
+                    .toList();
+            return new ResponseEntity<>(publicacionDTO, HttpStatus.OK);
         } catch (Throwable e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
