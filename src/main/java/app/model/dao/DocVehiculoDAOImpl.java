@@ -1,5 +1,6 @@
 package app.model.dao;
 
+import app.Errors.NotFoundError;
 import app.model.entity.DocVehiculo;
 import app.model.entity.Vehiculos;
 import jakarta.persistence.EntityManager;
@@ -21,7 +22,7 @@ public class DocVehiculoDAOImpl implements IDocVehiculoDAO {
         DocVehiculo docVehiculo = currentSession.get(DocVehiculo.class, id);
         if (docVehiculo != null)
             return docVehiculo;
-        throw new Error("No se encontro el documento");
+        throw new NotFoundError("No se encontro el documento");
     }
 
     @Override

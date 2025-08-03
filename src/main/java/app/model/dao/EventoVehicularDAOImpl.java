@@ -1,5 +1,6 @@
 package app.model.dao;
 
+import app.Errors.NotFoundError;
 import app.model.entity.EventoVehicular;
 import app.model.entity.Vehiculos;
 import jakarta.persistence.EntityManager;
@@ -21,7 +22,7 @@ public class EventoVehicularDAOImpl implements IEventoVehicularDAO {
         EventoVehicular eventoVehicular = currentSession.get(EventoVehicular.class, id);
         if (eventoVehicular != null)
             return eventoVehicular;
-        throw new Error("No se encontro el evento");
+        throw new NotFoundError("No se encontro el evento");
     }
 
     @Override

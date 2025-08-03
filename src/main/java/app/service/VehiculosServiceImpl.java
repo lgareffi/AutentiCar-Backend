@@ -15,7 +15,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     private IVehiculosDAO vehiculosDAO;
 
     @Autowired
-    private IUsuariosDAO usuariosDAO;
+        private IUsuariosDAO usuariosDAO;
 
     @Override
     public Vehiculos findById(long id) {
@@ -45,7 +45,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
                 return vehiculos;
             }
         } catch (Throwable e) {
-            throw new Error("Error al buscar los vehiculos");
+            throw new NotFoundError("Error al buscar los vehiculos");
         }
         return null;
     }
@@ -88,7 +88,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
         // Buscar el usuario
         Usuarios usuario = this.usuariosDAO.findById(dto.usuarioId);
         if (usuario == null)
-            throw new RuntimeException("No se encontró el usuario");
+            throw new NotFoundError("No se encontró el usuario");
 
         // Crear y guardar el nuevo vehículo
         Vehiculos vehiculo = new Vehiculos();

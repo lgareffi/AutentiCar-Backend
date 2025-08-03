@@ -1,5 +1,6 @@
 package app.model.dao;
 
+import app.Errors.NotFoundError;
 import app.model.entity.Usuarios;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,7 +23,7 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
         Usuarios usuario = currentSession.get(Usuarios.class, id);
         if (usuario != null)
             return usuario;
-        throw new Error("No se encontro al usuario");
+        throw new NotFoundError("No se encontro al usuario");
     }
 
     @Override

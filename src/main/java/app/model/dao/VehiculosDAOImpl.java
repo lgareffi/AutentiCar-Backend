@@ -1,6 +1,7 @@
 package app.model.dao;
 
 
+import app.Errors.NotFoundError;
 import app.model.entity.Vehiculos;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,7 +23,7 @@ public class VehiculosDAOImpl  implements IVehiculosDAO{
         Vehiculos vehiculo = currentSession.get(Vehiculos.class, id);
         if (vehiculo != null)
             return vehiculo;
-        throw new Error("No se encontro el vehiculo");
+        throw new NotFoundError("No se encontro el vehiculo");
     }
 
     @Override
