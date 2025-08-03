@@ -3,6 +3,7 @@ package app.service;
 
 import app.Errors.NotFoundError;
 import app.model.dao.IUsuariosDAO;
+import app.model.entity.EventoVehicular;
 import app.model.entity.Usuarios;
 import app.model.entity.Vehiculos;
 import app.model.entity.Ventas;
@@ -90,6 +91,20 @@ public class UsuariosServiceImpl implements IUsuariosService {
             if (u.getVehiculos().isEmpty())
                 throw new Error("No se encontraron vehiculos de este usuario");
             return u.getVehiculos();
+        } catch(Throwable e) {
+            throw new Error(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<EventoVehicular> getEventoVehicular(long id){
+        try {
+            Usuarios u = this.usuariosDAO.findById(id);
+            if (u == null)
+                throw new NotFoundError("No se encontro al usuario");
+            if (u.getEventoVehicular().isEmpty())
+                throw new Error("No se encontraron eventos hechos por este usuario");
+            return u.getEventoVehicular();
         } catch(Throwable e) {
             throw new Error(e.getMessage());
         }

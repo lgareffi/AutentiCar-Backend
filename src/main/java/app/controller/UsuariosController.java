@@ -1,10 +1,12 @@
 package app.controller;
 
 import app.Errors.NotFoundError;
+import app.controller.dtos.EventoVehicularDTO;
 import app.controller.dtos.UsuariosDTO;
 import app.controller.dtos.VehiculosDTO;
 import app.controller.dtos.VentasDTO;
 import app.model.dao.IUsuariosDAO;
+import app.model.entity.EventoVehicular;
 import app.model.entity.Usuarios;
 import app.model.entity.Vehiculos;
 import app.model.entity.Ventas;
@@ -72,6 +74,19 @@ public class UsuariosController {
                     .map(VehiculosDTO::new)
                     .toList();
             return new ResponseEntity<>(vehiculosDTO, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @GetMapping("/usuarios/{usuarioId}/eventos")
+    public ResponseEntity<?> getEventoVehicular(@PathVariable long usuarioId) {
+        try {
+            List<EventoVehicular> eventosVehicular = this.usuariosService.getEventoVehicular(usuarioId);
+            List<EventoVehicularDTO> eventosDTO = eventosVehicular.stream()
+                    .map(EventoVehicularDTO::new)
+                    .toList();
+            return new ResponseEntity<>(eventosDTO, HttpStatus.OK);
         } catch (Throwable e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
