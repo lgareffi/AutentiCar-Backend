@@ -46,7 +46,6 @@ public class DocVehiculo {
         super();
     }
 
-
     public DocVehiculo(long idDocVehiculo, String nombre, String urlDoc, int nivelRiesgo,
                        LocalDate fechaSubida, boolean validadoIA, TipoDoc tipoDoc,
                        Vehiculos vehiculo, EventoVehicular eventoVehicular) {

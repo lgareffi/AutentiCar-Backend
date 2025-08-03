@@ -1,9 +1,12 @@
 package app.service;
 
 import app.Errors.NotFoundError;
+import app.controller.dtos.AddDocumentoDTO;
 import app.model.dao.IDocVehiculoDAO;
+import app.model.dao.IEventoVehicularDAO;
 import app.model.dao.IVehiculosDAO;
 import app.model.entity.DocVehiculo;
+import app.model.entity.EventoVehicular;
 import app.model.entity.Vehiculos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,12 @@ import org.springframework.stereotype.Service;
 public class DocVehiculoServiceImpl implements IDocVehiculoService {
     @Autowired
     private IDocVehiculoDAO docVehiculoDAO;
+
+    @Autowired
+    private IVehiculosDAO vehiculosDAO;
+
+    @Autowired
+    private IEventoVehicularDAO eventoVehicularDAO;
 
     @Override
     public DocVehiculo findById(long id) {
@@ -32,4 +41,28 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             throw new Error("Error al guardar el documento" + e.getMessage());
         }
     }
+
+    @Override
+    public void saveDocumentoDesdeDTO(AddDocumentoDTO dto) {
+        Vehiculos vehiculo = vehiculosDAO.findById(dto.vehiculoId);
+        if (vehiculo == null)
+            throw new NotFoundError("No se encontró el vehículo");
+
+        EventoVehicular evento = eventoVehicularDAO.findById(dto.eventoId);
+        if (evento == null)
+            throw new NotFoundError("No se encontró el evento");
+
+        DocVehiculo doc = new DocVehiculo();
+        doc.setNombre(dto.nombre);
+        doc.setUrlDoc(dto.urlDoc);
+        doc.setNivelRiesgo(dto.nivelRiesgo);
+        doc.setValidadoIA(dto.validadoIA);
+        doc.setFechaSubida(dto.fechaSubida);
+        doc.setTipoDoc(DocVehiculo.TipoDoc.valueOf(dto.tipoDoc.toUpperCase()));
+        doc.setVehiculo(vehiculo);
+        doc.setEventoVehicular(evento);
+
+        docVehiculoDAO.save(doc);
+    }
+
 }
