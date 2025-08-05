@@ -3,6 +3,7 @@ package app.service;
 import app.controller.dtos.AddVehiculoDTO;
 import app.model.entity.DocVehiculo;
 import app.model.entity.EventoVehicular;
+import app.model.entity.ImagenVehiculo;
 import app.model.entity.Vehiculos;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public interface IVehiculosService {
     public List<DocVehiculo> getDocVehiculo(long id);
 
     public List<EventoVehicular> getEventoVehicular(long id);
+
+    public List<ImagenVehiculo> getImagenVehiculos(long id);
 
     public void saveVehiculoDesdeDTO(AddVehiculoDTO dto);
 }

@@ -19,7 +19,7 @@ public class VehiculosDTO {
     private String tipoTransmision;
     private LocalDate fechaAlta;
     private String estado;
-    private Long idUsuario; // Solo el ID del propietario
+    private Long idUsuario;
 
     private List<Long> idsDocumentos;
     private List<Long> idsEventos;

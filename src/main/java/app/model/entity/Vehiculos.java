@@ -63,23 +63,28 @@ public class Vehiculos {
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL) // 1 vehiculo tiene muchos eventos
     List<EventoVehicular> eventoVehicular;
 
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL) // 1 vehiculo tiene muchas imágenes
+    List<ImagenVehiculo> imagenVehiculos;
+
 
     public Vehiculos() {
         super();
     }
 
-    public Vehiculos(long idVehiculo, String vin, String marca, String modelo, int kilometraje,
-                     int anio, double motor, int puertas, String color, String tipoCombustible,
-                     String tipoTransmision, LocalDate fechaAlta, Estado estado, Usuarios usuario,
-                     List<DocVehiculo> docVehiculo, List<EventoVehicular> eventoVehicular) {
+    public Vehiculos(long idVehiculo, String vin, String marca, String modelo, int anio,
+                     int kilometraje, int puertas, double motor, String color,
+                     String tipoCombustible, String tipoTransmision, LocalDate fechaAlta,
+                     Estado estado, Usuarios usuario, List<DocVehiculo> docVehiculo,
+                     List<EventoVehicular> eventoVehicular,
+                     List<ImagenVehiculo> imagenVehiculos) {
         this.idVehiculo = idVehiculo;
         this.vin = vin;
         this.marca = marca;
         this.modelo = modelo;
-        this.kilometraje = kilometraje;
         this.anio = anio;
-        this.motor = motor;
+        this.kilometraje = kilometraje;
         this.puertas = puertas;
+        this.motor = motor;
         this.color = color;
         this.tipoCombustible = tipoCombustible;
         this.tipoTransmision = tipoTransmision;
@@ -88,6 +93,7 @@ public class Vehiculos {
         this.usuario = usuario;
         this.docVehiculo = docVehiculo;
         this.eventoVehicular = eventoVehicular;
+        this.imagenVehiculos = imagenVehiculos;
     }
 
     @Override
@@ -109,6 +115,7 @@ public class Vehiculos {
                 ", usuario=" + usuario +
                 ", docVehiculo=" + docVehiculo +
                 ", eventoVehicular=" + eventoVehicular +
+                ", imagenVehiculos=" + imagenVehiculos +
                 '}';
     }
 
@@ -239,4 +246,13 @@ public class Vehiculos {
     public void setMotor(double motor) {
         this.motor = motor;
     }
+
+    public List<ImagenVehiculo> getImagenVehiculos() {
+        return imagenVehiculos;
+    }
+
+    public void setImagenVehiculos(List<ImagenVehiculo> imagenVehiculos) {
+        this.imagenVehiculos = imagenVehiculos;
+    }
+
 }

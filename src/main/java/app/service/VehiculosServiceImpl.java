@@ -79,6 +79,20 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    public List<ImagenVehiculo> getImagenVehiculos(long id){
+        try {
+            Vehiculos v = this.vehiculosDAO.findById(id);
+            if (v == null)
+                throw new NotFoundError("No se encontro el vehiculo");
+            if (v.getImagenVehiculos().isEmpty())
+                throw new NotFoundError("No se encontraron imágenes del auto");
+            return v.getImagenVehiculos();
+        } catch(Throwable e) {
+            throw new NotFoundError(e.getMessage());
+        }
+    }
+
+    @Override
     public void saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
         // Verifica si el VIN ya existe
         Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);

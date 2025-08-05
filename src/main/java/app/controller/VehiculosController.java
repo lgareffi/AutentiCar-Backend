@@ -1,8 +1,7 @@
 package app.controller;
 
-import app.Errors.NotFoundError;
+
 import app.controller.dtos.*;
-import app.model.dao.IUsuariosDAO;
 import app.model.entity.*;
 import app.service.IVehiculosService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +67,19 @@ public class VehiculosController {
                     .map(EventoVehicularDTO::new)
                     .toList();
             return new ResponseEntity<>(eventosDTO, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @GetMapping("/{vehiculoId}/imagenes")
+    public ResponseEntity<?> getImagenVehiculos(@PathVariable long vehiculoId) {
+        try {
+            List<ImagenVehiculo> imagenesVehiculos = this.vehiculosService.getImagenVehiculos(vehiculoId);
+            List<ImagenVehiculoDTO> imagenesDTO = imagenesVehiculos.stream()
+                    .map(ImagenVehiculoDTO::new)
+                    .toList();
+            return new ResponseEntity<>(imagenesDTO, HttpStatus.OK);
         } catch (Throwable e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
