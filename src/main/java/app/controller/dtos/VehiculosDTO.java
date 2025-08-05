@@ -23,6 +23,8 @@ public class VehiculosDTO {
 
     private List<Long> idsDocumentos;
     private List<Long> idsEventos;
+    private List<Long> idsImagenes;
+
 
     public VehiculosDTO(Vehiculos v) {
         super();
@@ -48,6 +50,10 @@ public class VehiculosDTO {
 
         this.idsEventos = v.getEventoVehicular() != null
                 ? v.getEventoVehicular().stream().map(e -> e.getIdEvento()).collect(Collectors.toList())
+                : List.of();
+
+        this.idsImagenes = v.getImagenVehiculos() != null
+                ? v.getImagenVehiculos().stream().map(i -> i.getIdImagen()).collect(Collectors.toList())
                 : List.of();
     }
 
@@ -181,6 +187,14 @@ public class VehiculosDTO {
 
     public void setIdsEventos(List<Long> idsEventos) {
         this.idsEventos = idsEventos;
+    }
+
+    public List<Long> getIdsImagenes() {
+        return idsImagenes;
+    }
+
+    public void setIdsImagenes(List<Long> idsImagenes) {
+        this.idsImagenes = idsImagenes;
     }
 }
 
