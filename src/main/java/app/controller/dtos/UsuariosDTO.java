@@ -9,6 +9,7 @@ public class UsuariosDTO {
     private Long idUsuario;
     private String nombre;
     private String apellido;
+    private String mail;
     private List<Long> comprasRealizadas;
     private List<Long> ventasRealizadas;
     private List<Long> vehiculos;
@@ -20,6 +21,7 @@ public class UsuariosDTO {
         this.idUsuario = usuario.getIdUsuario();
         this.nombre = usuario.getNombre();
         this.apellido = usuario.getApellido();
+        this.mail = usuario.getMail();
         this.comprasRealizadas = usuario.getComprasRealizadas()
                 .stream()
                 .map(Ventas::getIdVenta)
@@ -109,5 +111,13 @@ public class UsuariosDTO {
 
     public void setPublicaciones(List<Long> publicaciones) {
         this.publicaciones = publicaciones;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 }
