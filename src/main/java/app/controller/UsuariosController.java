@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("")
@@ -119,7 +121,12 @@ public class UsuariosController {
             Usuarios existe = usuariosService.findByMail(mail);
 
             if (existe.getPassword().equals(password)) {
-                return new ResponseEntity<>("Fuiste loggeado exitosamente", HttpStatus.OK);
+                Map<String, Object> response = new HashMap<>();
+                response.put("mensaje", "Fuiste loggeado exitosamente");
+                response.put("id", existe.getIdUsuario());
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+//                return new ResponseEntity<>("Fuiste loggeado exitosamente", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Credenciales inválidas", HttpStatus.UNAUTHORIZED);
             }
