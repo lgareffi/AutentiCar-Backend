@@ -7,6 +7,8 @@ import app.model.dao.IVehiculosDAO;
 import app.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -116,7 +118,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
         vehiculo.setColor(dto.color);
         vehiculo.setTipoCombustible(dto.tipoCombustible);
         vehiculo.setTipoTransmision(dto.tipoTransmision);
-        vehiculo.setFechaAlta(dto.fechaAlta);
+        vehiculo.setFechaAlta(LocalDate.now());
         vehiculo.setEstado(Vehiculos.Estado.valueOf(dto.estado.toUpperCase()));
         vehiculo.setUsuario(usuario);
 

@@ -13,7 +13,6 @@ public class AddVehiculoDTO {
     public String color;
     public String tipoCombustible;
     public String tipoTransmision;
-    public LocalDate fechaAlta;
     public String estado;
     public long usuarioId;
 
@@ -95,14 +94,6 @@ public class AddVehiculoDTO {
 
     public void setTipoTransmision(String tipoTransmision) {
         this.tipoTransmision = tipoTransmision;
-    }
-
-    public LocalDate getFechaAlta() {
-        return fechaAlta;
-    }
-
-    public void setFechaAlta(LocalDate fechaAlta) {
-        this.fechaAlta = fechaAlta;
     }
 
     public String getEstado() {
