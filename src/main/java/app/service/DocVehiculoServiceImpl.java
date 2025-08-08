@@ -11,6 +11,8 @@ import app.model.entity.Vehiculos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class DocVehiculoServiceImpl implements IDocVehiculoService {
     @Autowired
@@ -57,7 +59,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
         doc.setUrlDoc(dto.urlDoc);
         doc.setNivelRiesgo(dto.nivelRiesgo);
         doc.setValidadoIA(dto.validadoIA);
-        doc.setFechaSubida(dto.fechaSubida);
+        doc.setFechaSubida(LocalDate.now());
         doc.setTipoDoc(DocVehiculo.TipoDoc.valueOf(dto.tipoDoc.toUpperCase()));
         doc.setVehiculo(vehiculo);
         doc.setEventoVehicular(evento);

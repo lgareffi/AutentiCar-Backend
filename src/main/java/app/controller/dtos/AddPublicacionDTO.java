@@ -6,7 +6,6 @@ public class AddPublicacionDTO {
     public String titulo;
     public String descripcion;
     public int precio;
-    public LocalDate fechaPublicacion;
     public String estadoPublicacion; // ACTIVA, VENDIDA, etc.
     public long usuarioId;
     public long vehiculoId;
@@ -41,14 +40,6 @@ public class AddPublicacionDTO {
 
     public void setEstadoPublicacion(String estadoPublicacion) {
         this.estadoPublicacion = estadoPublicacion;
-    }
-
-    public LocalDate getFechaPublicacion() {
-        return fechaPublicacion;
-    }
-
-    public void setFechaPublicacion(LocalDate fechaPublicacion) {
-        this.fechaPublicacion = fechaPublicacion;
     }
 
     public long getUsuarioId() {

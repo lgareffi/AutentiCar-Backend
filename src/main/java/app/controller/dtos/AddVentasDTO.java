@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 public class AddVentasDTO {
     public int precio;
-    public LocalDate fechaVenta;
     public long compradorId;
     public long vendedorId;
     public long publicacionId;
@@ -15,14 +14,6 @@ public class AddVentasDTO {
 
     public void setPrecio(int precio) {
         this.precio = precio;
-    }
-
-    public LocalDate getFechaVenta() {
-        return fechaVenta;
-    }
-
-    public void setFechaVenta(LocalDate fechaVenta) {
-        this.fechaVenta = fechaVenta;
     }
 
     public long getCompradorId() {

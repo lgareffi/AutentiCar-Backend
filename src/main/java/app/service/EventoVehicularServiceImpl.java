@@ -12,6 +12,7 @@ import app.model.entity.Vehiculos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -78,7 +79,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setDescripcion(dto.descripcion);
         evento.setKilometrajeEvento(dto.kilometrajeEvento);
         evento.setValidadoPorTercero(dto.validadoPorTercero);
-        evento.setFechaEvento(dto.fechaEvento);
+        evento.setFechaEvento(LocalDate.now());
         evento.setTipoEvento(EventoVehicular.TipoEvento.valueOf(dto.tipoEvento.toUpperCase()));
         evento.setUsuario(usuario);
         evento.setVehiculo(vehiculo);

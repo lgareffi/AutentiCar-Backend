@@ -7,7 +7,6 @@ public class AddDocumentoDTO {
     public String urlDoc;
     public int nivelRiesgo;
     public boolean validadoIA;
-    public LocalDate fechaSubida;
     public String tipoDoc; // debe coincidir con los valores del enum (TITULO, CEDULA, etc.)
     public long vehiculoId;
     public long eventoId;
@@ -42,14 +41,6 @@ public class AddDocumentoDTO {
 
     public void setValidadoIA(boolean validadoIA) {
         this.validadoIA = validadoIA;
-    }
-
-    public LocalDate getFechaSubida() {
-        return fechaSubida;
-    }
-
-    public void setFechaSubida(LocalDate fechaSubida) {
-        this.fechaSubida = fechaSubida;
     }
 
     public String getTipoDoc() {

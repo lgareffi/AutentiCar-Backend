@@ -12,6 +12,8 @@ import app.model.entity.Ventas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class VentasServiceImpl implements IVentasService{
     @Autowired
@@ -59,7 +61,7 @@ public class VentasServiceImpl implements IVentasService{
 
         Ventas v = new Ventas();
         v.setPrecio(dto.precio);
-        v.setFechaVenta(dto.fechaVenta);
+        v.setFechaVenta(LocalDate.now());
         v.setUsuarioComprador(comprador);
         v.setUsuarioVendedor(vendedor);
         v.setPublicacion(publicacion);

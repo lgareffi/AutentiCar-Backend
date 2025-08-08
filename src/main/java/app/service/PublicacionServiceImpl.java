@@ -9,6 +9,7 @@ import app.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -69,7 +70,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
         post.setTitulo(dto.titulo);
         post.setDescripcion(dto.descripcion);
         post.setPrecio(dto.precio);
-        post.setFechaPublicacion(dto.fechaPublicacion);
+        post.setFechaPublicacion(LocalDate.now());
         post.setEstadoPublicacion(Publicacion.EstadoPublicacion.valueOf(dto.estadoPublicacion.toUpperCase()));
         post.setUsuario(usuario);
         post.setVehiculo(vehiculo);

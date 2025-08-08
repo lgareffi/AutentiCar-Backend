@@ -7,7 +7,6 @@ public class AddEventoDTO {
     public String descripcion;
     public int kilometrajeEvento;
     public boolean validadoPorTercero;
-    public LocalDate fechaEvento;
     public String tipoEvento; // debe coincidir con los valores del enum
     public long usuarioId;
     public long vehiculoId;
@@ -34,14 +33,6 @@ public class AddEventoDTO {
 
     public void setKilometrajeEvento(int kilometrajeEvento) {
         this.kilometrajeEvento = kilometrajeEvento;
-    }
-
-    public LocalDate getFechaEvento() {
-        return fechaEvento;
-    }
-
-    public void setFechaEvento(LocalDate fechaEvento) {
-        this.fechaEvento = fechaEvento;
     }
 
     public boolean isValidadoPorTercero() {
