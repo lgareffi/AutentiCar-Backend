@@ -21,5 +21,5 @@ public interface IVehiculosService {
 
     public List<ImagenVehiculo> getImagenVehiculos(long id);
 
-    public void saveVehiculoDesdeDTO(AddVehiculoDTO dto);
+    public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto);
 }

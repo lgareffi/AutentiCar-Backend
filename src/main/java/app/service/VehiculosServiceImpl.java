@@ -95,7 +95,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
-    public void saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
+    public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
         // Verifica si el VIN ya existe
         Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);
         if (existente != null)
@@ -123,6 +123,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
         vehiculo.setUsuario(usuario);
 
         this.vehiculosDAO.save(vehiculo);
+        return vehiculo.getIdVehiculo();
     }
 
 

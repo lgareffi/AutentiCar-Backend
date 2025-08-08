@@ -1,6 +1,7 @@
 package app.controller;
 
 
+import app.Errors.NotFoundError;
 import app.controller.dtos.*;
 import app.model.entity.*;
 import app.service.IVehiculosService;
@@ -9,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -85,13 +88,37 @@ public class VehiculosController {
         }
     }
 
+//    @PostMapping
+//    public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO vehiculoDTO) {
+//        try {
+//            vehiculosService.saveVehiculoDesdeDTO(vehiculoDTO);
+//            return new ResponseEntity<>("Vehículo agregado correctamente", HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
+
     @PostMapping
-    public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO vehiculoDTO) {
+    public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO dto) {
         try {
-            vehiculosService.saveVehiculoDesdeDTO(vehiculoDTO);
-            return new ResponseEntity<>("Vehículo agregado correctamente", HttpStatus.CREATED);
+            Long id = vehiculosService.saveVehiculoDesdeDTO(dto);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("mensaje", "Vehículo agregado correctamente");
+            response.put("id", id);
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (NotFoundError e) {
+            // usuario no encontrado u otros not found del dominio
+            return new ResponseEntity<>("No se encontró el usuario", HttpStatus.NOT_FOUND);
+
+        } catch (RuntimeException e) {
+            // por ejemplo: VIN duplicado
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error interno: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
