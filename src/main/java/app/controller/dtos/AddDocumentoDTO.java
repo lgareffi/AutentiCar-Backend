@@ -9,7 +9,7 @@ public class AddDocumentoDTO {
     public boolean validadoIA;
     public String tipoDoc; // debe coincidir con los valores del enum (TITULO, CEDULA, etc.)
     public long vehiculoId;
-    public long eventoId;
+    public Long eventoId;
 
     public String getNombre() {
         return nombre;
@@ -59,11 +59,7 @@ public class AddDocumentoDTO {
         this.vehiculoId = vehiculoId;
     }
 
-    public long getEventoId() {
-        return eventoId;
-    }
-
-    public void setEventoId(long eventoId) {
+    public void setEventoId(Long eventoId) {
         this.eventoId = eventoId;
     }
 }

@@ -28,7 +28,10 @@ public class DocVehiculoDTO {
         this.fechaSubida = doc.getFechaSubida();
         this.tipoDoc = doc.getTipoDoc().name();
         this.idVehiculo = doc.getVehiculo().getIdVehiculo();
-        this.idEventoVehicular = doc.getEventoVehicular().getIdEvento();
+        this.idEventoVehicular = (doc.getEventoVehicular() != null)
+                ? doc.getEventoVehicular().getIdEvento()
+                : null;
+//        this.idEventoVehicular = doc.getEventoVehicular().getIdEvento();
     }
 
     public DocVehiculoDTO() {

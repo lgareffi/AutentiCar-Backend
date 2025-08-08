@@ -46,14 +46,26 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
 
     @Override
     public void saveDocumentoDesdeDTO(AddDocumentoDTO dto) {
+        // Vehículo obligatorio
         Vehiculos vehiculo = vehiculosDAO.findById(dto.vehiculoId);
         if (vehiculo == null)
             throw new NotFoundError("No se encontró el vehículo");
 
-        EventoVehicular evento = eventoVehicularDAO.findById(dto.eventoId);
-        if (evento == null)
-            throw new NotFoundError("No se encontró el evento");
+        // Evento opcional
+        EventoVehicular evento = null;
+        if (dto.eventoId != null) {
+            evento = eventoVehicularDAO.findById(dto.eventoId);
+            if (evento == null)
+                throw new NotFoundError("No se encontró el evento");
 
+            // (Recomendado) Asegurar que el evento es del mismo vehículo
+            if (evento.getVehiculo() == null ||
+                    evento.getVehiculo().getIdVehiculo() != vehiculo.getIdVehiculo()) {
+                throw new NotFoundError("El evento no pertenece al vehículo indicado");
+            }
+        }
+
+        // Crear DocVehiculo
         DocVehiculo doc = new DocVehiculo();
         doc.setNombre(dto.nombre);
         doc.setUrlDoc(dto.urlDoc);
@@ -66,5 +78,29 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
 
         docVehiculoDAO.save(doc);
     }
+
+
+//    @Override
+//    public void saveDocumentoDesdeDTO(AddDocumentoDTO dto) {
+//        Vehiculos vehiculo = vehiculosDAO.findById(dto.vehiculoId);
+//        if (vehiculo == null)
+//            throw new NotFoundError("No se encontró el vehículo");
+//
+//        EventoVehicular evento = eventoVehicularDAO.findById(dto.eventoId);
+//        if (evento == null)
+//            throw new NotFoundError("No se encontró el evento");
+//
+//        DocVehiculo doc = new DocVehiculo();
+//        doc.setNombre(dto.nombre);
+//        doc.setUrlDoc(dto.urlDoc);
+//        doc.setNivelRiesgo(dto.nivelRiesgo);
+//        doc.setValidadoIA(dto.validadoIA);
+//        doc.setFechaSubida(LocalDate.now());
+//        doc.setTipoDoc(DocVehiculo.TipoDoc.valueOf(dto.tipoDoc.toUpperCase()));
+//        doc.setVehiculo(vehiculo);
+//        doc.setEventoVehicular(evento);
+//
+//        docVehiculoDAO.save(doc);
+//    }
 
 }
