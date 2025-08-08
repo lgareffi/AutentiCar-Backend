@@ -47,7 +47,7 @@ public class Vehiculos {
     private LocalDate fechaAlta;
 
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    private Estado estado  = Estado.ACTIVO;
 
     public enum Estado {
         ACTIVO, VENDIDO, INACTIVO

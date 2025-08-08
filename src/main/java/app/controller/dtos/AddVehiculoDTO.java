@@ -13,7 +13,6 @@ public class AddVehiculoDTO {
     public String color;
     public String tipoCombustible;
     public String tipoTransmision;
-    public String estado;
     public long usuarioId;
 
     public String getVin() {
@@ -94,14 +93,6 @@ public class AddVehiculoDTO {
 
     public void setTipoTransmision(String tipoTransmision) {
         this.tipoTransmision = tipoTransmision;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 
     public long getUsuarioId() {

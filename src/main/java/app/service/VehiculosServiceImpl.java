@@ -119,7 +119,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
         vehiculo.setTipoCombustible(dto.tipoCombustible);
         vehiculo.setTipoTransmision(dto.tipoTransmision);
         vehiculo.setFechaAlta(LocalDate.now());
-        vehiculo.setEstado(Vehiculos.Estado.valueOf(dto.estado.toUpperCase()));
+        vehiculo.setEstado(Vehiculos.Estado.ACTIVO);
         vehiculo.setUsuario(usuario);
 
         this.vehiculosDAO.save(vehiculo);
