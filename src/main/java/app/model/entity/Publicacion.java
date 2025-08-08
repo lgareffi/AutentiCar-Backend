@@ -25,7 +25,7 @@ public class Publicacion {
     private LocalDate fechaPublicacion;
 
     @Enumerated(EnumType.STRING)
-    private EstadoPublicacion estadoPublicacion;
+    private EstadoPublicacion estadoPublicacion = EstadoPublicacion.ACTIVA ;
 
     public enum EstadoPublicacion {
         ACTIVA, VENDIDA, PAUSADA

@@ -6,7 +6,6 @@ public class AddPublicacionDTO {
     public String titulo;
     public String descripcion;
     public int precio;
-    public String estadoPublicacion; // ACTIVA, VENDIDA, etc.
     public long usuarioId;
     public long vehiculoId;
 
@@ -32,14 +31,6 @@ public class AddPublicacionDTO {
 
     public void setPrecio(int precio) {
         this.precio = precio;
-    }
-
-    public String getEstadoPublicacion() {
-        return estadoPublicacion;
-    }
-
-    public void setEstadoPublicacion(String estadoPublicacion) {
-        this.estadoPublicacion = estadoPublicacion;
     }
 
     public long getUsuarioId() {

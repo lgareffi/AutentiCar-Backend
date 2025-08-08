@@ -71,7 +71,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
         post.setDescripcion(dto.descripcion);
         post.setPrecio(dto.precio);
         post.setFechaPublicacion(LocalDate.now());
-        post.setEstadoPublicacion(Publicacion.EstadoPublicacion.valueOf(dto.estadoPublicacion.toUpperCase()));
+        post.setEstadoPublicacion(Publicacion.EstadoPublicacion.ACTIVA);
         post.setUsuario(usuario);
         post.setVehiculo(vehiculo);
 
