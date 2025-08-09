@@ -20,4 +20,5 @@ public class AddImagenDTO {
     public void setVehiculoId(long vehiculoId) {
         this.vehiculoId = vehiculoId;
     }
+
 }
