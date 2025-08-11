@@ -18,8 +18,8 @@ public class ImagenVehiculo {
     @Column(nullable = false)
     private LocalDate fechaSubida;
 
-    //    @Column(nullable = false,length = 150)
-//    private String nombreArchivo;
+    @Column(nullable = false, length = 200)
+    private String publicId;
 
     @ManyToOne // muchas imágenes pueden pertenecer a 1 vehiculo
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
@@ -29,11 +29,12 @@ public class ImagenVehiculo {
         super();
     }
 
-    public ImagenVehiculo(long idImagen, String urlImagen, LocalDate fechaSubida,
+    public ImagenVehiculo(long idImagen, String urlImagen, LocalDate fechaSubida, String publicId,
                           Vehiculos vehiculo) {
         this.idImagen = idImagen;
         this.urlImagen = urlImagen;
         this.fechaSubida = fechaSubida;
+        this.publicId = publicId;
         this.vehiculo = vehiculo;
     }
 
@@ -43,6 +44,7 @@ public class ImagenVehiculo {
                 "idImagen=" + idImagen +
                 ", urlImagen='" + urlImagen + '\'' +
                 ", fechaSubida=" + fechaSubida +
+                ", publicId='" + publicId + '\'' +
                 ", vehiculo=" + vehiculo +
                 '}';
     }
@@ -79,4 +81,11 @@ public class ImagenVehiculo {
         this.vehiculo = vehiculo;
     }
 
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
 }

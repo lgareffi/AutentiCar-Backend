@@ -139,4 +139,18 @@ public class VehiculosController {
         }
     }
 
+    @DeleteMapping("/imagenes/{imagenId}")
+    public ResponseEntity<?> eliminarImagen(@PathVariable long imagenId) {
+        try {
+            imagenVehiculoService.eliminarImagen(imagenId);
+            return ResponseEntity.ok("Imagen eliminada");
+        } catch (app.Errors.NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
 }

@@ -9,6 +9,7 @@ public class ImagenVehiculoDTO {
     private String urlImagen;
     private LocalDate fechaSubida;
     private long vehiculoId;
+    private String publicId;
 
     public ImagenVehiculoDTO() {
         super();
@@ -20,6 +21,7 @@ public class ImagenVehiculoDTO {
         this.urlImagen = i.getUrlImagen();
         this.fechaSubida = i.getFechaSubida();
         this.vehiculoId = i.getVehiculo().getIdVehiculo();
+        this.publicId = i.getPublicId();
     }
 
     public long getIdImagen() {
@@ -52,5 +54,13 @@ public class ImagenVehiculoDTO {
 
     public void setVehiculoId(long vehiculoId) {
         this.vehiculoId = vehiculoId;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 }

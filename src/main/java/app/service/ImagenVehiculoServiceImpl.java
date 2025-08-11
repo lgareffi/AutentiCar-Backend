@@ -84,10 +84,12 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
             );
 
             String secureUrl = (String) upload.get("secure_url");
-            if (secureUrl == null) throw new RuntimeException("No se obtuvo URL de Cloudinary");
+            String publicId  = (String) upload.get("public_id"); // <— NUEVO
+            if (secureUrl == null || publicId == null) throw new RuntimeException("Error al obtener datos de Cloudinary");
 
             ImagenVehiculo img = new ImagenVehiculo();
             img.setUrlImagen(secureUrl);
+            img.setPublicId(publicId);
             img.setFechaSubida(LocalDate.now());
             img.setVehiculo(vehiculo);
             imagenVehiculoDAO.save(img);
@@ -111,13 +113,15 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
 
     @Override
     public void eliminarImagen(long imagenId) {
-        ImagenVehiculo img = imagenVehiculoDAO.findById(imagenId); // tu DAO ya lanza NotFound si no existe
-        // Si más adelante almacenás publicId, acá podés borrar también de Cloudinary con destroy(publicId)
-        // cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-        // Por ahora, sólo en BD:
-        // necesitás agregar delete en tu DAO si no existe
-        // entityManager.remove(img);
-        throw new UnsupportedOperationException("Implementar delete en DAO si querés borrar");
+        ImagenVehiculo img = imagenVehiculoDAO.findById(imagenId); // tu DAO lanza NotFound si no existe
+        try {
+            // 1) Borrar en Cloudinary
+            cloudinary.uploader().destroy(img.getPublicId(), ObjectUtils.emptyMap());
+            // 2) Borrar en BD
+            imagenVehiculoDAO.delete(img);
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo eliminar la imagen: " + e.getMessage(), e);
+        }
     }
 
 //    @Override

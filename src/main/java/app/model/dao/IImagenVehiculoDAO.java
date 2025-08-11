@@ -15,4 +15,6 @@ public interface IImagenVehiculoDAO {
     public long countByVehiculo(Vehiculos vehiculo);
 
     public List<ImagenVehiculo> findByVehiculo(Vehiculos vehiculo);
+
+    public void delete(ImagenVehiculo imagenVehiculo);
 }
