@@ -1,5 +1,6 @@
 package app.controller.dtos;
 
+import app.model.entity.ImagenVehiculo;
 import app.model.entity.Vehiculos;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +21,7 @@ public class VehiculosDTO {
     private LocalDate fechaAlta;
     private String estado;
     private Long idUsuario;
+    private String portadaUrl;
 
     private List<Long> idsDocumentos;
     private List<Long> idsEventos;
@@ -55,6 +57,14 @@ public class VehiculosDTO {
         this.idsImagenes = v.getImagenVehiculos() != null
                 ? v.getImagenVehiculos().stream().map(i -> i.getIdImagen()).collect(Collectors.toList())
                 : List.of();
+
+        this.portadaUrl = (v.getImagenVehiculos() != null && !v.getImagenVehiculos().isEmpty())
+                ? v.getImagenVehiculos().stream()              // elegí el criterio que quieras
+                .sorted((a,b) -> b.getIdImagen() < a.getIdImagen() ? -1 : 1) // más nueva por id
+                .findFirst()
+                .map(ImagenVehiculo::getUrlImagen)
+                .orElse(null)
+                : null;
     }
 
     public VehiculosDTO() {
@@ -195,6 +205,14 @@ public class VehiculosDTO {
 
     public void setIdsImagenes(List<Long> idsImagenes) {
         this.idsImagenes = idsImagenes;
+    }
+
+    public String getPortadaUrl() {
+        return portadaUrl;
+    }
+
+    public void setPortadaUrl(String portadaUrl) {
+        this.portadaUrl = portadaUrl;
     }
 }
 
