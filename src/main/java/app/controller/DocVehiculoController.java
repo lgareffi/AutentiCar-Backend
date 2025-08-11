@@ -30,14 +30,4 @@ public class DocVehiculoController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> agregarDocumento(@RequestBody AddDocumentoDTO dto) {
-        try {
-            docVehiculoService.saveDocumentoDesdeDTO(dto);
-            return new ResponseEntity<>("Documento agregado correctamente", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
 }

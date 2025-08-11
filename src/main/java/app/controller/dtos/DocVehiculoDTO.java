@@ -17,6 +17,7 @@ public class DocVehiculoDTO {
 
     private Long idVehiculo; // solo el ID, no el objeto completo
     private Long idEventoVehicular;
+    private String mimeType;
 
     public DocVehiculoDTO(DocVehiculo doc) {
         super();
@@ -28,6 +29,7 @@ public class DocVehiculoDTO {
         this.fechaSubida = doc.getFechaSubida();
         this.tipoDoc = doc.getTipoDoc().name();
         this.idVehiculo = doc.getVehiculo().getIdVehiculo();
+        this.mimeType = doc.getMimeType();
         this.idEventoVehicular = (doc.getEventoVehicular() != null)
                 ? doc.getEventoVehicular().getIdEvento()
                 : null;
@@ -108,6 +110,14 @@ public class DocVehiculoDTO {
 
     public void setIdEventoVehicular(Long idEventoVehicular) {
         this.idEventoVehicular = idEventoVehicular;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }
 

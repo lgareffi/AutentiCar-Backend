@@ -4,6 +4,7 @@ package app.controller;
 import app.Errors.NotFoundError;
 import app.controller.dtos.*;
 import app.model.entity.*;
+import app.service.IDocVehiculoService;
 import app.service.IImagenVehiculoService;
 import app.service.IVehiculosService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class VehiculosController {
 
     @Autowired
     private IImagenVehiculoService imagenVehiculoService;
+
+    @Autowired
+    private IDocVehiculoService docVehiculoService;
 
     @GetMapping("/{vehiculoId}")
     public ResponseEntity<?> getVehiculo(@PathVariable long vehiculoId) {
@@ -52,19 +56,6 @@ public class VehiculosController {
         }catch (Throwable e) {
             String msj = "No se encontraron vehiculos";
             return new ResponseEntity<>(msj, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @GetMapping("/{vehiculoId}/documentos")
-    public ResponseEntity<?> getDocVehiculo(@PathVariable long vehiculoId) {
-        try {
-            List<DocVehiculo> docsVehiculo = this.vehiculosService.getDocVehiculo(vehiculoId);
-            List<DocVehiculoDTO> docsDTO = docsVehiculo.stream()
-                    .map(DocVehiculoDTO::new)
-                    .toList();
-            return new ResponseEntity<>(docsDTO, HttpStatus.OK);
-        } catch (Throwable e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
@@ -144,6 +135,51 @@ public class VehiculosController {
         try {
             imagenVehiculoService.eliminarImagen(imagenId);
             return ResponseEntity.ok("Imagen eliminada");
+        } catch (app.Errors.NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
+    @PostMapping(value = "/{vehiculoId}/documentos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> subirDocumento(@PathVariable long vehiculoId,
+                                            @RequestParam("file") MultipartFile file,
+                                            @RequestParam("nombre") String nombre,
+                                            @RequestParam("tipoDoc") String tipoDoc,
+                                            @RequestParam(value = "nivelRiesgo", required = false) Integer nivelRiesgo,
+                                            @RequestParam(value = "validadoIA", required = false) Boolean validadoIA,
+                                            @RequestParam(value = "eventoId", required = false) Long eventoId) {
+        try {
+            DocVehiculoDTO dto = docVehiculoService.subirDocumento(vehiculoId, file, nombre, tipoDoc, nivelRiesgo, validadoIA, eventoId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+        } catch (app.Errors.NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
+    @GetMapping("/{vehiculoId}/documentos")
+    public ResponseEntity<?> listarDocumentos(@PathVariable long vehiculoId) {
+        try {
+            return ResponseEntity.ok(docVehiculoService.listarPorVehiculo(vehiculoId));
+        } catch (app.Errors.NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
+    @DeleteMapping("/documentos/{documentoId}")
+    public ResponseEntity<?> eliminarDocumento(@PathVariable long documentoId) {
+        try {
+            docVehiculoService.eliminarDocumento(documentoId);
+            return ResponseEntity.ok("Documento eliminado");
         } catch (app.Errors.NotFoundError e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (RuntimeException e) {

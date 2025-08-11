@@ -15,17 +15,26 @@ public class DocVehiculo {
     @Column(nullable = false,length = 150)
     private String nombre;
 
-    @Column(nullable = false,length = 150)
+    @Column(nullable = false,length = 255)
     private String urlDoc;
 
     @Column(nullable = false)
     private int nivelRiesgo;
 
-    @Column(nullable = true, length = 40)
+    @Column(nullable = true)
     private boolean validadoIA = false;
 
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false)
     private LocalDate fechaSubida;
+
+    @Column(length = 200, nullable = true)
+    private String publicId;
+
+    @Column(length = 20, nullable = true)   // "image" | "raw"
+    private String resourceType;
+
+    @Column(length = 80, nullable = true)   // "application/pdf", "image/jpeg", etc.
+    private String mimeType;
 
     @Enumerated(EnumType.STRING)
     private TipoDoc tipoDoc;
@@ -47,14 +56,18 @@ public class DocVehiculo {
     }
 
     public DocVehiculo(long idDocVehiculo, String nombre, String urlDoc, int nivelRiesgo,
-                       LocalDate fechaSubida, boolean validadoIA, TipoDoc tipoDoc,
+                       boolean validadoIA, LocalDate fechaSubida, String publicId,
+                       String resourceType, String mimeType, TipoDoc tipoDoc,
                        Vehiculos vehiculo, EventoVehicular eventoVehicular) {
         this.idDocVehiculo = idDocVehiculo;
         this.nombre = nombre;
         this.urlDoc = urlDoc;
         this.nivelRiesgo = nivelRiesgo;
-        this.fechaSubida = fechaSubida;
         this.validadoIA = validadoIA;
+        this.fechaSubida = fechaSubida;
+        this.publicId = publicId;
+        this.resourceType = resourceType;
+        this.mimeType = mimeType;
         this.tipoDoc = tipoDoc;
         this.vehiculo = vehiculo;
         this.eventoVehicular = eventoVehicular;
@@ -69,6 +82,9 @@ public class DocVehiculo {
                 ", nivelRiesgo=" + nivelRiesgo +
                 ", validadoIA=" + validadoIA +
                 ", fechaSubida=" + fechaSubida +
+                ", publicId='" + publicId + '\'' +
+                ", resourceType='" + resourceType + '\'' +
+                ", mimeType='" + mimeType + '\'' +
                 ", tipoDoc=" + tipoDoc +
                 ", vehiculo=" + vehiculo +
                 ", eventoVehicular=" + eventoVehicular +
@@ -146,5 +162,29 @@ public class DocVehiculo {
 
     public void setTipoDoc(TipoDoc tipoDoc) {
         this.tipoDoc = tipoDoc;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

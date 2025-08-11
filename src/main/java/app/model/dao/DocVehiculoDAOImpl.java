@@ -32,4 +32,22 @@ public class DocVehiculoDAOImpl implements IDocVehiculoDAO {
         currentSession.persist(docVehiculo);
     }
 
+    @Override
+    @Transactional
+    public void delete(DocVehiculo docVehiculo) {
+        Session s = entityManager.unwrap(Session.class);
+        DocVehiculo managed = s.contains(docVehiculo) ? docVehiculo : s.merge(docVehiculo);
+        s.remove(managed);
+    }
+
+    @Override
+    @Transactional
+    public List<DocVehiculo> findByVehiculo(Vehiculos vehiculo) {
+        Session s = entityManager.unwrap(Session.class);
+        return s.createQuery(
+                "FROM DocVehiculo d WHERE d.vehiculo = :vehiculo ORDER BY d.idDocVehiculo DESC",
+                DocVehiculo.class
+        ).setParameter("vehiculo", vehiculo).getResultList();
+    }
+
 }
