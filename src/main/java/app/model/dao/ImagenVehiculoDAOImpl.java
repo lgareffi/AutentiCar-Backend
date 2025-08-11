@@ -39,9 +39,30 @@ public class ImagenVehiculoDAOImpl implements IImagenVehiculoDAO {
     public ImagenVehiculo findByUrl(String urlImagen) {
         Session currentSession = entityManager.unwrap(Session.class);
         Query<ImagenVehiculo> query = currentSession.createQuery("FROM ImagenVehiculo WHERE urlImagen = :urlImagen", ImagenVehiculo.class);
-        query.setParameter("urlImagen", urlImagen.toLowerCase());
+        query.setParameter("urlImagen", urlImagen);
         List<ImagenVehiculo> result = query.getResultList();
         return result.isEmpty() ? null : result.get(0);
+    }
+
+    @Override
+    @Transactional
+    public long countByVehiculo(Vehiculos vehiculo) {
+        Session s = entityManager.unwrap(Session.class);
+        Long count = s.createQuery(
+                "SELECT COUNT(i) FROM ImagenVehiculo i WHERE i.vehiculo = :vehiculo",
+                Long.class
+        ).setParameter("vehiculo", vehiculo).getSingleResult();
+        return count == null ? 0L : count;
+    }
+
+    @Override
+    @Transactional
+    public List<ImagenVehiculo> findByVehiculo(Vehiculos vehiculo) {
+        Session s = entityManager.unwrap(Session.class);
+        return s.createQuery(
+                "FROM ImagenVehiculo i WHERE i.vehiculo = :vehiculo ORDER BY i.idImagen DESC",
+                ImagenVehiculo.class
+        ).setParameter("vehiculo", vehiculo).getResultList();
     }
 
 }

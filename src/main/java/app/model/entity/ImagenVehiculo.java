@@ -12,10 +12,10 @@ public class ImagenVehiculo {
     @Column(nullable = false)
     private long idImagen;
 
-    @Column(nullable = false,length = 150)
+    @Column(nullable = false,length = 255)
     private String urlImagen;
 
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false)
     private LocalDate fechaSubida;
 
     //    @Column(nullable = false,length = 150)

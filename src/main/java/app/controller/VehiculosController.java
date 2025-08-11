@@ -4,11 +4,14 @@ package app.controller;
 import app.Errors.NotFoundError;
 import app.controller.dtos.*;
 import app.model.entity.*;
+import app.service.IImagenVehiculoService;
 import app.service.IVehiculosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +23,9 @@ import java.util.stream.Collectors;
 public class VehiculosController {
     @Autowired
     private IVehiculosService vehiculosService;
+
+    @Autowired
+    private IImagenVehiculoService imagenVehiculoService;
 
     @GetMapping("/{vehiculoId}")
     public ResponseEntity<?> getVehiculo(@PathVariable long vehiculoId) {
@@ -79,24 +85,18 @@ public class VehiculosController {
     public ResponseEntity<?> getImagenVehiculos(@PathVariable long vehiculoId) {
         try {
             List<ImagenVehiculo> imagenesVehiculos = this.vehiculosService.getImagenVehiculos(vehiculoId);
+
             List<ImagenVehiculoDTO> imagenesDTO = imagenesVehiculos.stream()
                     .map(ImagenVehiculoDTO::new)
                     .toList();
-            return new ResponseEntity<>(imagenesDTO, HttpStatus.OK);
+
+            return ResponseEntity.ok(imagenesDTO); // 200 [] si está vacío
+        } catch (app.Errors.NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Throwable e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
         }
     }
-
-//    @PostMapping
-//    public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO vehiculoDTO) {
-//        try {
-//            vehiculosService.saveVehiculoDesdeDTO(vehiculoDTO);
-//            return new ResponseEntity<>("Vehículo agregado correctamente", HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
 
     @PostMapping
     public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO dto) {
@@ -119,6 +119,23 @@ public class VehiculosController {
 
         } catch (Exception e) {
             return new ResponseEntity<>("Error interno: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping( value = "/{vehiculoId}/imagenes",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> subirImagenes(
+            @PathVariable long vehiculoId,
+            @RequestParam("files") List<MultipartFile> files) {
+        try {
+            List<ImagenVehiculoDTO> dtos = imagenVehiculoService.subirMultiples(vehiculoId, files);
+            return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+        } catch (app.Errors.NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
         }
     }
 
