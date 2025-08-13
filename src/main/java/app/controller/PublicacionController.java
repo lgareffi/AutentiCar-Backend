@@ -1,6 +1,7 @@
 package app.controller;
 
 
+import app.Errors.NotFoundError;
 import app.controller.dtos.AddPublicacionDTO;
 import app.controller.dtos.PublicacionDTO;
 import app.controller.dtos.VehiculosDTO;
@@ -55,6 +56,20 @@ public class PublicacionController {
             return new ResponseEntity<>("Publicación agregada correctamente", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{publicacionId}")
+    public ResponseEntity<?> eliminarPublicacion(@PathVariable long publicacionId) {
+        try {
+            publicacionService.eliminarPublicacion(publicacionId);
+            return ResponseEntity.ok("Publicación eliminada");
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
         }
     }
 

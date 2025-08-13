@@ -12,4 +12,8 @@ public interface IPublicacionDAO {
     public List<Publicacion> findAll();
 
     public void save(Publicacion publicacion);
+
+    public void delete(Publicacion publicacion);
+
+    public Publicacion findByVehiculoId(long vehiculoId);
 }

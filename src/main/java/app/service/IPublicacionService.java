@@ -14,4 +14,6 @@ public interface IPublicacionService {
     public void save(Publicacion publicacion);
 
     public void savePublicacionDesdeDTO(AddPublicacionDTO dto);
+
+    public void eliminarPublicacion(long publicacionId);
 }

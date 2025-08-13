@@ -72,23 +72,6 @@ public class VehiculosController {
         }
     }
 
-    @GetMapping("/{vehiculoId}/imagenes")
-    public ResponseEntity<?> getImagenVehiculos(@PathVariable long vehiculoId) {
-        try {
-            List<ImagenVehiculo> imagenesVehiculos = this.vehiculosService.getImagenVehiculos(vehiculoId);
-
-            List<ImagenVehiculoDTO> imagenesDTO = imagenesVehiculos.stream()
-                    .map(ImagenVehiculoDTO::new)
-                    .toList();
-
-            return ResponseEntity.ok(imagenesDTO); // 200 [] si está vacío
-        } catch (app.Errors.NotFoundError e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Throwable e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
-        }
-    }
-
     @PostMapping
     public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO dto) {
         try {
@@ -113,6 +96,20 @@ public class VehiculosController {
         }
     }
 
+    @DeleteMapping("/{vehiculoId}")
+    public ResponseEntity<?> eliminarVehiculo(@PathVariable long vehiculoId) {
+        try {
+            vehiculosService.eliminarVehiculo(vehiculoId);
+            return ResponseEntity.ok("Vehículo eliminado");
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
     @PostMapping( value = "/{vehiculoId}/imagenes",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> subirImagenes(
@@ -126,6 +123,23 @@ public class VehiculosController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
+    @GetMapping("/{vehiculoId}/imagenes")
+    public ResponseEntity<?> getImagenVehiculos(@PathVariable long vehiculoId) {
+        try {
+            List<ImagenVehiculo> imagenesVehiculos = this.vehiculosService.getImagenVehiculos(vehiculoId);
+
+            List<ImagenVehiculoDTO> imagenesDTO = imagenesVehiculos.stream()
+                    .map(ImagenVehiculoDTO::new)
+                    .toList();
+
+            return ResponseEntity.ok(imagenesDTO); // 200 [] si está vacío
+        } catch (app.Errors.NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Throwable e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
         }
     }

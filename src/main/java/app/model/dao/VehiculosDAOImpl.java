@@ -54,5 +54,12 @@ public class VehiculosDAOImpl  implements IVehiculosDAO{
         return result.isEmpty() ? null : result.get(0);
     }
 
+    @Override
+    @Transactional
+    public void delete(Vehiculos vehiculo) {
+        Session s = entityManager.unwrap(Session.class);
+        Vehiculos managed = s.contains(vehiculo) ? vehiculo : s.merge(vehiculo);
+        s.remove(managed);
+    }
 
 }

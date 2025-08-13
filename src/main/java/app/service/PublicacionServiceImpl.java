@@ -78,4 +78,13 @@ public class PublicacionServiceImpl implements IPublicacionService{
         publicacionDAO.save(post);
     }
 
+    @Override
+    public void eliminarPublicacion(long publicacionId) {
+        Publicacion pub = publicacionDAO.findById(publicacionId);
+        if (pub == null) {
+            throw new NotFoundError("Publicación no encontrada: " + publicacionId);
+        }
+        publicacionDAO.delete(pub);
+    }
+
 }

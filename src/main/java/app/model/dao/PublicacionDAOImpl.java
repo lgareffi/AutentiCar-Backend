@@ -46,4 +46,25 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         currentSession.persist(publicacion);
     }
 
+    @Override
+    @Transactional
+    public void delete(Publicacion publicacion) {
+        Session s = entityManager.unwrap(Session.class);
+        Publicacion managed = s.contains(publicacion) ? publicacion : s.merge(publicacion);
+        s.remove(managed);
+    }
+
+    @Override
+    @Transactional
+    public Publicacion findByVehiculoId(long vehiculoId) {
+        Session currentSession = entityManager.unwrap(Session.class);
+        Query<Publicacion> query = currentSession.createQuery(
+                "FROM Publicacion WHERE vehiculo.idVehiculo = :vehiculoId",
+                Publicacion.class
+        );
+        query.setParameter("vehiculoId", vehiculoId);
+        List<Publicacion> result = query.getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
 }

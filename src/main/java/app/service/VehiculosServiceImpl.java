@@ -2,8 +2,8 @@ package app.service;
 
 import app.Errors.NotFoundError;
 import app.controller.dtos.AddVehiculoDTO;
-import app.model.dao.IUsuariosDAO;
-import app.model.dao.IVehiculosDAO;
+import app.controller.dtos.DocVehiculoDTO;
+import app.model.dao.*;
 import app.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,16 @@ public class VehiculosServiceImpl implements IVehiculosService{
     private IVehiculosDAO vehiculosDAO;
 
     @Autowired
-        private IUsuariosDAO usuariosDAO;
+    private IUsuariosDAO usuariosDAO;
+
+    @Autowired
+    private IPublicacionDAO publicacionDAO;
+
+    @Autowired
+    private IImagenVehiculoService imagenVehiculoService;
+
+    @Autowired
+    private IDocVehiculoService docVehiculoService;
 
     @Override
     public Vehiculos findById(long id) {
@@ -126,6 +135,57 @@ public class VehiculosServiceImpl implements IVehiculosService{
         return vehiculo.getIdVehiculo();
     }
 
+    @Override
+    public void eliminarVehiculo(long vehiculoId) {
+        Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
+        if (vehiculo == null) {
+            throw new NotFoundError("Vehículo no encontrado: " + vehiculoId);
+        }
 
+        // 1) Eliminar publicación asociada (si existe)
+        Publicacion pub = publicacionDAO.findByVehiculoId(vehiculoId);
+        if (pub != null) {
+            publicacionDAO.delete(pub);
+        }
+
+        // 2) Eliminar imágenes asociadas
+        List<ImagenVehiculo> imagenes = this.getImagenVehiculos(vehiculoId);
+        if (imagenes != null && !imagenes.isEmpty()) {
+            for (ImagenVehiculo img : imagenes) {
+                try {
+                    imagenVehiculoService.eliminarImagen(img.getIdImagen()); // ajusta getter si difiere
+                } catch (Exception e) {
+                    // Podés elegir: o fallar toda la transacción o loguear y seguir.
+                    // Aquí fallamos para mantener consistencia.
+                    throw new RuntimeException("No se pudo eliminar la imagen id=" + img.getIdImagen() + ": " + e.getMessage(), e);
+                }
+            }
+        }
+
+        // 3) Eliminar documentos/archivos asociados
+        // Si tu listarPorVehiculo devuelve DTOs:
+        List<?> documentos = docVehiculoService.listarPorVehiculo(vehiculoId);
+        if (documentos != null && !documentos.isEmpty()) {
+            for (Object d : documentos) {
+                try {
+                    long documentoId;
+                    if (d instanceof DocVehiculoDTO dto) {
+                        documentoId = dto.getIdDocVehiculo(); // ajusta al nombre real del campo
+                    } else if (d instanceof DocVehiculo ent) {
+                        documentoId = ent.getIdDocVehiculo(); // ajusta al nombre real del campo
+                    } else {
+                        // Si fuese otro tipo, adaptá este bloque
+                        throw new IllegalStateException("Tipo de documento no reconocido: " + d.getClass());
+                    }
+                    docVehiculoService.eliminarDocumento(documentoId);
+                } catch (Exception e) {
+                    throw new RuntimeException("No se pudo eliminar un documento del vehículo " + vehiculoId + ": " + e.getMessage(), e);
+                }
+            }
+        }
+
+        // 4) Finalmente, eliminar el vehículo
+        vehiculosDAO.delete(vehiculo);
+    }
 
 }

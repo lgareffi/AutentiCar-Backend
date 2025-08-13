@@ -14,4 +14,6 @@ public interface IVehiculosDAO {
 
     public Vehiculos findByVin(String vin);
 
+    public void delete(Vehiculos vehiculo);
+
 }

@@ -22,4 +22,6 @@ public interface IVehiculosService {
     public List<ImagenVehiculo> getImagenVehiculos(long id);
 
     public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto);
+
+    public void eliminarVehiculo(long vehiculoId);
 }
