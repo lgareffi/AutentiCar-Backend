@@ -31,4 +31,12 @@ public class EventoVehicularDAOImpl implements IEventoVehicularDAO {
         Session currentSession = entityManager.unwrap(Session.class);
         currentSession.persist(eventoVehicular);
     }
+
+    @Override
+    @Transactional
+    public void delete(EventoVehicular evento) {
+        Session s = entityManager.unwrap(Session.class);
+        EventoVehicular managed = s.contains(evento) ? evento : s.merge(evento);
+        s.remove(managed);
+    }
 }

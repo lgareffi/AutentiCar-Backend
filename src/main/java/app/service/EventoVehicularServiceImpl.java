@@ -2,6 +2,7 @@ package app.service;
 
 import app.Errors.NotFoundError;
 import app.controller.dtos.AddEventoDTO;
+import app.model.dao.IDocVehiculoDAO;
 import app.model.dao.IEventoVehicularDAO;
 import app.model.dao.IUsuariosDAO;
 import app.model.dao.IVehiculosDAO;
@@ -25,6 +26,9 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
 
     @Autowired
     private IVehiculosDAO vehiculosDAO;
+
+    @Autowired
+    private IDocVehiculoDAO docVehiculoDAO;
 
 
     @Override
@@ -53,9 +57,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
             EventoVehicular e = this.eventoVehicularDAO.findById(id);
             if (e == null)
                 throw new NotFoundError("No se encontro el evento");
-            if (e.getDocVehiculo().isEmpty())
-                throw new Error("No se encontraron documentos del evento");
-            return e.getDocVehiculo();
+            return e.getDocVehiculo() != null ? e.getDocVehiculo() : java.util.Collections.emptyList();
         } catch(Throwable e) {
             throw new Error(e.getMessage());
         }
@@ -85,6 +87,24 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setVehiculo(vehiculo);
 
         this.eventoVehicularDAO.save(evento);
+    }
+
+    @Override
+    public void eliminarEvento(long eventoId) {
+        EventoVehicular evento = eventoVehicularDAO.findById(eventoId);
+        if (evento == null) throw new NotFoundError("Evento no encontrado: " + eventoId);
+
+        // Desasociar documentos (no borrarlos)
+        List<DocVehiculo> docs = evento.getDocVehiculo();
+        if (docs != null) {
+            for (DocVehiculo d : docs) {
+                d.setEventoVehicular(null);
+                docVehiculoDAO.save(d); // o merge/persist según tu DAO
+            }
+        }
+
+        // Ahora sí, borrar el evento
+        eventoVehicularDAO.delete(evento);
     }
 
 }

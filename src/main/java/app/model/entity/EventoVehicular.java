@@ -43,7 +43,8 @@ public class EventoVehicular {
     Vehiculos vehiculo;
 
     // 1 evento puede tener varios documentos (ej. una reparación puede tener una factura y un informe técnico)
-    @OneToMany(mappedBy = "eventoVehicular", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "eventoVehicular",
+            cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     List<DocVehiculo> docVehiculo;
 
     public EventoVehicular() {

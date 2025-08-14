@@ -1,5 +1,6 @@
 package app.controller;
 
+import app.Errors.NotFoundError;
 import app.controller.dtos.AddEventoDTO;
 import app.controller.dtos.DocVehiculoDTO;
 import app.controller.dtos.EventoVehicularDTO;
@@ -53,6 +54,20 @@ public class EventoVehicularController {
             return new ResponseEntity<>("Evento agregado correctamente", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{eventoId}")
+    public ResponseEntity<?> eliminarEvento(@PathVariable long eventoId) {
+        try {
+            eventoVehicularService.eliminarEvento(eventoId);
+            return ResponseEntity.ok("Evento eliminado");
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
         }
     }
 
