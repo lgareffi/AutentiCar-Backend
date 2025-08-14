@@ -73,4 +73,18 @@ public class PublicacionController {
         }
     }
 
+    @PutMapping("/{publicacionId}/estado")
+    public ResponseEntity<?> alternarEstado(@PathVariable long publicacionId) {
+        try {
+            publicacionService.alternarEstado(publicacionId);
+            return ResponseEntity.ok("Publicación actualizada");
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
 }

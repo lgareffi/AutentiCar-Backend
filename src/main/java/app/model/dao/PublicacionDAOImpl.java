@@ -67,4 +67,16 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         return result.isEmpty() ? null : result.get(0);
     }
 
+//    @Override
+//    @Transactional
+//    public int updateEstado(long idPublicacion, Publicacion.EstadoPublicacion nuevoEstado) {
+//        Session s = entityManager.unwrap(Session.class);
+//        Query<?> q = s.createQuery(
+//                "UPDATE Publicacion p SET p.estadoPublicacion = :estado WHERE p.idPublicacion = :id"
+//        );
+//        q.setParameter("estado", nuevoEstado);
+//        q.setParameter("id", idPublicacion);
+//        return q.executeUpdate(); // devuelve filas afectadas (0 o 1)
+//    }
+
 }

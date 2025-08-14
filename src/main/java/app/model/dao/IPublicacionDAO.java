@@ -16,4 +16,7 @@ public interface IPublicacionDAO {
     public void delete(Publicacion publicacion);
 
     public Publicacion findByVehiculoId(long vehiculoId);
+
+    //public int updateEstado(long idPublicacion, Publicacion.EstadoPublicacion nuevoEstado);
+
 }

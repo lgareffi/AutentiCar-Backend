@@ -87,4 +87,23 @@ public class PublicacionServiceImpl implements IPublicacionService{
         publicacionDAO.delete(pub);
     }
 
+    @Override
+    public void alternarEstado(long publicacionId) {
+        Publicacion pub = publicacionDAO.findById(publicacionId);
+        if (pub == null) throw new NotFoundError("Publicación no encontrada: " + publicacionId);
+
+        // Regla: si está VENDIDA, no se permite alternar (podés cambiar esta regla si querés)
+        if (pub.getEstadoPublicacion() == Publicacion.EstadoPublicacion.VENDIDA) {
+            throw new RuntimeException("No se puede cambiar el estado de una publicación vendida.");
+        }
+
+        Publicacion.EstadoPublicacion nuevo =
+                (pub.getEstadoPublicacion() == Publicacion.EstadoPublicacion.ACTIVA)
+                        ? Publicacion.EstadoPublicacion.PAUSADA
+                        : Publicacion.EstadoPublicacion.ACTIVA;
+
+        pub.setEstadoPublicacion(nuevo);
+        publicacionDAO.save(pub);
+    }
+
 }
