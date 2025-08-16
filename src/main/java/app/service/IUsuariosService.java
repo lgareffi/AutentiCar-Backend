@@ -23,5 +23,7 @@ public interface IUsuariosService {
 
     public List<Publicacion> getPublicaciones(long id);
 
+    public void eliminarCuenta(long usuarioId);
+
     public void update(long id, Usuarios datos); // para cambiar la contraseña (probar si funciona)
 }

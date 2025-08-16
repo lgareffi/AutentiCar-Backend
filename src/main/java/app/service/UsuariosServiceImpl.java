@@ -4,6 +4,7 @@ package app.service;
 import app.Errors.NotFoundError;
 import app.model.dao.IUsuariosDAO;
 import app.model.entity.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -12,6 +13,15 @@ import java.util.List;
 public class UsuariosServiceImpl implements IUsuariosService {
     @Autowired
     private IUsuariosDAO usuariosDAO;
+
+    @Autowired
+    private IVehiculosService vehiculosService;
+
+    @Autowired
+    private IEventoVehicularService eventoVehicularService;
+
+    @Autowired
+    private IPublicacionService publicacionService;
 
     @Override
     public Usuarios findById(long id) {
@@ -119,6 +129,47 @@ public class UsuariosServiceImpl implements IUsuariosService {
         } catch(Throwable e) {
             throw new Error(e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional
+    public void eliminarCuenta(long usuarioId) {
+        Usuarios u = usuariosDAO.findById(usuarioId);
+        if (u == null) throw new NotFoundError("Usuario no encontrado: " + usuarioId);
+
+        // 1) Vehículos
+        if (u.getVehiculos() != null) {
+            for (Vehiculos v : u.getVehiculos()) {
+                vehiculosService.eliminarVehiculo(v.getIdVehiculo());  // ya borra imágenes/docs/pub
+            }
+            u.getVehiculos().clear();              // <<< importante
+        }
+
+        // 2) Eventos
+        if (u.getEventoVehicular() != null) {
+            for (EventoVehicular ev : u.getEventoVehicular()) {
+                eventoVehicularService.eliminarEvento(ev.getIdEvento());
+            }
+            u.getEventoVehicular().clear();        // <<< importante
+        }
+
+        // 3) Publicaciones
+        if (u.getPublicaciones() != null) {
+            for (Publicacion p : u.getPublicaciones()) {
+                publicacionService.eliminarPublicacion(p.getIdPublicacion());
+            }
+            u.getPublicaciones().clear();          // <<< importante
+        }
+
+        // 4) (opcional) si querés, limpia también compras/ventas si te molestan las cascadas
+//        if (u.getComprasRealizadas() != null) u.getComprasRealizadas().clear();
+//        if (u.getVentasRealizadas() != null)  u.getVentasRealizadas().clear();
+
+        // 5) Sincronizá el estado del usuario sin hijos antes de borrar
+        usuariosDAO.save(u);   // hace merge del usuario con colecciones vacías
+
+        // 6) Ahora sí, eliminar el usuario
+        usuariosDAO.delete(u);
     }
 
     @Override

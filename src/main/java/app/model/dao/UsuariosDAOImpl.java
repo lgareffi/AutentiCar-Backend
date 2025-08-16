@@ -16,15 +16,6 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-//    @Override
-//    @Transactional
-//    public Usuarios findById(long id){
-//        Session currentSession = entityManager.unwrap(Session.class);
-//        Usuarios usuario = currentSession.get(Usuarios.class, id);
-//        if (usuario != null)
-//            return usuario;
-//        throw new NotFoundError("No se encontro al usuario");
-//    }
     @Override
     @Transactional
     public Usuarios findById(long id){
@@ -54,10 +45,29 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
     }
 
 
+//    @Override
+//    @Transactional
+//    public void save(Usuarios usuario) {
+//        Session currentSession = entityManager.unwrap(Session.class);
+//        currentSession.persist(usuario);
+//    }
+
     @Override
     @Transactional
     public void save(Usuarios usuario) {
-        Session currentSession = entityManager.unwrap(Session.class);
-        currentSession.persist(usuario);
+        Session s = entityManager.unwrap(Session.class);
+        if (usuario.getIdUsuario() == 0) {
+            s.persist(usuario);
+        } else {
+            s.merge(usuario);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(Usuarios usuario) {
+        Session s = entityManager.unwrap(Session.class);
+        Usuarios managed = s.contains(usuario) ? usuario : s.merge(usuario);
+        s.remove(managed);
     }
 }

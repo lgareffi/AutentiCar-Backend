@@ -13,4 +13,6 @@ public interface IUsuariosDAO {
 
     public void save(Usuarios usuario);
 
+    public void delete(Usuarios usuario);
+
 }
