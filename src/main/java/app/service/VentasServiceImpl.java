@@ -9,6 +9,7 @@ import app.model.entity.Publicacion;
 import app.model.entity.Usuarios;
 import app.model.entity.Vehiculos;
 import app.model.entity.Ventas;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class VentasServiceImpl implements IVentasService{
     private IPublicacionDAO publicacionDAO;
 
     @Override
+    @Transactional
     public Ventas findById(long id) {
         try {
             Ventas venta = ventasDAO.findById(id);
@@ -37,6 +39,7 @@ public class VentasServiceImpl implements IVentasService{
     }
 
     @Override
+    @Transactional
     public void save(Ventas venta) {
         try {
             ventasDAO.save(venta);
@@ -46,6 +49,7 @@ public class VentasServiceImpl implements IVentasService{
     }
 
     @Override
+    @Transactional
     public void saveVentaDesdeDTO(AddVentasDTO dto) {
         Usuarios comprador = usuariosDAO.findById(dto.compradorId);
         if (comprador == null)

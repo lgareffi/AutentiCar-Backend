@@ -10,6 +10,7 @@ import app.model.entity.DocVehiculo;
 import app.model.entity.EventoVehicular;
 import app.model.entity.Usuarios;
 import app.model.entity.Vehiculos;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
 
 
     @Override
+    @Transactional
     public EventoVehicular findById(long id) {
         try {
             EventoVehicular eventoVehicular = eventoVehicularDAO.findById(id);
@@ -43,6 +45,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
     }
 
     @Override
+    @Transactional
     public void save(EventoVehicular eventoVehicular) {
         try {
             eventoVehicularDAO.save(eventoVehicular);
@@ -52,6 +55,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
     }
 
     @Override
+    @Transactional
     public List<DocVehiculo> getDocVehiculo(long id){
         try {
             EventoVehicular e = this.eventoVehicularDAO.findById(id);
@@ -64,6 +68,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
     }
 
     @Override
+    @Transactional
     public void saveEventoDesdeDTO(AddEventoDTO dto) {
         // Validar usuario
         Usuarios usuario = this.usuariosDAO.findById(dto.usuarioId);
@@ -90,6 +95,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
     }
 
     @Override
+    @Transactional
     public void eliminarEvento(long eventoId) {
         EventoVehicular evento = eventoVehicularDAO.findById(eventoId);
         if (evento == null) throw new NotFoundError("Evento no encontrado: " + eventoId);

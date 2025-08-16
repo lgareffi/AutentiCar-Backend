@@ -6,6 +6,7 @@ import app.model.dao.IPublicacionDAO;
 import app.model.dao.IUsuariosDAO;
 import app.model.dao.IVehiculosDAO;
 import app.model.entity.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
     private IVehiculosDAO vehiculosDAO;
 
     @Override
+    @Transactional
     public Publicacion findById(long id) {
         try {
             Publicacion publicacion = publicacionDAO.findById(id);
@@ -35,6 +37,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
     }
 
     @Override
+    @Transactional
     public List<Publicacion> findAll() {
         try {
             List<Publicacion> publicaciones = publicacionDAO.findAll();
@@ -48,6 +51,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
     }
 
     @Override
+    @Transactional
     public void save(Publicacion publicacion) {
         try {
             publicacionDAO.save(publicacion);
@@ -57,6 +61,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
     }
 
     @Override
+    @Transactional
     public void savePublicacionDesdeDTO(AddPublicacionDTO dto) {
         Usuarios usuario = usuariosDAO.findById(dto.usuarioId);
         if (usuario == null)
@@ -79,6 +84,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
     }
 
     @Override
+    @Transactional
     public void eliminarPublicacion(long publicacionId) {
         Publicacion pub = publicacionDAO.findById(publicacionId);
         if (pub == null) {
@@ -88,6 +94,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
     }
 
     @Override
+    @Transactional
     public void alternarEstado(long publicacionId) {
         Publicacion pub = publicacionDAO.findById(publicacionId);
         if (pub == null) throw new NotFoundError("Publicación no encontrada: " + publicacionId);

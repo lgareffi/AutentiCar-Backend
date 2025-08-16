@@ -24,6 +24,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     private IPublicacionService publicacionService;
 
     @Override
+    @Transactional
     public Usuarios findById(long id) {
         try {
             Usuarios usuario = usuariosDAO.findById(id);
@@ -35,6 +36,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public void save(Usuarios usuario) {
         try {
             usuariosDAO.save(usuario);
@@ -44,6 +46,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public Usuarios findByMail(String mail) {
         Usuarios usuario = usuariosDAO.findByMail(mail);
         if (usuario == null) {
@@ -53,6 +56,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public Usuarios findByDni(int dni) {
         Usuarios usuario = usuariosDAO.findByDni(dni);
         if (usuario == null) {
@@ -62,6 +66,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public List<Ventas> getComprasRealizadas(long id){
         try {
             Usuarios u = this.usuariosDAO.findById(id);
@@ -76,6 +81,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public List<Ventas> getVentasRealizadas(long id){
         try {
             Usuarios u = this.usuariosDAO.findById(id);
@@ -90,6 +96,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public List<Vehiculos> getVehiculos(long id){
         try {
             Usuarios u = this.usuariosDAO.findById(id);
@@ -104,6 +111,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public List<EventoVehicular> getEventoVehicular(long id){
         try {
             Usuarios u = this.usuariosDAO.findById(id);
@@ -118,6 +126,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public List<Publicacion> getPublicaciones(long id){
         try {
             Usuarios u = this.usuariosDAO.findById(id);
@@ -173,6 +182,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional
     public void update(long id, Usuarios datos) {
         try {
             Usuarios newInfo = usuariosDAO.findById(id);

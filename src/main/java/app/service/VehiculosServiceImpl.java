@@ -5,6 +5,7 @@ import app.controller.dtos.AddVehiculoDTO;
 import app.controller.dtos.DocVehiculoDTO;
 import app.model.dao.*;
 import app.model.entity.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     private IDocVehiculoService docVehiculoService;
 
     @Override
+    @Transactional
     public Vehiculos findById(long id) {
         try {
             Vehiculos vehiculo = vehiculosDAO.findById(id);
@@ -40,6 +42,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    @Transactional
     public void save(Vehiculos vehiculo) {
         try {
             vehiculosDAO.save(vehiculo);
@@ -49,6 +52,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    @Transactional
     public List<Vehiculos> findAll() {
         try {
             List<Vehiculos> vehiculos = vehiculosDAO.findAll();
@@ -62,6 +66,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    @Transactional
     public List<DocVehiculo> getDocVehiculo(long id){
         try {
             Vehiculos v = this.vehiculosDAO.findById(id);
@@ -76,6 +81,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    @Transactional
     public List<EventoVehicular> getEventoVehicular(long id){
         try {
             Vehiculos v = this.vehiculosDAO.findById(id);
@@ -90,6 +96,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    @Transactional
     public List<ImagenVehiculo> getImagenVehiculos(long id){
         try {
             Vehiculos v = this.vehiculosDAO.findById(id);
@@ -104,6 +111,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    @Transactional
     public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
         // Verifica si el VIN ya existe
         Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);
@@ -136,6 +144,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
     }
 
     @Override
+    @Transactional
     public void eliminarVehiculo(long vehiculoId) {
         Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
         if (vehiculo == null) {

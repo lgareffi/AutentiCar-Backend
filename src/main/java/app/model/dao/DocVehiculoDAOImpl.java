@@ -36,14 +36,6 @@ public class DocVehiculoDAOImpl implements IDocVehiculoDAO {
         }
     }
 
-
-//    @Override
-//    @Transactional
-//    public void save(DocVehiculo docVehiculo) {
-//        Session currentSession = entityManager.unwrap(Session.class);
-//        currentSession.persist(docVehiculo);
-//    }
-
     @Override
     @Transactional
     public void delete(DocVehiculo docVehiculo) {

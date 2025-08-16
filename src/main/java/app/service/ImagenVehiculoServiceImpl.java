@@ -9,6 +9,7 @@ import app.model.entity.Vehiculos;
 import app.model.entity.ImagenVehiculo;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     }
 
     @Override
+    @Transactional
     public ImagenVehiculo findById(long id) {
         try {
             ImagenVehiculo imagenVehiculo = imagenVehiculoDAO.findById(id);
@@ -51,6 +53,7 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     }
 
     @Override
+    @Transactional
     public void save(ImagenVehiculo imagenVehiculo) {
         try {
             imagenVehiculoDAO.save(imagenVehiculo);
@@ -60,6 +63,7 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     }
 
     @Override
+    @Transactional
     public ImagenVehiculoDTO subirImagen(long vehiculoId, MultipartFile file) {
         Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
         if (vehiculo == null) throw new NotFoundError("No se encontró el vehículo");
@@ -102,6 +106,7 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     }
 
     @Override
+    @Transactional
     public List<ImagenVehiculoDTO> subirMultiples(long vehiculoId, List<MultipartFile> files) {
         if (files == null || files.isEmpty()) throw new RuntimeException("No se enviaron archivos");
         List<ImagenVehiculoDTO> out = new ArrayList<>();
@@ -112,6 +117,7 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     }
 
     @Override
+    @Transactional
     public void eliminarImagen(long imagenId) {
         ImagenVehiculo img = imagenVehiculoDAO.findById(imagenId); // tu DAO lanza NotFound si no existe
         try {
@@ -123,21 +129,5 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
             throw new RuntimeException("No se pudo eliminar la imagen: " + e.getMessage(), e);
         }
     }
-
-//    @Override
-//    public void saveImagenDesdeDTO(AddImagenDTO dto) {
-//        // Buscar vehículo
-//        Vehiculos vehiculo = this.vehiculosDAO.findById(dto.getVehiculoId());
-//        if (vehiculo == null)
-//            throw new NotFoundError("No se encontró el vehículo con ID: " + dto.getVehiculoId());
-//
-//        // Crear imagen
-//        ImagenVehiculo imagen = new ImagenVehiculo();
-//        imagen.setUrlImagen(dto.getUrlImagen());
-//        imagen.setFechaSubida(LocalDate.now());
-//        imagen.setVehiculo(vehiculo);
-//
-//        this.imagenVehiculoDAO.save(imagen);
-//    }
 
 }

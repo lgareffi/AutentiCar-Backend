@@ -1,7 +1,6 @@
 package app.service;
 
 import app.Errors.NotFoundError;
-import app.controller.dtos.AddDocumentoDTO;
 import app.controller.dtos.DocVehiculoDTO;
 import app.model.dao.IDocVehiculoDAO;
 import app.model.dao.IEventoVehicularDAO;
@@ -11,6 +10,7 @@ import app.model.entity.EventoVehicular;
 import app.model.entity.Vehiculos;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,6 +45,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
     }
 
     @Override
+    @Transactional
     public DocVehiculo findById(long id) {
         try {
             DocVehiculo docVehiculo = docVehiculoDAO.findById(id);
@@ -57,6 +57,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
     }
 
     @Override
+    @Transactional
     public void save(DocVehiculo docVehiculo) {
         try {
             docVehiculoDAO.save(docVehiculo);
@@ -66,6 +67,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
     }
 
     @Override
+    @Transactional
     public DocVehiculoDTO subirDocumento(long vehiculoId,
                                          MultipartFile file,
                                          String nombre,
@@ -127,6 +129,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
     }
 
     @Override
+    @Transactional
     public List<DocVehiculoDTO> listarPorVehiculo(long vehiculoId) {
         Vehiculos v = vehiculosDAO.findById(vehiculoId);
         if (v == null) throw new NotFoundError("No se encontró el vehículo");
@@ -135,6 +138,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
     }
 
     @Override
+    @Transactional
     public void eliminarDocumento(long documentoId) {
         DocVehiculo d = docVehiculoDAO.findById(documentoId);
         try {
@@ -149,41 +153,5 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             throw new RuntimeException("No se pudo eliminar el documento: " + e.getMessage(), e);
         }
     }
-
-//    @Override
-//    public void saveDocumentoDesdeDTO(AddDocumentoDTO dto) {
-//        // Vehículo obligatorio
-//        Vehiculos vehiculo = vehiculosDAO.findById(dto.vehiculoId);
-//        if (vehiculo == null)
-//            throw new NotFoundError("No se encontró el vehículo");
-//
-//        // Evento opcional
-//        EventoVehicular evento = null;
-//        if (dto.eventoId != null) {
-//            evento = eventoVehicularDAO.findById(dto.eventoId);
-//            if (evento == null)
-//                throw new NotFoundError("No se encontró el evento");
-//
-//            // (Recomendado) Asegurar que el evento es del mismo vehículo
-//            if (evento.getVehiculo() == null ||
-//                    evento.getVehiculo().getIdVehiculo() != vehiculo.getIdVehiculo()) {
-//                throw new NotFoundError("El evento no pertenece al vehículo indicado");
-//            }
-//        }
-//
-//        // Crear DocVehiculo
-//        DocVehiculo doc = new DocVehiculo();
-//        doc.setNombre(dto.nombre);
-//        doc.setUrlDoc(dto.urlDoc);
-//        doc.setNivelRiesgo(dto.nivelRiesgo);
-//        doc.setValidadoIA(dto.validadoIA);
-//        doc.setFechaSubida(LocalDate.now());
-//        doc.setTipoDoc(DocVehiculo.TipoDoc.valueOf(dto.tipoDoc.toUpperCase()));
-//        doc.setVehiculo(vehiculo);
-//        doc.setEventoVehicular(evento);
-//
-//        docVehiculoDAO.save(doc);
-//    }
-
 
 }
