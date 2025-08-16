@@ -1,5 +1,7 @@
 package app.controller.dtos;
 
+import app.model.entity.Vehiculos;
+
 import java.time.LocalDate;
 
 public class AddVehiculoDTO {
@@ -14,6 +16,7 @@ public class AddVehiculoDTO {
     public String tipoCombustible;
     public String tipoTransmision;
     public long usuarioId;
+    public Vehiculos.Moneda moneda;
 
     public String getVin() {
         return vin;
@@ -101,5 +104,13 @@ public class AddVehiculoDTO {
 
     public void setUsuarioId(long usuarioId) {
         this.usuarioId = usuarioId;
+    }
+
+    public Vehiculos.Moneda getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(Vehiculos.Moneda moneda) {
+        this.moneda = moneda;
     }
 }

@@ -138,6 +138,9 @@ public class VehiculosServiceImpl implements IVehiculosService{
         vehiculo.setFechaAlta(LocalDate.now());
         vehiculo.setEstado(Vehiculos.Estado.ACTIVO);
         vehiculo.setUsuario(usuario);
+        if (dto.moneda != null) {
+            vehiculo.setMoneda(dto.moneda);
+        }
 
         this.vehiculosDAO.save(vehiculo);
         return vehiculo.getIdVehiculo();

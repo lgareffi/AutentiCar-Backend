@@ -22,6 +22,7 @@ public class VehiculosDTO {
     private String estado;
     private Long idUsuario;
     private String portadaUrl;
+    private String moneda;
 
     private List<Long> idsDocumentos;
     private List<Long> idsEventos;
@@ -44,6 +45,7 @@ public class VehiculosDTO {
         this.fechaAlta = v.getFechaAlta();
         this.estado = v.getEstado().name();
         this.idUsuario = v.getUsuario().getIdUsuario();
+        this.moneda = v.getMoneda().name();
 
 
         this.idsDocumentos = v.getDocVehiculo() != null
@@ -213,6 +215,14 @@ public class VehiculosDTO {
 
     public void setPortadaUrl(String portadaUrl) {
         this.portadaUrl = portadaUrl;
+    }
+
+    public String getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(String moneda) {
+        this.moneda = moneda;
     }
 }
 
