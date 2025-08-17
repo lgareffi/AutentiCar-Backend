@@ -29,6 +29,10 @@ public class VehiculosServiceImpl implements IVehiculosService{
     @Autowired
     private IDocVehiculoService docVehiculoService;
 
+    @Autowired
+    private IEventoVehicularService eventoVehicularService;
+
+
     @Override
     @Transactional
     public Vehiculos findById(long id) {
@@ -160,7 +164,23 @@ public class VehiculosServiceImpl implements IVehiculosService{
             publicacionDAO.delete(pub);
         }
 
-        // 2) Eliminar imágenes asociadas
+        // 2) Eliminar eventos asociados al vehículo
+        //    (tu service de evento ya desasocia documentos del evento)
+        if (vehiculo.getEventoVehicular() != null && !vehiculo.getEventoVehicular().isEmpty()) {
+            for (EventoVehicular ev : vehiculo.getEventoVehicular()) {
+                try {
+                    eventoVehicularService.eliminarEvento(ev.getIdEvento());
+                } catch (Exception e) {
+                    throw new RuntimeException(
+                            "No se pudo eliminar el evento id=" + ev.getIdEvento() + " del vehículo " + vehiculoId + ": " + e.getMessage(), e
+                    );
+                }
+            }
+            // opcional, para mantener el contexto consistente
+            vehiculo.getEventoVehicular().clear();
+        }
+
+        // 3) Eliminar imágenes asociadas
         List<ImagenVehiculo> imagenes = this.getImagenVehiculos(vehiculoId);
         if (imagenes != null && !imagenes.isEmpty()) {
             for (ImagenVehiculo img : imagenes) {
@@ -174,7 +194,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
             }
         }
 
-        // 3) Eliminar documentos/archivos asociados
+        // 4) Eliminar documentos/archivos asociados
         // Si tu listarPorVehiculo devuelve DTOs:
         List<?> documentos = docVehiculoService.listarPorVehiculo(vehiculoId);
         if (documentos != null && !documentos.isEmpty()) {
@@ -196,7 +216,7 @@ public class VehiculosServiceImpl implements IVehiculosService{
             }
         }
 
-        // 4) Finalmente, eliminar el vehículo
+        // 5) Finalmente, eliminar el vehículo
         vehiculosDAO.delete(vehiculo);
     }
 
