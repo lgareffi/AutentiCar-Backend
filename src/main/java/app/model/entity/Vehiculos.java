@@ -53,13 +53,6 @@ public class Vehiculos {
         ACTIVO, VENDIDO, INACTIVO
     }
 
-    @Enumerated(EnumType.STRING)
-    private Moneda moneda = Moneda.PESOS;
-
-    public enum Moneda {
-        PESOS, DOLARES
-    }
-
     @ManyToOne // muchos vehiculos pueden pertenecer a un usuario
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
@@ -81,7 +74,7 @@ public class Vehiculos {
     public Vehiculos(long idVehiculo, String marca, String vin, String modelo, int anio,
                      int kilometraje, int puertas, double motor, String color,
                      String tipoCombustible, String tipoTransmision, LocalDate fechaAlta,
-                     Estado estado, Moneda moneda, Usuarios usuario,
+                     Estado estado, Usuarios usuario,
                      List<DocVehiculo> docVehiculo, List<EventoVehicular> eventoVehicular,
                      List<ImagenVehiculo> imagenVehiculos) {
         this.idVehiculo = idVehiculo;
@@ -97,7 +90,6 @@ public class Vehiculos {
         this.tipoTransmision = tipoTransmision;
         this.fechaAlta = fechaAlta;
         this.estado = estado;
-        this.moneda = moneda;
         this.usuario = usuario;
         this.docVehiculo = docVehiculo;
         this.eventoVehicular = eventoVehicular;
@@ -120,7 +112,6 @@ public class Vehiculos {
                 ", tipoTransmision='" + tipoTransmision + '\'' +
                 ", fechaAlta=" + fechaAlta +
                 ", estado=" + estado +
-                ", moneda=" + moneda +
                 ", usuario=" + usuario +
                 ", docVehiculo=" + docVehiculo +
                 ", eventoVehicular=" + eventoVehicular +
@@ -264,11 +255,4 @@ public class Vehiculos {
         this.imagenVehiculos = imagenVehiculos;
     }
 
-    public Moneda getMoneda() {
-        return moneda;
-    }
-
-    public void setMoneda(Moneda moneda) {
-        this.moneda = moneda;
-    }
 }

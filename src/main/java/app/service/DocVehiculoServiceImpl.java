@@ -132,8 +132,12 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
     @Transactional
     public List<DocVehiculoDTO> listarPorVehiculo(long vehiculoId) {
         Vehiculos v = vehiculosDAO.findById(vehiculoId);
-        if (v == null) throw new NotFoundError("No se encontró el vehículo");
+        if (v == null) throw new NotFoundError("No se encontró el vehículo: " + vehiculoId);
+
         List<DocVehiculo> docs = docVehiculoDAO.findByVehiculo(v);
+        if (docs == null || docs.isEmpty()) {
+            return java.util.Collections.emptyList(); // ← 200 [] en el controller
+        }
         return docs.stream().map(DocVehiculoDTO::new).toList();
     }
 

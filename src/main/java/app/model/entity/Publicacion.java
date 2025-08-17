@@ -31,6 +31,13 @@ public class Publicacion {
         ACTIVA, VENDIDA, PAUSADA
     }
 
+    @Enumerated(EnumType.STRING)
+    private Publicacion.Moneda moneda = Publicacion.Moneda.PESOS;
+
+    public enum Moneda {
+        PESOS, DOLARES
+    }
+
     @ManyToOne // muchas publicaciones puede hacer 1 usuario
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
@@ -45,13 +52,14 @@ public class Publicacion {
 
     public Publicacion(long idPublicacion, String titulo, String descripcion, int precio,
                        LocalDate fechaPublicacion, EstadoPublicacion estadoPublicacion,
-                       Usuarios usuario, Vehiculos vehiculo) {
+                       Publicacion.Moneda moneda, Usuarios usuario, Vehiculos vehiculo) {
         this.idPublicacion = idPublicacion;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.precio = precio;
         this.fechaPublicacion = fechaPublicacion;
         this.estadoPublicacion = estadoPublicacion;
+        this.moneda = moneda;
         this.usuario = usuario;
         this.vehiculo = vehiculo;
     }
@@ -65,6 +73,7 @@ public class Publicacion {
                 ", precio=" + precio +
                 ", fechaPublicacion=" + fechaPublicacion +
                 ", estadoPublicacion=" + estadoPublicacion +
+                ", moneda=" + moneda +
                 ", usuario=" + usuario +
                 ", vehiculo=" + vehiculo +
                 '}';
@@ -132,5 +141,13 @@ public class Publicacion {
 
     public void setVehiculo(Vehiculos vehiculo) {
         this.vehiculo = vehiculo;
+    }
+
+    public Moneda getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(Moneda moneda) {
+        this.moneda = moneda;
     }
 }

@@ -79,6 +79,9 @@ public class PublicacionServiceImpl implements IPublicacionService{
         post.setEstadoPublicacion(Publicacion.EstadoPublicacion.ACTIVA);
         post.setUsuario(usuario);
         post.setVehiculo(vehiculo);
+        if (dto.moneda != null) {
+            post.setMoneda(dto.moneda);
+        }
 
         publicacionDAO.save(post);
     }

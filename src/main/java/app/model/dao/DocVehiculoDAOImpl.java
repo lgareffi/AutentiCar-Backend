@@ -48,10 +48,13 @@ public class DocVehiculoDAOImpl implements IDocVehiculoDAO {
     @Transactional
     public List<DocVehiculo> findByVehiculo(Vehiculos vehiculo) {
         Session s = entityManager.unwrap(Session.class);
-        return s.createQuery(
-                "FROM DocVehiculo d WHERE d.vehiculo = :vehiculo ORDER BY d.idDocVehiculo DESC",
-                DocVehiculo.class
-        ).setParameter("vehiculo", vehiculo).getResultList();
+        List<DocVehiculo> res = s.createQuery(
+                        "FROM DocVehiculo d WHERE d.vehiculo = :vehiculo ORDER BY d.idDocVehiculo DESC",
+                        DocVehiculo.class
+                ).setParameter("vehiculo", vehiculo)
+                .getResultList();
+
+        return (res != null) ? res : java.util.Collections.emptyList();
     }
 
 }

@@ -32,6 +32,9 @@ public class VehiculosServiceImpl implements IVehiculosService{
     @Autowired
     private IEventoVehicularService eventoVehicularService;
 
+    @Autowired
+    private IImagenVehiculoDAO imagenVehiculoDAO;
+
 
     @Override
     @Transactional
@@ -101,18 +104,14 @@ public class VehiculosServiceImpl implements IVehiculosService{
 
     @Override
     @Transactional
-    public List<ImagenVehiculo> getImagenVehiculos(long id){
-        try {
-            Vehiculos v = this.vehiculosDAO.findById(id);
-            if (v == null)
-                throw new NotFoundError("No se encontro el vehiculo");
-            if (v.getImagenVehiculos().isEmpty())
-                throw new NotFoundError("No se encontraron imágenes del auto");
-            return v.getImagenVehiculos();
-        } catch(Throwable e) {
-            throw new NotFoundError(e.getMessage());
+    public List<ImagenVehiculo> getImagenVehiculos(long id) {
+        Vehiculos v = vehiculosDAO.findById(id);
+        if (v == null) {
+            throw new NotFoundError("No se encontró el vehículo con id " + id);
         }
+        return (v.getImagenVehiculos() != null) ? v.getImagenVehiculos() : java.util.Collections.emptyList();
     }
+
 
     @Override
     @Transactional
@@ -142,9 +141,6 @@ public class VehiculosServiceImpl implements IVehiculosService{
         vehiculo.setFechaAlta(LocalDate.now());
         vehiculo.setEstado(Vehiculos.Estado.ACTIVO);
         vehiculo.setUsuario(usuario);
-        if (dto.moneda != null) {
-            vehiculo.setMoneda(dto.moneda);
-        }
 
         this.vehiculosDAO.save(vehiculo);
         return vehiculo.getIdVehiculo();
@@ -165,59 +161,28 @@ public class VehiculosServiceImpl implements IVehiculosService{
         }
 
         // 2) Eliminar eventos asociados al vehículo
-        //    (tu service de evento ya desasocia documentos del evento)
         if (vehiculo.getEventoVehicular() != null && !vehiculo.getEventoVehicular().isEmpty()) {
             for (EventoVehicular ev : vehiculo.getEventoVehicular()) {
-                try {
-                    eventoVehicularService.eliminarEvento(ev.getIdEvento());
-                } catch (Exception e) {
-                    throw new RuntimeException(
-                            "No se pudo eliminar el evento id=" + ev.getIdEvento() + " del vehículo " + vehiculoId + ": " + e.getMessage(), e
-                    );
-                }
+                eventoVehicularService.eliminarEvento(ev.getIdEvento());
             }
-            // opcional, para mantener el contexto consistente
-            vehiculo.getEventoVehicular().clear();
+            vehiculo.getEventoVehicular().clear(); // mantener el contexto limpio
         }
 
         // 3) Eliminar imágenes asociadas
-        List<ImagenVehiculo> imagenes = this.getImagenVehiculos(vehiculoId);
-        if (imagenes != null && !imagenes.isEmpty()) {
-            for (ImagenVehiculo img : imagenes) {
-                try {
-                    imagenVehiculoService.eliminarImagen(img.getIdImagen()); // ajusta getter si difiere
-                } catch (Exception e) {
-                    // Podés elegir: o fallar toda la transacción o loguear y seguir.
-                    // Aquí fallamos para mantener consistencia.
-                    throw new RuntimeException("No se pudo eliminar la imagen id=" + img.getIdImagen() + ": " + e.getMessage(), e);
-                }
-            }
+        List<ImagenVehiculo> imagenes = this.getImagenVehiculos(vehiculoId); // ahora nunca tira NotFound
+        for (ImagenVehiculo img : imagenes) {
+            imagenVehiculoService.eliminarImagen(img.getIdImagen());
         }
 
-        // 4) Eliminar documentos/archivos asociados
-        // Si tu listarPorVehiculo devuelve DTOs:
-        List<?> documentos = docVehiculoService.listarPorVehiculo(vehiculoId);
-        if (documentos != null && !documentos.isEmpty()) {
-            for (Object d : documentos) {
-                try {
-                    long documentoId;
-                    if (d instanceof DocVehiculoDTO dto) {
-                        documentoId = dto.getIdDocVehiculo(); // ajusta al nombre real del campo
-                    } else if (d instanceof DocVehiculo ent) {
-                        documentoId = ent.getIdDocVehiculo(); // ajusta al nombre real del campo
-                    } else {
-                        // Si fuese otro tipo, adaptá este bloque
-                        throw new IllegalStateException("Tipo de documento no reconocido: " + d.getClass());
-                    }
-                    docVehiculoService.eliminarDocumento(documentoId);
-                } catch (Exception e) {
-                    throw new RuntimeException("No se pudo eliminar un documento del vehículo " + vehiculoId + ": " + e.getMessage(), e);
-                }
-            }
+        // 4) Eliminar documentos asociados
+        List<DocVehiculoDTO> documentos = docVehiculoService.listarPorVehiculo(vehiculoId); // ahora nunca tira NotFound
+        for (DocVehiculoDTO d : documentos) {
+            docVehiculoService.eliminarDocumento(d.getIdDocVehiculo());
         }
 
         // 5) Finalmente, eliminar el vehículo
         vehiculosDAO.delete(vehiculo);
     }
+
 
 }

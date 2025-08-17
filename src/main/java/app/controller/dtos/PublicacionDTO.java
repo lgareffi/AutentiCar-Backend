@@ -13,6 +13,7 @@ public class PublicacionDTO {
     private String estadoPublicacion;
     private long usuarioId;
     private long vehiculoId;
+    private String moneda;
 
     public PublicacionDTO(Publicacion pub) {
         super();
@@ -24,6 +25,7 @@ public class PublicacionDTO {
         this.estadoPublicacion = pub.getEstadoPublicacion().toString();
         this.usuarioId = pub.getUsuario().getIdUsuario();
         this.vehiculoId = pub.getVehiculo() != null ? pub.getVehiculo().getIdVehiculo() : 0;
+        this.moneda = pub.getMoneda().name();
     }
 
     public long getIdPublicacion() {
@@ -88,5 +90,13 @@ public class PublicacionDTO {
 
     public void setVehiculoId(long vehiculoId) {
         this.vehiculoId = vehiculoId;
+    }
+
+    public String getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(String moneda) {
+        this.moneda = moneda;
     }
 }

@@ -1,5 +1,7 @@
 package app.controller.dtos;
 
+import app.model.entity.Publicacion;
+
 import java.time.LocalDate;
 
 public class AddPublicacionDTO {
@@ -8,6 +10,7 @@ public class AddPublicacionDTO {
     public int precio;
     public long usuarioId;
     public long vehiculoId;
+    public Publicacion.Moneda moneda;
 
     public String getTitulo() {
         return titulo;
@@ -47,5 +50,13 @@ public class AddPublicacionDTO {
 
     public void setVehiculoId(long vehiculoId) {
         this.vehiculoId = vehiculoId;
+    }
+
+    public Publicacion.Moneda getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(Publicacion.Moneda moneda) {
+        this.moneda = moneda;
     }
 }

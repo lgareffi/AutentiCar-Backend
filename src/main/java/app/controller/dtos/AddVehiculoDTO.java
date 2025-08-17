@@ -16,7 +16,6 @@ public class AddVehiculoDTO {
     public String tipoCombustible;
     public String tipoTransmision;
     public long usuarioId;
-    public Vehiculos.Moneda moneda;
 
     public String getVin() {
         return vin;
@@ -106,11 +105,4 @@ public class AddVehiculoDTO {
         this.usuarioId = usuarioId;
     }
 
-    public Vehiculos.Moneda getMoneda() {
-        return moneda;
-    }
-
-    public void setMoneda(Vehiculos.Moneda moneda) {
-        this.moneda = moneda;
-    }
 }
