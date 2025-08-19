@@ -19,7 +19,7 @@ public class ConcesionariaVerif {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private EstadoVerificacion estado; // PENDIENTE / VERIFICADA / RECHAZADA
+    private EstadoVerificacion estado = EstadoVerificacion.PENDIENTE;
 
     @Column(nullable = true, length = 250)
     private String notas; // motivo de rechazo u observaciones (opcional)
