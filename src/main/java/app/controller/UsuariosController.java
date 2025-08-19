@@ -156,8 +156,15 @@ public class UsuariosController {
                 return new ResponseEntity<>("Ya existe una cuenta registrada con ese DNI", HttpStatus.CONFLICT);
             }
 
+            if (datos.getRol() == null) {
+                return new ResponseEntity<>("Debe seleccionar un rol válido", HttpStatus.BAD_REQUEST);
+            }
+
             // Setear fecha de registro
             datos.setFechaRegistro(LocalDate.now());
+
+            // Setear flag según rol seleccionado
+            datos.setEsConcesionaria(datos.getRol() == Usuarios.Rol.CONCESIONARIO);
 
             // Guardar usuario nuevo
             usuariosService.save(datos);

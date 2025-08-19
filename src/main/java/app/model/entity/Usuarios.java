@@ -33,6 +33,9 @@ public class Usuarios {
     @Column(nullable = false, length = 40)
     private LocalDate fechaRegistro;
 
+    @Column(nullable = false)
+    private boolean esConcesionaria;
+
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
@@ -60,10 +63,10 @@ public class Usuarios {
         super();
     }
 
-    public Usuarios(long idUsuario, String nombre, String apellido, int dni,
-                    String mail, String password, Rol rol, LocalDate fechaRegistro,
-                    List<Vehiculos> vehiculos, List<EventoVehicular> eventoVehicular,
-                    List<Ventas> comprasRealizadas, List<Ventas> ventasRealizadas,
+    public Usuarios(long idUsuario, String nombre, String apellido, int dni, String mail,
+                    String password, LocalDate fechaRegistro, boolean esConcesionaria,
+                    Rol rol, List<Vehiculos> vehiculos, List<Ventas> comprasRealizadas,
+                    List<EventoVehicular> eventoVehicular, List<Ventas> ventasRealizadas,
                     List<Publicacion> publicaciones) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
@@ -71,11 +74,12 @@ public class Usuarios {
         this.dni = dni;
         this.mail = mail;
         this.password = password;
-        this.rol = rol;
         this.fechaRegistro = fechaRegistro;
+        this.esConcesionaria = esConcesionaria;
+        this.rol = rol;
         this.vehiculos = vehiculos;
-        this.eventoVehicular = eventoVehicular;
         this.comprasRealizadas = comprasRealizadas;
+        this.eventoVehicular = eventoVehicular;
         this.ventasRealizadas = ventasRealizadas;
         this.publicaciones = publicaciones;
     }
@@ -90,6 +94,7 @@ public class Usuarios {
                 ", mail='" + mail + '\'' +
                 ", password='" + password + '\'' +
                 ", fechaRegistro=" + fechaRegistro +
+                ", esConcesionaria=" + esConcesionaria +
                 ", rol=" + rol +
                 ", vehiculos=" + vehiculos +
                 ", eventoVehicular=" + eventoVehicular +
@@ -202,4 +207,13 @@ public class Usuarios {
     public void setPublicaciones(List<Publicacion> publicaciones) {
         this.publicaciones = publicaciones;
     }
+
+    public boolean isEsConcesionaria() {
+        return esConcesionaria;
+    }
+
+    public void setEsConcesionaria(boolean esConcesionaria) {
+        this.esConcesionaria = esConcesionaria;
+    }
+
 }
