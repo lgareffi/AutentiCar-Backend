@@ -15,6 +15,7 @@ public class UsuariosDTO {
     private List<Long> vehiculos;
     private List<Long> eventos;
     private List<Long> publicaciones;
+    private boolean esConcesionaria;
 
     public UsuariosDTO(Usuarios usuario) {
         super();
@@ -22,6 +23,7 @@ public class UsuariosDTO {
         this.nombre = usuario.getNombre();
         this.apellido = usuario.getApellido();
         this.mail = usuario.getMail();
+        this.esConcesionaria = usuario.isEsConcesionaria();
         this.comprasRealizadas = usuario.getComprasRealizadas()
                 .stream()
                 .map(Ventas::getIdVenta)
@@ -119,5 +121,13 @@ public class UsuariosDTO {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public boolean isEsConcesionaria() {
+        return esConcesionaria;
+    }
+
+    public void setEsConcesionaria(boolean esConcesionaria) {
+        this.esConcesionaria = esConcesionaria;
     }
 }

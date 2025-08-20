@@ -169,7 +169,12 @@ public class UsuariosController {
             // Guardar usuario nuevo
             usuariosService.save(datos);
 
-            return new ResponseEntity<>("Usuario registrado con éxito", HttpStatus.CREATED);
+            //return new ResponseEntity<>("Usuario registrado con éxito", HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(java.util.Map.of(
+                            "mensaje", "Usuario registrado con éxito",
+                            "usuario", new UsuariosDTO(datos)
+                    ));
 
         } catch (Exception e) {
             return new ResponseEntity<>("Error al registrar usuario: " + e.getMessage(),

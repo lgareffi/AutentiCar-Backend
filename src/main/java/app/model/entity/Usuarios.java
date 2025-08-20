@@ -44,19 +44,19 @@ public class Usuarios {
     }
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede tener muchos autos
-    List<Vehiculos> vehiculos;
+    List<Vehiculos> vehiculos = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede registrar muchos eventos
-    List<EventoVehicular> eventoVehicular;
+    List<EventoVehicular> eventoVehicular = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "usuarioComprador", cascade = CascadeType.ALL) // 1 usuario puede realizar muchas comprar
-    List<Ventas> comprasRealizadas;
+    List<Ventas> comprasRealizadas = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "usuarioVendedor", cascade = CascadeType.ALL) // 1 usuario puede realizar muchas ventas
-    List<Ventas> ventasRealizadas;
+    List<Ventas> ventasRealizadas = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede realizar muchas ventas
-    List<Publicacion> publicaciones;
+    List<Publicacion> publicaciones = new java.util.ArrayList<>();
 
 
     public Usuarios() {

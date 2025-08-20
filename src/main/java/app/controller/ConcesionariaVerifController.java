@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/concesinariaVerif")
+@RequestMapping("/concesionariaVerif")
 public class ConcesionariaVerifController {
     @Autowired
     private IConcesionariaVerifService concesionariaVerifService;

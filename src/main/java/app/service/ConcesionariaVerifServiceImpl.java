@@ -48,30 +48,67 @@ public class ConcesionariaVerifServiceImpl implements IConcesionariaVerifService
         // 1) Usuario
         Usuarios usuario = usuariosDAO.findById(dto.usuarioId);
         if (usuario == null) {
-            throw new NotFoundError("No se encontró al usuario");
+            throw new NotFoundError("No se encontró al usuario: " + dto.usuarioId);
         }
 
-        // 2) Evitar duplicados (la relación es 1:1 por usuario)
-        ConcesionariaVerif existente = concesionariaVerifDAO.findByUsuarioId(usuario.getIdUsuario());
-        if (existente != null) {
-            throw new IllegalStateException("El usuario ya tiene una solicitud de verificación de concesionaria");
+        // 2) Buscar existente por usuario (1:1)
+        ConcesionariaVerif cv = concesionariaVerifDAO.findByUsuarioId(usuario.getIdUsuario());
+
+        if (cv == null) {
+            // Crear nueva
+            cv = new ConcesionariaVerif();
+            cv.setUsuario(usuario);
+            cv.setFechaSolicitud(LocalDate.now());
+            cv.setEstado(ConcesionariaVerif.EstadoVerificacion.PENDIENTE);
+        } else {
+            // (Opcional) si ya está VERIFICADA y no querés permitir cambios, descomentá:
+            // if (cv.getEstado() == ConcesionariaVerif.EstadoVerificacion.VERIFICADA) {
+            //     throw new IllegalStateException("La verificación ya fue aprobada y no puede modificarse.");
+            // }
+            // Si estuvo RECHAZADA o PENDIENTE, la “reenvías” dejando PENDIENTE de nuevo:
+            cv.setEstado(ConcesionariaVerif.EstadoVerificacion.PENDIENTE);
         }
 
-        ConcesionariaVerif cv = new ConcesionariaVerif();
-        cv.setUsuario(usuario);
+        // 3) Setear/actualizar datos
         cv.setRazonSocial(dto.razonSocial);
         cv.setCuit(dto.cuit);
         cv.setNotas(dto.notas);
-        cv.setFechaSolicitud(LocalDate.now());
         cv.setFechaActualizacion(LocalDate.now());
-        cv.setEstado(ConcesionariaVerif.EstadoVerificacion.PENDIENTE);
 
-        try {
-            concesionariaVerifDAO.save(cv);
-        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
-            throw new IllegalStateException("El usuario ya tiene una solicitud de verificación de concesionaria", ex);
-        }
+        // 4) Persistir (sin try/catch innecesario; si hay error de integridad, que se vea la causa real)
+        concesionariaVerifDAO.save(cv);
     }
+
+//    @Override
+//    @Transactional
+//    public void saveVerificacionDesdeDTO(AddConcesionariaVerifDTO dto) {
+//        // 1) Usuario
+//        Usuarios usuario = usuariosDAO.findById(dto.usuarioId);
+//        if (usuario == null) {
+//            throw new NotFoundError("No se encontró al usuario");
+//        }
+//
+//        // 2) Evitar duplicados (la relación es 1:1 por usuario)
+//        ConcesionariaVerif existente = concesionariaVerifDAO.findByUsuarioId(usuario.getIdUsuario());
+//        if (existente != null) {
+//            throw new IllegalStateException("El usuario ya tiene una solicitud de verificación de concesionaria");
+//        }
+//
+//        ConcesionariaVerif cv = new ConcesionariaVerif();
+//        cv.setUsuario(usuario);
+//        cv.setRazonSocial(dto.razonSocial);
+//        cv.setCuit(dto.cuit);
+//        cv.setNotas(dto.notas);
+//        cv.setFechaSolicitud(LocalDate.now());
+//        cv.setFechaActualizacion(LocalDate.now());
+//        cv.setEstado(ConcesionariaVerif.EstadoVerificacion.PENDIENTE);
+//
+//        try {
+//            concesionariaVerifDAO.save(cv);
+//        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+//            throw new IllegalStateException("El usuario ya tiene una solicitud de verificación de concesionaria", ex);
+//        }
+//    }
 
     @Override
     @Transactional
