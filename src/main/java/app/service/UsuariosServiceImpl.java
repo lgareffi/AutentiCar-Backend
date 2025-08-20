@@ -2,6 +2,7 @@ package app.service;
 
 
 import app.Errors.NotFoundError;
+import app.model.dao.IConcesionariaVerifDAO;
 import app.model.dao.IUsuariosDAO;
 import app.model.entity.*;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,9 @@ public class UsuariosServiceImpl implements IUsuariosService {
 
     @Autowired
     private IPublicacionService publicacionService;
+
+    @Autowired
+    private IConcesionariaVerifDAO concesionariaVerifDAO;
 
     @Override
     @Transactional
@@ -145,6 +149,11 @@ public class UsuariosServiceImpl implements IUsuariosService {
     public void eliminarCuenta(long usuarioId) {
         Usuarios u = usuariosDAO.findById(usuarioId);
         if (u == null) throw new NotFoundError("Usuario no encontrado: " + usuarioId);
+
+        ConcesionariaVerif cv = concesionariaVerifDAO.findByUsuarioId(u.getIdUsuario());
+        if (cv != null) {
+            concesionariaVerifDAO.delete(cv);
+        }
 
         // 1) Vehículos
         if (u.getVehiculos() != null) {

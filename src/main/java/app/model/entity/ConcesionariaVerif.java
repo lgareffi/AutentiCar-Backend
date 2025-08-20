@@ -35,7 +35,7 @@ public class ConcesionariaVerif {
     private Usuarios usuario;
 
     public enum EstadoVerificacion {
-        PENDIENTE, VERIFICADA, RECHAZADA
+        PENDIENTE, RECHAZADA, VERIFICADA
     }
 
     public ConcesionariaVerif() {
