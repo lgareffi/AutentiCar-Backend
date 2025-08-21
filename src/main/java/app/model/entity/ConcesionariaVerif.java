@@ -132,4 +132,5 @@ public class ConcesionariaVerif {
     public void setUsuario(Usuarios usuario) {
         this.usuario = usuario;
     }
+
 }
