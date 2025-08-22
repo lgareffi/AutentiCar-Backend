@@ -10,6 +10,8 @@ public class UsuariosDTO {
     private String nombre;
     private String apellido;
     private String mail;
+    private String telefonoCelular;
+    private String rol;
     private List<Long> comprasRealizadas;
     private List<Long> ventasRealizadas;
     private List<Long> vehiculos;
@@ -23,6 +25,8 @@ public class UsuariosDTO {
         this.nombre = usuario.getNombre();
         this.apellido = usuario.getApellido();
         this.mail = usuario.getMail();
+        this.telefonoCelular = usuario.getTelefonoCelular();
+        this.rol = usuario.getRol().name();
         this.esConcesionaria = usuario.isEsConcesionaria();
         this.comprasRealizadas = usuario.getComprasRealizadas()
                 .stream()
@@ -129,5 +133,21 @@ public class UsuariosDTO {
 
     public void setEsConcesionaria(boolean esConcesionaria) {
         this.esConcesionaria = esConcesionaria;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public String getTelefonoCelular() {
+        return telefonoCelular;
+    }
+
+    public void setTelefonoCelular(String telefonoCelular) {
+        this.telefonoCelular = telefonoCelular;
     }
 }

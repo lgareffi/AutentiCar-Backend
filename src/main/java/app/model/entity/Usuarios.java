@@ -27,8 +27,11 @@ public class Usuarios {
     @Column(nullable = false, length = 100)
     private String mail;
 
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false, length = 100)
     private String password;
+
+    @Column(nullable = false, length = 30)
+    private String telefonoCelular;
 
     @Column(nullable = false, length = 40)
     private LocalDate fechaRegistro;
@@ -40,7 +43,7 @@ public class Usuarios {
     private Rol rol;
 
     public enum Rol {
-        PARTICULAR, TALLER, CONCESIONARIO
+        PARTICULAR, TALLER, CONCESIONARIO, ADMIN
     }
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede tener muchos autos
@@ -63,23 +66,24 @@ public class Usuarios {
         super();
     }
 
-    public Usuarios(long idUsuario, String nombre, String apellido, int dni, String mail,
-                    String password, LocalDate fechaRegistro, boolean esConcesionaria,
-                    Rol rol, List<Vehiculos> vehiculos, List<Ventas> comprasRealizadas,
-                    List<EventoVehicular> eventoVehicular, List<Ventas> ventasRealizadas,
-                    List<Publicacion> publicaciones) {
+    public Usuarios(long idUsuario, String nombre, int dni, String apellido, String password,
+                    String mail, LocalDate fechaRegistro, String telefonoCelular,
+                    boolean esConcesionaria, Rol rol, List<Vehiculos> vehiculos,
+                    List<EventoVehicular> eventoVehicular, List<Ventas> comprasRealizadas,
+                    List<Ventas> ventasRealizadas, List<Publicacion> publicaciones) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
-        this.apellido = apellido;
         this.dni = dni;
-        this.mail = mail;
+        this.apellido = apellido;
         this.password = password;
+        this.mail = mail;
         this.fechaRegistro = fechaRegistro;
+        this.telefonoCelular = telefonoCelular;
         this.esConcesionaria = esConcesionaria;
         this.rol = rol;
         this.vehiculos = vehiculos;
-        this.comprasRealizadas = comprasRealizadas;
         this.eventoVehicular = eventoVehicular;
+        this.comprasRealizadas = comprasRealizadas;
         this.ventasRealizadas = ventasRealizadas;
         this.publicaciones = publicaciones;
     }
@@ -93,6 +97,7 @@ public class Usuarios {
                 ", dni=" + dni +
                 ", mail='" + mail + '\'' +
                 ", password='" + password + '\'' +
+                ", telefonoCelular='" + telefonoCelular + '\'' +
                 ", fechaRegistro=" + fechaRegistro +
                 ", esConcesionaria=" + esConcesionaria +
                 ", rol=" + rol +
@@ -216,4 +221,11 @@ public class Usuarios {
         this.esConcesionaria = esConcesionaria;
     }
 
+    public String getTelefonoCelular() {
+        return telefonoCelular;
+    }
+
+    public void setTelefonoCelular(String telefonoCelular) {
+        this.telefonoCelular = telefonoCelular;
+    }
 }
