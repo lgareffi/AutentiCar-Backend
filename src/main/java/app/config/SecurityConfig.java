@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true) // reemplaza EnableGlobalMethodSecurity
@@ -24,17 +26,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // === CORS ===
+                .cors(cors -> {
+                    var cfg = new org.springframework.web.cors.CorsConfiguration();
+                    cfg.setAllowedOrigins(java.util.List.of(
+                            "http://127.0.0.1:5500",
+                            "http://localhost:5500",
+                            "http://localhost:3000"
+                    ));
+                    cfg.setAllowedMethods(java.util.List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+                    // Acepta cualquier header que envíe el browser (incluye Authorization, etc.)
+                    cfg.setAllowedHeaders(java.util.List.of("*"));
+                    // Por si en algún momento devolvés el header Authorization y querés leerlo del lado cliente
+                    cfg.setExposedHeaders(java.util.List.of("Authorization"));
+                    cfg.setAllowCredentials(true);
+
+                    var source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+                    source.registerCorsConfiguration("/**", cfg);
+                    cors.configurationSource(source);
+                })
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(sm -> sm.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ==== PÚBLICOS (rol VISITANTE) ====
+                        // ⭐ IMPORTANTE: permitir el preflight OPTIONS para todas las rutas
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        // Públicos
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/publicaciones/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/publicaciones/**").permitAll()
                         .requestMatchers("/health", "/docs/**").permitAll()
-                        // ==== PRIVADOS ====
+                        // Privados (requieren token)
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuth(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuth(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
