@@ -46,18 +46,37 @@ public class SecurityConfig {
                     cors.configurationSource(source);
                 })
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
+                .sessionManagement(sm -> sm.sessionCreationPolicy(
+                        org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // ⭐ IMPORTANTE: permitir el preflight OPTIONS para todas las rutas
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Públicos
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
+
+                        // Publicaciones (lista + detalle)
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/publicaciones/**").permitAll()
-                        .requestMatchers("/health", "/docs/**").permitAll()
+
+                        // Vehículos (detalle + recursos públicos del vehículo)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/documentos").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/imagenes").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/eventos").permitAll()
+
+                        // Documentos (detalle)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/documentos/*").permitAll()
+
+                        // Eventos (detalle)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/eventos/*").permitAll()
+
+                        // Verificación concesionaria (form)
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/concesionariaVerif").permitAll()
+
                         // Privados (requieren token)
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuth(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuth(),
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
