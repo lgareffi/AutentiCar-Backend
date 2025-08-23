@@ -196,4 +196,17 @@ public class UsuariosController {
         }
     }
 
+    @GetMapping("/usuarios/publico/{usuarioId}")
+    public ResponseEntity<?> getUsuarioPublico(@PathVariable long usuarioId) {
+        try {
+            var u = usuariosService.findById(usuarioId);
+            return ResponseEntity.ok(new UsuarioPublicoDTO(u));
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener usuario público");
+        }
+    }
+
 }

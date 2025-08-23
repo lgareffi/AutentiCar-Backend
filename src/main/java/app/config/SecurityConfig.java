@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Públicos
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/usuarios/publico/*").permitAll()
 
                         // Publicaciones (lista + detalle)
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/publicaciones/**").permitAll()
