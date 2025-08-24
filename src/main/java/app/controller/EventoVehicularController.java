@@ -12,6 +12,7 @@ import app.service.IEventoVehicularService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class EventoVehicularController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @PostMapping
     public ResponseEntity<?> agregarEvento(@RequestBody AddEventoDTO eventoDTO) {
         try {
@@ -57,6 +59,7 @@ public class EventoVehicularController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @DeleteMapping("/{eventoId}")
     public ResponseEntity<?> eliminarEvento(@PathVariable long eventoId) {
         try {

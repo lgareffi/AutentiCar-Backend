@@ -38,7 +38,8 @@ public class JwtTokenProvider {
     public String generarToken(Usuarios u) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .setSubject(u.getMail())               // tu "username" será el mail
+                .setSubject(String.valueOf(u.getIdUsuario()))
+                .claim("mail", u.getMail())
                 .claim("rol", mapAuthority(u))         // <- lo lee tu JwtAuthFilter
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plus(expMinutes, ChronoUnit.MINUTES)))

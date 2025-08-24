@@ -66,15 +66,19 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                     .parseClaimsJws(token);
 
             Claims claims = jws.getBody();
-            String username = claims.getSubject();            // lo que pusiste en setSubject (mail)
+            String sub = claims.getSubject();
+            Long userId = (sub != null) ? Long.parseLong(sub) : null;
             String rol = claims.get("rol", String.class);     // p.ej. "ROL_ADMIN", "ROL_TALLER", "ROL_USER"
 
-            if (username != null && rol != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (userId != null && rol != null
+                    && SecurityContextHolder.getContext().getAuthentication() == null) {
+
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority(rol));
 
+                // principal = userId (Long)
                 UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
@@ -83,11 +87,8 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             filterChain.doFilter(request, response);
 
         } catch (JwtException | IllegalArgumentException e) {
-            // Token presente pero inválido/expirado -> 401
             SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o expirado");
         }
     }
-
-
 }

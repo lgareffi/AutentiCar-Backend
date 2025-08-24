@@ -11,6 +11,7 @@ import app.service.IPublicacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,6 +50,7 @@ public class PublicacionController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @PostMapping
     public ResponseEntity<?> agregarPublicacion(@RequestBody AddPublicacionDTO dto) {
         try {
@@ -59,6 +61,7 @@ public class PublicacionController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @DeleteMapping("/{publicacionId}")
     public ResponseEntity<?> eliminarPublicacion(@PathVariable long publicacionId) {
         try {
@@ -73,6 +76,7 @@ public class PublicacionController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @PutMapping("/{publicacionId}/estado")
     public ResponseEntity<?> alternarEstado(@PathVariable long publicacionId) {
         try {

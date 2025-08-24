@@ -8,6 +8,7 @@ import app.service.IUsuariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class UsuariosController {
     @Autowired
     private IUsuariosDAO usuariosDAO;
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}")
     public ResponseEntity<?> getUsuario(@PathVariable long usuarioId) {
         try {
@@ -36,6 +38,7 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}/comprasRealizadas")
     public ResponseEntity<?> getComprasRealizadas(@PathVariable long usuarioId) {
         try {
@@ -49,6 +52,7 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}/ventasRealizadas")
     public ResponseEntity<?> getVentasRealizadas(@PathVariable long usuarioId) {
         try {
@@ -62,6 +66,7 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}/vehiculos")
     public ResponseEntity<?> getVehiculos(@PathVariable long usuarioId) {
         try {
@@ -75,6 +80,7 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}/eventos")
     public ResponseEntity<?> getEventoVehicular(@PathVariable long usuarioId) {
         try {
@@ -88,6 +94,7 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}/publicaciones")
     public ResponseEntity<?> getPublicaciones(@PathVariable long usuarioId) {
         try {
@@ -182,6 +189,7 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @DeleteMapping("/usuarios/{usuarioId}")
     public ResponseEntity<?> eliminarCuenta(@PathVariable long usuarioId) {
         try {

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -72,6 +73,7 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @PostMapping
     public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO dto) {
         try {
@@ -96,6 +98,7 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @DeleteMapping("/{vehiculoId}")
     public ResponseEntity<?> eliminarVehiculo(@PathVariable long vehiculoId) {
         try {
@@ -110,6 +113,7 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @PostMapping( value = "/{vehiculoId}/imagenes",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> subirImagenes(
@@ -144,6 +148,7 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @DeleteMapping("/imagenes/{imagenId}")
     public ResponseEntity<?> eliminarImagen(@PathVariable long imagenId) {
         try {
@@ -158,6 +163,7 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @PostMapping(value = "/{vehiculoId}/documentos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> subirDocumento(@PathVariable long vehiculoId,
                                             @RequestParam("file") MultipartFile file,
@@ -189,6 +195,7 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @DeleteMapping("/documentos/{documentoId}")
     public ResponseEntity<?> eliminarDocumento(@PathVariable long documentoId) {
         try {
