@@ -9,6 +9,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -112,21 +117,43 @@ public class VehiculosServiceImpl implements IVehiculosService{
         return (v.getImagenVehiculos() != null) ? v.getImagenVehiculos() : java.util.Collections.emptyList();
     }
 
-
     @Override
     @Transactional
     public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
-        // Verifica si el VIN ya existe
+        // 1) VIN único
         Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);
-        if (existente != null)
+        if (existente != null) {
             throw new RuntimeException("Auto con VIN ya existente");
+        }
 
-        // Buscar el usuario
-        Usuarios usuario = this.usuariosDAO.findById(dto.usuarioId);
-        if (usuario == null)
-            throw new NotFoundError("No se encontró el usuario");
+        // 2) Usuario actual desde el token (principal = ID Long)
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new AccessDeniedException("No autenticado");
+        }
+        Long currentUserId = (Long) auth.getPrincipal();
 
-        // Crear y guardar el nuevo vehículo
+        boolean esAdmin = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROL_ADMIN"::equals);
+
+        // 3) Determinar dueño del vehículo a crear
+        //    - Admin: si viene dto.usuarioId se usa ese; si no, se usa su propio id.
+        //    - No admin: SIEMPRE su propio id (se ignora dto.usuarioId si viene distinto).
+        Long ownerId = (esAdmin && dto.usuarioId != null) ? dto.usuarioId : currentUserId;
+
+        // (opcional) si querés ser estricto con no-admin + usuarioId distinto, podés forzar error:
+//        if (!esAdmin && !ownerId.equals(currentUserId)) {
+//            throw new AccessDeniedException("No autorizado para crear vehículos para otro usuario");
+//        }
+
+        // 4) Cargar dueño desde BD
+        Usuarios owner = this.usuariosDAO.findById(ownerId);
+        if (owner == null) {
+            throw new NotFoundError("No se encontró el usuario destino");
+        }
+
+        // 5) Crear y guardar
         Vehiculos vehiculo = new Vehiculos();
         vehiculo.setVin(dto.vin);
         vehiculo.setMarca(dto.marca);
@@ -140,11 +167,44 @@ public class VehiculosServiceImpl implements IVehiculosService{
         vehiculo.setTipoTransmision(dto.tipoTransmision);
         vehiculo.setFechaAlta(LocalDate.now());
         vehiculo.setEstado(Vehiculos.Estado.ACTIVO);
-        vehiculo.setUsuario(usuario);
+        vehiculo.setUsuario(owner);
 
         this.vehiculosDAO.save(vehiculo);
         return vehiculo.getIdVehiculo();
     }
+
+
+//    @Transactional
+//    public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
+//        // Verifica si el VIN ya existe
+//        Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);
+//        if (existente != null)
+//            throw new RuntimeException("Auto con VIN ya existente");
+//
+//        // Buscar el usuario
+//        Usuarios usuario = this.usuariosDAO.findById(dto.usuarioId);
+//        if (usuario == null)
+//            throw new NotFoundError("No se encontró el usuario");
+//
+//        // Crear y guardar el nuevo vehículo
+//        Vehiculos vehiculo = new Vehiculos();
+//        vehiculo.setVin(dto.vin);
+//        vehiculo.setMarca(dto.marca);
+//        vehiculo.setModelo(dto.modelo);
+//        vehiculo.setAnio(dto.anio);
+//        vehiculo.setKilometraje(dto.kilometraje);
+//        vehiculo.setPuertas(dto.puertas);
+//        vehiculo.setMotor(dto.motor);
+//        vehiculo.setColor(dto.color);
+//        vehiculo.setTipoCombustible(dto.tipoCombustible);
+//        vehiculo.setTipoTransmision(dto.tipoTransmision);
+//        vehiculo.setFechaAlta(LocalDate.now());
+//        vehiculo.setEstado(Vehiculos.Estado.ACTIVO);
+//        vehiculo.setUsuario(usuario);
+//
+//        this.vehiculosDAO.save(vehiculo);
+//        return vehiculo.getIdVehiculo();
+//    }
 
     @Override
     @Transactional

@@ -15,7 +15,7 @@ public class AddVehiculoDTO {
     public String color;
     public String tipoCombustible;
     public String tipoTransmision;
-    public long usuarioId;
+    public Long usuarioId;
 
     public String getVin() {
         return vin;
