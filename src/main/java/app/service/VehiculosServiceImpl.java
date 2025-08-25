@@ -5,6 +5,7 @@ import app.controller.dtos.AddVehiculoDTO;
 import app.controller.dtos.DocVehiculoDTO;
 import app.model.dao.*;
 import app.model.entity.*;
+import app.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,26 +127,12 @@ public class VehiculosServiceImpl implements IVehiculosService{
             throw new RuntimeException("Auto con VIN ya existente");
         }
 
-        // 2) Usuario actual desde el token (principal = ID Long)
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getPrincipal() == null) {
-            throw new AccessDeniedException("No autenticado");
-        }
-        Long currentUserId = (Long) auth.getPrincipal();
+        // 2) Determinar el dueño objetivo (si no viene, es el usuario actual)
+        Long currentUserId = SecurityUtils.currentUserId(); // principal = ID (Long)
+        Long ownerId = (dto.usuarioId != null) ? dto.usuarioId : currentUserId;
 
-        boolean esAdmin = auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch("ROL_ADMIN"::equals);
-
-        // 3) Determinar dueño del vehículo a crear
-        //    - Admin: si viene dto.usuarioId se usa ese; si no, se usa su propio id.
-        //    - No admin: SIEMPRE su propio id (se ignora dto.usuarioId si viene distinto).
-        Long ownerId = (esAdmin && dto.usuarioId != null) ? dto.usuarioId : currentUserId;
-
-        // (opcional) si querés ser estricto con no-admin + usuarioId distinto, podés forzar error:
-//        if (!esAdmin && !ownerId.equals(currentUserId)) {
-//            throw new AccessDeniedException("No autorizado para crear vehículos para otro usuario");
-//        }
+        // 3) Autorización: solo admin puede crear para otro usuario
+        SecurityUtils.requireAdminOrSelf(ownerId); // lanza 403 si no corresponde
 
         // 4) Cargar dueño desde BD
         Usuarios owner = this.usuariosDAO.findById(ownerId);

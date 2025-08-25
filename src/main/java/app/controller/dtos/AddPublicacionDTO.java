@@ -8,8 +8,8 @@ public class AddPublicacionDTO {
     public String titulo;
     public String descripcion;
     public int precio;
-    public long usuarioId;
-    public long vehiculoId;
+    public Long usuarioId;
+    public Long vehiculoId;
     public Publicacion.Moneda moneda;
 
     public String getTitulo() {

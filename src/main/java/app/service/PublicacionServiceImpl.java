@@ -6,6 +6,7 @@ import app.model.dao.IPublicacionDAO;
 import app.model.dao.IUsuariosDAO;
 import app.model.dao.IVehiculosDAO;
 import app.model.entity.*;
+import app.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,21 +64,28 @@ public class PublicacionServiceImpl implements IPublicacionService{
     @Override
     @Transactional
     public void savePublicacionDesdeDTO(AddPublicacionDTO dto) {
-        Usuarios usuario = usuariosDAO.findById(dto.usuarioId);
-        if (usuario == null)
-            throw new NotFoundError("No se encontró al usuario");
+        // (Opcional) validación defensiva
+        if (dto.vehiculoId == null) {
+            throw new IllegalArgumentException("vehiculoId es obligatorio");
+        }
 
         Vehiculos vehiculo = vehiculosDAO.findById(dto.vehiculoId);
         if (vehiculo == null)
             throw new NotFoundError("No se encontró el vehículo");
 
+        Long ownerId = vehiculo.getUsuario().getIdUsuario();
+
+        // Autorización: dueño o admin
+        SecurityUtils.requireAdminOrSelf(ownerId);
+
+        // Crear publicación SIEMPRE con el dueño del vehículo
         Publicacion post = new Publicacion();
         post.setTitulo(dto.titulo);
         post.setDescripcion(dto.descripcion);
         post.setPrecio(dto.precio);
         post.setFechaPublicacion(LocalDate.now());
         post.setEstadoPublicacion(Publicacion.EstadoPublicacion.ACTIVA);
-        post.setUsuario(usuario);
+        post.setUsuario(vehiculo.getUsuario());
         post.setVehiculo(vehiculo);
         if (dto.moneda != null) {
             post.setMoneda(dto.moneda);
