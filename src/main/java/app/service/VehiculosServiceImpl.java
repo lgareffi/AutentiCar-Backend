@@ -160,39 +160,6 @@ public class VehiculosServiceImpl implements IVehiculosService{
         return vehiculo.getIdVehiculo();
     }
 
-
-//    @Transactional
-//    public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
-//        // Verifica si el VIN ya existe
-//        Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);
-//        if (existente != null)
-//            throw new RuntimeException("Auto con VIN ya existente");
-//
-//        // Buscar el usuario
-//        Usuarios usuario = this.usuariosDAO.findById(dto.usuarioId);
-//        if (usuario == null)
-//            throw new NotFoundError("No se encontró el usuario");
-//
-//        // Crear y guardar el nuevo vehículo
-//        Vehiculos vehiculo = new Vehiculos();
-//        vehiculo.setVin(dto.vin);
-//        vehiculo.setMarca(dto.marca);
-//        vehiculo.setModelo(dto.modelo);
-//        vehiculo.setAnio(dto.anio);
-//        vehiculo.setKilometraje(dto.kilometraje);
-//        vehiculo.setPuertas(dto.puertas);
-//        vehiculo.setMotor(dto.motor);
-//        vehiculo.setColor(dto.color);
-//        vehiculo.setTipoCombustible(dto.tipoCombustible);
-//        vehiculo.setTipoTransmision(dto.tipoTransmision);
-//        vehiculo.setFechaAlta(LocalDate.now());
-//        vehiculo.setEstado(Vehiculos.Estado.ACTIVO);
-//        vehiculo.setUsuario(usuario);
-//
-//        this.vehiculosDAO.save(vehiculo);
-//        return vehiculo.getIdVehiculo();
-//    }
-
     @Override
     @Transactional
     public void eliminarVehiculo(long vehiculoId) {
@@ -200,6 +167,10 @@ public class VehiculosServiceImpl implements IVehiculosService{
         if (vehiculo == null) {
             throw new NotFoundError("Vehículo no encontrado: " + vehiculoId);
         }
+
+        // Autorización: dueño del vehículo o ADMIN
+        Long ownerId = vehiculo.getUsuario().getIdUsuario();
+        app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
 
         // 1) Eliminar publicación asociada (si existe)
         Publicacion pub = publicacionDAO.findByVehiculoId(vehiculoId);
