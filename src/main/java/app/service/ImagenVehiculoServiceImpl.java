@@ -68,8 +68,8 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
         Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
         if (vehiculo == null) throw new NotFoundError("No se encontró el vehículo");
 
-        long cantidad = imagenVehiculoDAO.countByVehiculo(vehiculo);
-        if (cantidad >= 30) throw new RuntimeException("El vehículo ya tiene 30 imágenes");
+//        long cantidad = imagenVehiculoDAO.countByVehiculo(vehiculo);
+//        if (cantidad >= 30) throw new RuntimeException("El vehículo ya tiene 30 imágenes");
 
         if (file == null || file.isEmpty()) throw new RuntimeException("Archivo vacío");
         if (file.getSize() > 10 * 1024 * 1024) throw new RuntimeException("La imagen excede 10MB");
@@ -108,7 +108,23 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     @Override
     @Transactional
     public List<ImagenVehiculoDTO> subirMultiples(long vehiculoId, List<MultipartFile> files) {
-        if (files == null || files.isEmpty()) throw new RuntimeException("No se enviaron archivos");
+        if (files == null || files.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+
+        Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
+        if (vehiculo == null){
+            throw new NotFoundError("Vehículo no encontrado");
+        }
+
+        Long ownerId = vehiculo.getUsuario().getIdUsuario();
+        app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
+
+        long actuales = imagenVehiculoDAO.countByVehiculo(vehiculo);
+        if (actuales + files.size() > 30) {
+            throw new RuntimeException("El vehículo superaría el máximo de 30 imágenes");
+        }
+
         List<ImagenVehiculoDTO> out = new ArrayList<>();
         for (MultipartFile f : files) {
             out.add(subirImagen(vehiculoId, f));
@@ -120,6 +136,10 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     @Transactional
     public void eliminarImagen(long imagenId) {
         ImagenVehiculo img = imagenVehiculoDAO.findById(imagenId); // tu DAO lanza NotFound si no existe
+
+        Long ownerId = img.getVehiculo().getUsuario().getIdUsuario();
+        app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
+
         try {
             // 1) Borrar en Cloudinary
             cloudinary.uploader().destroy(img.getPublicId(), ObjectUtils.emptyMap());

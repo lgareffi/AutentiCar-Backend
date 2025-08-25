@@ -3,7 +3,7 @@ package app.controller.dtos;
 public class AddImagenDTO {
 
     private String urlImagen;
-    private long vehiculoId;
+    private Long vehiculoId;
 
     public String getUrlImagen() {
         return urlImagen;
