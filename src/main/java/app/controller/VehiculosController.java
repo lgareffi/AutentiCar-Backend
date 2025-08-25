@@ -195,7 +195,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @DeleteMapping("/documentos/{documentoId}")
     public ResponseEntity<?> eliminarDocumento(@PathVariable long documentoId) {
         try {

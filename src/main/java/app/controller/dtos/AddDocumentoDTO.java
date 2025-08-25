@@ -7,8 +7,8 @@ public class AddDocumentoDTO {
     public String urlDoc;
     public int nivelRiesgo;
     public boolean validadoIA;
-    public String tipoDoc; // debe coincidir con los valores del enum (TITULO, CEDULA, etc.)
-    public long vehiculoId;
+    public String tipoDoc;
+    public Long vehiculoId;
     public Long eventoId;
 
     public String getNombre() {

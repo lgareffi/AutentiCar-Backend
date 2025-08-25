@@ -76,17 +76,57 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
                                          Boolean validadoIA,
                                          Long eventoId) {
         Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
-        if (vehiculo == null) throw new NotFoundError("No se encontró el vehículo");
-        if (file == null || file.isEmpty()) throw new RuntimeException("Archivo vacío");
+        if (vehiculo == null) {
+            throw new NotFoundError("No se encontró el vehículo");
+        }
+
+        var auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
+        }
+
+        Long me = (Long) auth.getPrincipal();
+
+        boolean esAdmin  = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .anyMatch("ROL_ADMIN"::equals);
+        boolean esTaller = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .anyMatch("ROL_TALLER"::equals);
+
+        Long ownerId = vehiculo.getUsuario().getIdUsuario();
+
+        if (!(esAdmin || esTaller || ownerId.equals(me))) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No estás autorizado para subir documentos a este vehículo");
+        }
+
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("Archivo vacío");
+        }
+
+        // validaciones básicas
+        long maxBytes = 15L * 1024 * 1024; // 15MB
+        if (file.getSize() > maxBytes) throw new RuntimeException("Archivo supera 15MB");
 
         final String mime = file.getContentType() != null ? file.getContentType() : "application/octet-stream";
 
         // PDF e imágenes como "image" para permitir thumbnails; otros como "raw"
         final String resourceType = (mime.startsWith("image/") || "application/pdf".equals(mime)) ? "image" : "raw";
 
-        // validaciones básicas
-        long maxBytes = 15L * 1024 * 1024; // 15MB
-        if (file.getSize() > maxBytes) throw new RuntimeException("Archivo supera 15MB");
+        // 4) Si vino eventoId, validar que el evento exista y pertenezca al mismo vehículo
+        EventoVehicular evento = null;
+        if (eventoId != null) {
+            evento = eventoVehicularDAO.findById(eventoId);
+            if (evento == null) {
+                throw new NotFoundError("No se encontró el evento");
+            }
+            if (evento.getVehiculo() == null || evento.getVehiculo().getIdVehiculo() != vehiculoId) {
+                throw new RuntimeException("El evento no pertenece al vehículo indicado");
+            }
+        }
 
         try {
             String folder = folderRoot + "/docs/" + vehiculoId;
@@ -118,9 +158,6 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             d.setResourceType(resourceType);
             d.setMimeType(mime);
 
-            // si manejás evento, buscá y setealo
-            if (eventoId != null) { EventoVehicular ev = eventoVehicularDAO.findById(eventoId); d.setEventoVehicular(ev); }
-
             docVehiculoDAO.save(d);
             return new DocVehiculoDTO(d);
         } catch (Exception e) {
@@ -145,6 +182,14 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
     @Transactional
     public void eliminarDocumento(long documentoId) {
         DocVehiculo d = docVehiculoDAO.findById(documentoId);
+        if (d == null){
+            throw new NotFoundError("Documento no encontrado");
+        }
+
+        // validar: dueño del vehículo o admin
+        Long ownerId = d.getVehiculo().getUsuario().getIdUsuario();
+        app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
+
         try {
             if (d.getPublicId() != null) {
                 cloudinary.uploader().destroy(
