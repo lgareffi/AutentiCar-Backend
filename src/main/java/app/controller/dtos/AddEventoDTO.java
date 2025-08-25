@@ -8,8 +8,8 @@ public class AddEventoDTO {
     public int kilometrajeEvento;
     public boolean validadoPorTercero;
     public String tipoEvento; // debe coincidir con los valores del enum
-    public long usuarioId;
-    public long vehiculoId;
+    public Long usuarioId;
+    public Long vehiculoId;
 
     public String getTitulo() {
         return titulo;

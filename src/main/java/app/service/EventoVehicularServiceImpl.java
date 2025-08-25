@@ -10,9 +10,12 @@ import app.model.entity.DocVehiculo;
 import app.model.entity.EventoVehicular;
 import app.model.entity.Usuarios;
 import app.model.entity.Vehiculos;
+import app.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -70,15 +73,56 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
     @Override
     @Transactional
     public void saveEventoDesdeDTO(AddEventoDTO dto) {
-        // Validar usuario
-        Usuarios usuario = this.usuariosDAO.findById(dto.usuarioId);
-        if (usuario == null)
-            throw new NotFoundError("No se encontró el usuario");
+        // 1) Validaciones básicas
+        if (dto.vehiculoId == null) {
+            throw new IllegalArgumentException("vehiculoId es obligatorio");
+        }
+        if (dto.titulo == null || dto.titulo.isBlank()) {
+            throw new IllegalArgumentException("El título es obligatorio");
+        }
+
+        if (dto.tipoEvento == null || dto.tipoEvento.isBlank()) {
+            throw new IllegalArgumentException("tipoEvento es obligatorio");
+        }
 
         // Validar vehículo
         Vehiculos vehiculo = this.vehiculosDAO.findById(dto.vehiculoId);
         if (vehiculo == null)
             throw new NotFoundError("No se encontró el vehículo");
+
+        Long ownerId = vehiculo.getUsuario().getIdUsuario();
+
+        // Usuario autenticado y rol
+        Long me = SecurityUtils.currentUserId();
+        boolean esAdmin  = SecurityUtils.isAdmin();
+        boolean esTaller = SecurityUtils.isTaller();
+        boolean esUser   = app.security.SecurityUtils.isUser();
+
+        // Determinar quién será el "registrador" del evento
+        Long registradorId = esAdmin && dto.usuarioId != null ? dto.usuarioId : me;
+
+        Usuarios registrador = this.usuariosDAO.findById(registradorId);
+        if (registrador == null) {
+            throw new NotFoundError("No se encontró el usuario registrador");
+        }
+
+        // Autorización de la acción
+        if (esAdmin) {
+            // ok sin más
+        } else if (esTaller) {
+            if (!registradorId.equals(me)) {
+                throw new AccessDeniedException("Un taller solo puede registrar eventos como sí mismo");
+            }
+        } else if (esUser) {
+            if (!ownerId.equals(me)) {
+                throw new AccessDeniedException("No podés registrar eventos sobre un vehículo ajeno");
+            }
+            if (!registradorId.equals(me)) {
+                throw new AccessDeniedException("Un usuario solo puede registrar eventos como sí mismo");
+            }
+        } else {
+            throw new AccessDeniedException("Rol no autorizado");
+        }
 
         // Crear el evento
         EventoVehicular evento = new EventoVehicular();
@@ -88,7 +132,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setValidadoPorTercero(dto.validadoPorTercero);
         evento.setFechaEvento(LocalDate.now());
         evento.setTipoEvento(EventoVehicular.TipoEvento.valueOf(dto.tipoEvento.toUpperCase()));
-        evento.setUsuario(usuario);
+        evento.setUsuario(registrador);
         evento.setVehiculo(vehiculo);
 
         this.eventoVehicularDAO.save(evento);
