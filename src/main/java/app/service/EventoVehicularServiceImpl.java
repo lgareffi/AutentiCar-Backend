@@ -142,7 +142,30 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
     @Transactional
     public void eliminarEvento(long eventoId) {
         EventoVehicular evento = eventoVehicularDAO.findById(eventoId);
-        if (evento == null) throw new NotFoundError("Evento no encontrado: " + eventoId);
+        if (evento == null) {
+            throw new NotFoundError("Evento no encontrado: " + eventoId);
+        }
+
+        // ===== Autorización =====
+        var auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
+        }
+        Long me = (Long) auth.getPrincipal(); // subject = id del usuario en tu token
+
+        boolean esAdmin = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .anyMatch("ROL_ADMIN"::equals);
+
+        Long creadorId = (evento.getUsuario() != null) ? evento.getUsuario().getIdUsuario() : null;
+
+        // Permite: ADMIN, o (creador == usuario actual). No más chequeo de dueño del vehículo.
+        boolean permitido = esAdmin || (creadorId != null && creadorId.equals(me));
+        if (!permitido) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No autorizado para eliminar este evento");
+        }
 
         // Desasociar documentos (no borrarlos)
         List<DocVehiculo> docs = evento.getDocVehiculo();
