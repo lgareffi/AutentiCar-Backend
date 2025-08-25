@@ -36,15 +36,32 @@ public class PublicacionController {
         }
     }
 
+    // TRAE TODAS LAS PUBLICACIONES EXISTENTES
+//    @GetMapping
+//    public ResponseEntity<?> getPublicaciones() {
+//        try {
+//            List<Publicacion> publicaciones = publicacionService.findAll();
+//            List<PublicacionDTO> publicacionDTOS = publicaciones.stream()
+//                    .map(PublicacionDTO::new)
+//                    .collect(Collectors.toList());
+//            return new ResponseEntity<>(publicacionDTOS, HttpStatus.OK);
+//        }catch (Throwable e) {
+//            String msj = "No se encontraron publicaciones";
+//            return new ResponseEntity<>(msj, HttpStatus.NOT_FOUND);
+//        }
+//    }
+
     @GetMapping
     public ResponseEntity<?> getPublicaciones() {
         try {
-            List<Publicacion> publicaciones = publicacionService.findAll();
+            List<Publicacion> publicaciones = publicacionService.getPublicacionesPublicas(); // solo ACTIVA
             List<PublicacionDTO> publicacionDTOS = publicaciones.stream()
                     .map(PublicacionDTO::new)
-                    .collect(Collectors.toList());
+                    .collect(java.util.stream.Collectors.toList());
+
             return new ResponseEntity<>(publicacionDTOS, HttpStatus.OK);
-        }catch (Throwable e) {
+
+        } catch (Throwable e) {
             String msj = "No se encontraron publicaciones";
             return new ResponseEntity<>(msj, HttpStatus.NOT_FOUND);
         }

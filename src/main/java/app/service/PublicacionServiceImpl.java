@@ -53,6 +53,13 @@ public class PublicacionServiceImpl implements IPublicacionService{
 
     @Override
     @Transactional
+    public List<Publicacion> getPublicacionesPublicas() {
+        return publicacionDAO.findActivas();
+    }
+
+
+    @Override
+    @Transactional
     public void save(Publicacion publicacion) {
         try {
             publicacionDAO.save(publicacion);

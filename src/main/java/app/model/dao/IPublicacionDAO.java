@@ -17,6 +17,6 @@ public interface IPublicacionDAO {
 
     public Publicacion findByVehiculoId(long vehiculoId);
 
-    //public int updateEstado(long idPublicacion, Publicacion.EstadoPublicacion nuevoEstado);
+    List<Publicacion> findActivas();
 
 }

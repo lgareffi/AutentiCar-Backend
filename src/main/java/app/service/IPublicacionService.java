@@ -11,6 +11,8 @@ public interface IPublicacionService {
 
     public List<Publicacion> findAll();
 
+    public List<Publicacion> getPublicacionesPublicas();
+
     public void save(Publicacion publicacion);
 
     public void savePublicacionDesdeDTO(AddPublicacionDTO dto);
