@@ -101,6 +101,33 @@ public class PublicacionServiceImpl implements IPublicacionService{
         if (pub == null) {
             throw new NotFoundError("Publicación no encontrada: " + publicacionId);
         }
+
+        // ===== Autorización =====
+        var auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
+        }
+        Long me = (Long) auth.getPrincipal(); // subject = id en tu token
+
+        boolean esAdmin = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .anyMatch("ROL_ADMIN"::equals);
+
+        Long creadorId = (pub.getUsuario() != null) ? pub.getUsuario().getIdUsuario() : null;
+        Long duenoVehiculoId = (pub.getVehiculo() != null && pub.getVehiculo().getUsuario() != null)
+                ? pub.getVehiculo().getUsuario().getIdUsuario() : null;
+
+        boolean permitido =
+                esAdmin
+                        || (creadorId != null && creadorId.equals(me))          // user = creador
+                        || (duenoVehiculoId != null && duenoVehiculoId.equals(me)); // user = dueño del auto
+
+        if (!permitido) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No autorizado para eliminar esta publicación");
+        }
+
         publicacionDAO.delete(pub);
     }
 
@@ -108,7 +135,35 @@ public class PublicacionServiceImpl implements IPublicacionService{
     @Transactional
     public void alternarEstado(long publicacionId) {
         Publicacion pub = publicacionDAO.findById(publicacionId);
-        if (pub == null) throw new NotFoundError("Publicación no encontrada: " + publicacionId);
+        if (pub == null){
+            throw new NotFoundError("Publicación no encontrada: " + publicacionId);
+        }
+
+        // ===== Autorización =====
+        var auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
+        }
+        Long me = (Long) auth.getPrincipal(); // subject = id del usuario en tu token
+
+        boolean esAdmin = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .anyMatch("ROL_ADMIN"::equals);
+
+        Long creadorId = (pub.getUsuario() != null) ? pub.getUsuario().getIdUsuario() : null;
+        Long duenoVehiculoId = (pub.getVehiculo() != null && pub.getVehiculo().getUsuario() != null)
+                ? pub.getVehiculo().getUsuario().getIdUsuario() : null;
+
+        boolean permitido =
+                esAdmin
+                        || (creadorId != null && creadorId.equals(me))          // user creador
+                        || (duenoVehiculoId != null && duenoVehiculoId.equals(me)); // user dueño del auto
+
+        if (!permitido) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No autorizado para cambiar el estado de esta publicación");
+        }
 
         // Regla: si está VENDIDA, no se permite alternar (podés cambiar esta regla si querés)
         if (pub.getEstadoPublicacion() == Publicacion.EstadoPublicacion.VENDIDA) {
