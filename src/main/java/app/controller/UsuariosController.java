@@ -80,7 +80,7 @@ public class UsuariosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}/eventos")
     public ResponseEntity<?> getEventoVehicular(@PathVariable long usuarioId) {
         try {
