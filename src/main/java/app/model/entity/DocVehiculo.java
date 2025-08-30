@@ -48,7 +48,7 @@ public class DocVehiculo {
     Vehiculos vehiculo;
 
     @ManyToOne // muchos documentos pueden pertenecer a 1 evento
-    @JoinColumn(name = "eventoId", referencedColumnName = "idEvento",nullable = true)
+    @JoinColumn(name = "eventoId", referencedColumnName = "idEvento",nullable = false)
     EventoVehicular eventoVehicular;
 
     public DocVehiculo() {

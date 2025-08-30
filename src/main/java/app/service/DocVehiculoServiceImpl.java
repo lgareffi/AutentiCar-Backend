@@ -116,16 +116,14 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
         // PDF e imágenes como "image" para permitir thumbnails; otros como "raw"
         final String resourceType = (mime.startsWith("image/") || "application/pdf".equals(mime)) ? "image" : "raw";
 
-        // 4) Si vino eventoId, validar que el evento exista y pertenezca al mismo vehículo
-        EventoVehicular evento = null;
-        if (eventoId != null) {
-            evento = eventoVehicularDAO.findById(eventoId);
-            if (evento == null) {
-                throw new NotFoundError("No se encontró el evento");
-            }
-            if (evento.getVehiculo() == null || evento.getVehiculo().getIdVehiculo() != vehiculoId) {
-                throw new RuntimeException("El evento no pertenece al vehículo indicado");
-            }
+        // 4) validar que el evento exista y pertenezca al mismo vehículo
+        if (eventoId == null) {
+            throw new RuntimeException("Debe indicar el eventoId para asociar el documento");
+        }
+        EventoVehicular evento = eventoVehicularDAO.findById(eventoId);
+        if (evento == null) throw new NotFoundError("No se encontró el evento");
+        if (evento.getVehiculo() == null || evento.getVehiculo().getIdVehiculo() != vehiculoId) {
+            throw new RuntimeException("El evento no pertenece al vehículo indicado");
         }
 
         try {
@@ -147,6 +145,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
 
             DocVehiculo d = new DocVehiculo();
             d.setVehiculo(vehiculo);
+            d.setEventoVehicular(evento);
             d.setNombre(nombre != null && !nombre.isBlank() ? nombre : file.getOriginalFilename());
             d.setTipoDoc(tipoDoc != null ? DocVehiculo.TipoDoc.valueOf(tipoDoc.toUpperCase()) : DocVehiculo.TipoDoc.OTRO);
             d.setNivelRiesgo(nivelRiesgo != null ? nivelRiesgo : 0);

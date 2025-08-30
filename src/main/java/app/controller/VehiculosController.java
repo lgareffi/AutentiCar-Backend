@@ -172,7 +172,7 @@ public class VehiculosController {
                                             @RequestParam("tipoDoc") String tipoDoc,
                                             @RequestParam(value = "nivelRiesgo", required = false) Integer nivelRiesgo,
                                             @RequestParam(value = "validadoIA", required = false) Boolean validadoIA,
-                                            @RequestParam(value = "eventoId", required = false) Long eventoId) {
+                                            @RequestParam(value = "eventoId", required = true) Long eventoId) {
         try {
             DocVehiculoDTO dto = docVehiculoService.subirDocumento(vehiculoId, file, nombre, tipoDoc, nivelRiesgo, validadoIA, eventoId);
             return ResponseEntity.status(HttpStatus.CREATED).body(dto);

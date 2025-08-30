@@ -15,7 +15,7 @@ public class DocVehiculoDTO {
     private LocalDate fechaSubida;
     private String tipoDoc;
 
-    private Long idVehiculo; // solo el ID, no el objeto completo
+    private Long idVehiculo;
     private Long idEventoVehicular;
     private String mimeType;
 
