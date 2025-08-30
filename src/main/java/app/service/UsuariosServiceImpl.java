@@ -41,6 +41,17 @@ public class UsuariosServiceImpl implements IUsuariosService {
 
     @Override
     @Transactional
+    public List<Usuarios> findAll() {
+        try {
+            List<Usuarios> usuarios = usuariosDAO.findAll();
+            return usuarios;
+        } catch (Exception e) {
+            throw new NotFoundError("Error al buscar los usuarios");
+        }
+    }
+
+    @Override
+    @Transactional
     public void save(Usuarios usuario) {
         try {
             usuariosDAO.save(usuario);

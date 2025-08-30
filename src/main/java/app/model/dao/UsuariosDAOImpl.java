@@ -2,6 +2,7 @@ package app.model.dao;
 
 import app.Errors.NotFoundError;
 import app.model.entity.Usuarios;
+import app.model.entity.Vehiculos;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,17 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
         Session currentSession = entityManager.unwrap(Session.class);
         Usuarios usuario = currentSession.get(Usuarios.class, id);
         return usuario;
+    }
+
+    @Override
+    @Transactional
+    public List<Usuarios> findAll() {
+        Session currentSession = entityManager.unwrap(Session.class);
+        Query<Usuarios> getQuery = currentSession.createQuery("FROM Usuarios", Usuarios.class);
+        List<Usuarios> list = getQuery.getResultList();
+        if(list.isEmpty())
+            throw new Error("No hay Usuarios cargados");
+        return list;
     }
 
     @Override

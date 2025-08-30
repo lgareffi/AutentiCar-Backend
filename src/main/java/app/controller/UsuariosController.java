@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("")
@@ -34,6 +35,22 @@ public class UsuariosController {
 
         } catch (Throwable e) {
             String msj = "No se encontro al usuario con id: " + usuarioId;
+            return new ResponseEntity<>(msj, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_ADMIN')")
+    @GetMapping("/usuarios")
+    public ResponseEntity<?> getUsuarios() {
+        try {
+            List<Usuarios> usuarios = usuariosService.findAll();
+            List<UsuariosDTO> usuariosDTO = usuarios.stream()
+                    .map(UsuariosDTO::new)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(usuariosDTO, HttpStatus.OK);
+
+        }catch (Throwable e) {
+            String msj = "No se encontraron usuarios";
             return new ResponseEntity<>(msj, HttpStatus.NOT_FOUND);
         }
     }
