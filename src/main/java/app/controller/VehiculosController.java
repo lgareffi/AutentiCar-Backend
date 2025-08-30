@@ -45,6 +45,7 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getVehiculos() {
         try {
