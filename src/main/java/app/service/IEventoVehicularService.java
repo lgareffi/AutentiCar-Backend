@@ -13,7 +13,7 @@ public interface IEventoVehicularService {
 
     public List<DocVehiculo> getDocVehiculo(long id);
 
-    public void saveEventoDesdeDTO(AddEventoDTO dto);
+    public Long saveEventoDesdeDTO(AddEventoDTO dto);
 
     public void eliminarEvento(long eventoId);
 }

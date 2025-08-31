@@ -12,10 +12,13 @@ import app.service.IEventoVehicularService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/eventos")
@@ -52,10 +55,20 @@ public class EventoVehicularController {
     @PostMapping
     public ResponseEntity<?> agregarEvento(@RequestBody AddEventoDTO eventoDTO) {
         try {
-            eventoVehicularService.saveEventoDesdeDTO(eventoDTO);
-            return new ResponseEntity<>("Evento agregado correctamente", HttpStatus.CREATED);
+            Long id = eventoVehicularService.saveEventoDesdeDTO(eventoDTO);
+            Map<String, Object> body = new HashMap<>();
+            body.put("mensaje", "Evento agregado correctamente");
+            body.put("id", id);
+            return new ResponseEntity<>(body, HttpStatus.CREATED);
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error interno: " + e.getMessage()));
         }
     }
 

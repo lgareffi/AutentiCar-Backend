@@ -72,7 +72,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
 
     @Override
     @Transactional
-    public void saveEventoDesdeDTO(AddEventoDTO dto) {
+    public Long saveEventoDesdeDTO(AddEventoDTO dto) {
         // 1) Validaciones básicas
         if (dto.vehiculoId == null) {
             throw new IllegalArgumentException("vehiculoId es obligatorio");
@@ -136,6 +136,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setVehiculo(vehiculo);
 
         this.eventoVehicularDAO.save(evento);
+        return evento.getIdEvento();
     }
 
     @Override
