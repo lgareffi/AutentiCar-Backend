@@ -122,5 +122,6 @@ public class EventoVehicularDTO {
     public void setIdsDocumentos(List<Long> idsDocumentos) {
         this.idsDocumentos = idsDocumentos;
     }
+
 }
 
