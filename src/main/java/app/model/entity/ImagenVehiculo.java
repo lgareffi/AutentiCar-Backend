@@ -88,4 +88,5 @@ public class ImagenVehiculo {
     public void setPublicId(String publicId) {
         this.publicId = publicId;
     }
+
 }
