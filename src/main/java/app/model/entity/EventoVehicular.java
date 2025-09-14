@@ -162,4 +162,5 @@ public class EventoVehicular {
     public void setDocVehiculo(List<DocVehiculo> docVehiculo) {
         this.docVehiculo = docVehiculo;
     }
+    
 }
