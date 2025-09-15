@@ -103,4 +103,5 @@ public class Ventas {
     public void setPublicacion(Publicacion publicacion) {
         this.publicacion = publicacion;
     }
+
 }
