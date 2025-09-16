@@ -150,4 +150,5 @@ public class Publicacion {
     public void setMoneda(Moneda moneda) {
         this.moneda = moneda;
     }
+
 }
