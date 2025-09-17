@@ -66,4 +66,5 @@ public class AddEventoDTO {
     public void setVehiculoId(long vehiculoId) {
         this.vehiculoId = vehiculoId;
     }
+
 }
