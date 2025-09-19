@@ -2,10 +2,16 @@ package app.model.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "EventoVehicular")
+@Table(name = "EventoVehicular",
+    uniqueConstraints = {
+            @UniqueConstraint(name = "uk_ev_vehiculo_hash", columnNames = {"vehiculoId", "hashEvento"})
+    }
+)
+
 public class EventoVehicular {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +40,18 @@ public class EventoVehicular {
         SERVICIO, REPARACION, SINIESTRO, VTV, TRANSFERENCIA, OTRO
     }
 
+    @Column(name = "hashEvento", length = 64, nullable = false)
+    private String hashEvento;
+
+    @Column(name = "bc_recorded_at")
+    private LocalDateTime blockchainRecordedAt;
+
+    @Column(name = "bc_tx_id", length = 128)
+    private String blockchainTxId;
+
+    @Column(name = "bc_error", length = 255)
+    private String blockchainError;
+
     @ManyToOne // muchos eventos pueden ser cargados por 1 usuario
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
@@ -51,10 +69,12 @@ public class EventoVehicular {
         super();
     }
 
-    public EventoVehicular(long idEvento, String titulo, String descripcion, int kilometrajeEvento,
-                           boolean validadoPorTercero, LocalDate fechaEvento,
-                           TipoEvento tipoEvento, Vehiculos vehiculo,
-                           List<DocVehiculo> docVehiculo, Usuarios usuario) {
+    public EventoVehicular(long idEvento, String titulo, String descripcion,
+                           int kilometrajeEvento, boolean validadoPorTercero,
+                           LocalDate fechaEvento, TipoEvento tipoEvento,
+                           String hashEvento, LocalDateTime blockchainRecordedAt,
+                           String blockchainTxId, String blockchainError,
+                           Usuarios usuario, List<DocVehiculo> docVehiculo, Vehiculos vehiculo) {
         this.idEvento = idEvento;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -62,9 +82,13 @@ public class EventoVehicular {
         this.validadoPorTercero = validadoPorTercero;
         this.fechaEvento = fechaEvento;
         this.tipoEvento = tipoEvento;
-        this.vehiculo = vehiculo;
-        this.docVehiculo = docVehiculo;
+        this.hashEvento = hashEvento;
+        this.blockchainRecordedAt = blockchainRecordedAt;
+        this.blockchainTxId = blockchainTxId;
+        this.blockchainError = blockchainError;
         this.usuario = usuario;
+        this.docVehiculo = docVehiculo;
+        this.vehiculo = vehiculo;
     }
 
     @Override
@@ -77,6 +101,10 @@ public class EventoVehicular {
                 ", validadoPorTercero=" + validadoPorTercero +
                 ", fechaEvento=" + fechaEvento +
                 ", tipoEvento=" + tipoEvento +
+                ", hashEvento='" + hashEvento + '\'' +
+                ", blockchainRecordedAt=" + blockchainRecordedAt +
+                ", blockchainTxId='" + blockchainTxId + '\'' +
+                ", blockchainError='" + blockchainError + '\'' +
                 ", usuario=" + usuario +
                 ", vehiculo=" + vehiculo +
                 ", docVehiculo=" + docVehiculo +
@@ -162,5 +190,36 @@ public class EventoVehicular {
     public void setDocVehiculo(List<DocVehiculo> docVehiculo) {
         this.docVehiculo = docVehiculo;
     }
-    
+
+    public String getHashEvento() {
+        return hashEvento;
+    }
+
+    public void setHashEvento(String hashEvento) {
+        this.hashEvento = hashEvento;
+    }
+
+    public LocalDateTime getBlockchainRecordedAt() {
+        return blockchainRecordedAt;
+    }
+
+    public void setBlockchainRecordedAt(LocalDateTime blockchainRecordedAt) {
+        this.blockchainRecordedAt = blockchainRecordedAt;
+    }
+
+    public String getBlockchainTxId() {
+        return blockchainTxId;
+    }
+
+    public void setBlockchainTxId(String blockchainTxId) {
+        this.blockchainTxId = blockchainTxId;
+    }
+
+    public String getBlockchainError() {
+        return blockchainError;
+    }
+
+    public void setBlockchainError(String blockchainError) {
+        this.blockchainError = blockchainError;
+    }
 }

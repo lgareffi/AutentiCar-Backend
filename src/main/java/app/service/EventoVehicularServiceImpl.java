@@ -1,6 +1,7 @@
 package app.service;
 
 import app.Errors.NotFoundError;
+import app.blockchain.EventHash;
 import app.controller.dtos.AddEventoDTO;
 import app.model.dao.IDocVehiculoDAO;
 import app.model.dao.IEventoVehicularDAO;
@@ -14,10 +15,12 @@ import app.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import app.blockchain.BlockchainService;
 
 import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -33,6 +36,9 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
 
     @Autowired
     private IDocVehiculoDAO docVehiculoDAO;
+
+    @Autowired
+    private BlockchainService blockchainService;
 
 
     @Override
@@ -135,6 +141,38 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setUsuario(registrador);
         evento.setVehiculo(vehiculo);
 
+        //  calcular hash y setear campos on-chain
+        String vin = vehiculo.getVin(); // asegurate que Vehiculos tenga getVin()
+        if (vin == null || vin.isBlank()) {
+            throw new IllegalArgumentException("El vehículo no tiene VIN cargado");
+        }
+        String hash = EventHash.sha256Evento(evento, vin);
+        evento.setHashEvento(hash);
+        evento.setBlockchainRecordedAt(null);
+        evento.setBlockchainTxId(null);
+        evento.setBlockchainError(null);
+
+        this.eventoVehicularDAO.save(evento);
+
+        // Intentar registrar en blockchain (no rompas la transacción si falla)
+        try {
+            boolean yaExiste = blockchainService.exists(vin, hash); // opcional, útil
+            if (!yaExiste) {
+                var resp = blockchainService.record(vin, hash);
+                if (resp != null && resp.isOk()) {
+                    evento.setBlockchainRecordedAt(LocalDateTime.now());
+                    // si tu /record devolviera algo como txId dentro de payload, acá lo seteás
+                    // evento.setBlockchainTxId(extraerTxId(resp.getPayload()));
+                } else {
+                    evento.setBlockchainError("record() no devolvió ok");
+                }
+            } else {
+                evento.setBlockchainRecordedAt(LocalDateTime.now());
+            }
+        } catch (Exception ex) {
+            evento.setBlockchainError(ex.getMessage());
+        }
+
         this.eventoVehicularDAO.save(evento);
         return evento.getIdEvento();
     }
@@ -169,12 +207,19 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         }
 
         // Desasociar documentos (no borrarlos)
+//        List<DocVehiculo> docs = evento.getDocVehiculo();
+//        if (docs != null) {
+//            for (DocVehiculo d : docs) {
+//                d.setEventoVehicular(null);
+//                docVehiculoDAO.save(d); // o merge/persist según tu DAO
+//            }
+//        }
         List<DocVehiculo> docs = evento.getDocVehiculo();
-        if (docs != null) {
+        if (docs != null && !docs.isEmpty()) {
             for (DocVehiculo d : docs) {
-                d.setEventoVehicular(null);
-                docVehiculoDAO.save(d); // o merge/persist según tu DAO
+                docVehiculoDAO.delete(d);   // <-- borra cada documento
             }
+            //docs.clear(); // opcional: limpia la colección en memoria
         }
 
         // Ahora sí, borrar el evento

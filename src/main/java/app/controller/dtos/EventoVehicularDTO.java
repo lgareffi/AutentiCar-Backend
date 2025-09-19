@@ -3,6 +3,7 @@ package app.controller.dtos;
 import app.model.entity.EventoVehicular;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,11 @@ public class EventoVehicularDTO {
     private Long idUsuario;    // ID del usuario que creó el evento
     private Long idVehiculo;   // ID del vehículo relacionado
 
+    private String hashEvento;
+    private java.time.LocalDateTime blockchainRecordedAt;
+    private String blockchainTxId;
+    private String blockchainError;
+
     private List<Long> idsDocumentos; // IDs de los documentos relacionados
 
     public EventoVehicularDTO(EventoVehicular evento) {
@@ -31,6 +37,10 @@ public class EventoVehicularDTO {
         this.tipoEvento = evento.getTipoEvento().name();
         this.idUsuario = evento.getUsuario().getIdUsuario();
         this.idVehiculo = evento.getVehiculo().getIdVehiculo();
+        this.hashEvento = evento.getHashEvento();
+        this.blockchainRecordedAt = evento.getBlockchainRecordedAt();
+        this.blockchainTxId = evento.getBlockchainTxId();
+        this.blockchainError = evento.getBlockchainError();
 
         this.idsDocumentos = evento.getDocVehiculo() != null
                 ? evento.getDocVehiculo().stream()
@@ -123,5 +133,36 @@ public class EventoVehicularDTO {
         this.idsDocumentos = idsDocumentos;
     }
 
+    public String getHashEvento() {
+        return hashEvento;
+    }
+
+    public void setHashEvento(String hashEvento) {
+        this.hashEvento = hashEvento;
+    }
+
+    public LocalDateTime getBlockchainRecordedAt() {
+        return blockchainRecordedAt;
+    }
+
+    public void setBlockchainRecordedAt(LocalDateTime blockchainRecordedAt) {
+        this.blockchainRecordedAt = blockchainRecordedAt;
+    }
+
+    public String getBlockchainTxId() {
+        return blockchainTxId;
+    }
+
+    public void setBlockchainTxId(String blockchainTxId) {
+        this.blockchainTxId = blockchainTxId;
+    }
+
+    public String getBlockchainError() {
+        return blockchainError;
+    }
+
+    public void setBlockchainError(String blockchainError) {
+        this.blockchainError = blockchainError;
+    }
 }
 
