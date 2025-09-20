@@ -164,5 +164,6 @@ public class EventoVehicularDTO {
     public void setBlockchainError(String blockchainError) {
         this.blockchainError = blockchainError;
     }
+
 }
 
