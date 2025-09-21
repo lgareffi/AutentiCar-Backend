@@ -29,4 +29,5 @@ public class UsuarioPublicoDTO {
     public String getApellido() {
         return apellido;
     }
+
 }
