@@ -40,7 +40,7 @@ public class DocVehiculo {
     private TipoDoc tipoDoc;
 
     public enum TipoDoc {
-        TITULO, CEDULA, VTV, SEGURO, INFORME, OTRO
+        TITULO, CEDULA, VTV, SEGURO, INFORME, SERVICE, OTRO
     }
 
     @ManyToOne // muchos documentos pueden pertenecer a 1 vehiculo
