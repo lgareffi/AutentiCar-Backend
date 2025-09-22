@@ -99,4 +99,5 @@ public class PublicacionDTO {
     public void setMoneda(String moneda) {
         this.moneda = moneda;
     }
+
 }
