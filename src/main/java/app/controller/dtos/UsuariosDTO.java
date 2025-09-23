@@ -150,4 +150,5 @@ public class UsuariosDTO {
     public void setTelefonoCelular(String telefonoCelular) {
         this.telefonoCelular = telefonoCelular;
     }
+
 }
