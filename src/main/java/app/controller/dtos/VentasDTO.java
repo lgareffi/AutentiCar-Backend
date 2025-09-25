@@ -78,4 +78,5 @@ public class VentasDTO {
     public void setIdPublicacion(Long idPublicacion) {
         this.idPublicacion = idPublicacion;
     }
+
 }
