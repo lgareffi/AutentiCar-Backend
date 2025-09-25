@@ -63,4 +63,5 @@ public class ImagenVehiculoDTO {
     public void setPublicId(String publicId) {
         this.publicId = publicId;
     }
+
 }
