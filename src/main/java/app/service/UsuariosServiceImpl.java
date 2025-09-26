@@ -216,4 +216,5 @@ public class UsuariosServiceImpl implements IUsuariosService {
             throw new Error(e.getMessage());
         }
     }
+
 }
