@@ -21,4 +21,5 @@ public interface IImagenVehiculoService {
     public void eliminarImagen(long imagenId);
 
 //    public ImagenVehiculo findByUrl(String urlImagen);
+    
 }
