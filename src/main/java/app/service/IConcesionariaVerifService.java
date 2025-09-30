@@ -15,4 +15,5 @@ public interface IConcesionariaVerifService {
     public void cambiarEstadoVerificacion (long verificacionId,
                                            ConcesionariaVerif.EstadoVerificacion nuevoEstado,
                                            String notas);
+
 }
