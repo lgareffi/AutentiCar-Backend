@@ -12,7 +12,6 @@ public class EventoVehicularDTO {
     private String titulo;
     private String descripcion;
     private int kilometrajeEvento;
-    private boolean validadoPorTercero;
     private LocalDate fechaEvento;
     private String tipoEvento;
 
@@ -32,7 +31,6 @@ public class EventoVehicularDTO {
         this.titulo = evento.getTitulo();
         this.descripcion = evento.getDescripcion();
         this.kilometrajeEvento = evento.getKilometrajeEvento();
-        this.validadoPorTercero = evento.isValidadoPorTercero();
         this.fechaEvento = evento.getFechaEvento();
         this.tipoEvento = evento.getTipoEvento().name();
         this.idUsuario = evento.getUsuario().getIdUsuario();
@@ -83,14 +81,6 @@ public class EventoVehicularDTO {
 
     public void setKilometrajeEvento(int kilometrajeEvento) {
         this.kilometrajeEvento = kilometrajeEvento;
-    }
-
-    public boolean isValidadoPorTercero() {
-        return validadoPorTercero;
-    }
-
-    public void setValidadoPorTercero(boolean validadoPorTercero) {
-        this.validadoPorTercero = validadoPorTercero;
     }
 
     public LocalDate getFechaEvento() {

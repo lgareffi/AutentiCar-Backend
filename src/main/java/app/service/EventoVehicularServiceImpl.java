@@ -135,7 +135,6 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setTitulo(dto.titulo);
         evento.setDescripcion(dto.descripcion);
         evento.setKilometrajeEvento(dto.kilometrajeEvento);
-        evento.setValidadoPorTercero(dto.validadoPorTercero);
         evento.setFechaEvento(LocalDate.now());
         evento.setTipoEvento(EventoVehicular.TipoEvento.valueOf(dto.tipoEvento.toUpperCase()));
         evento.setUsuario(registrador);

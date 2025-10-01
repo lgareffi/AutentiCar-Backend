@@ -27,8 +27,8 @@ public class EventoVehicular {
     @Column(nullable = false)
     private int kilometrajeEvento;
 
-    @Column(nullable = true, length = 40)
-    private boolean validadoPorTercero = false;
+//    @Column(nullable = true, length = 40)
+//    private boolean validadoPorTercero = false;
 
     @Column(nullable = false, length = 40)
     private LocalDate fechaEvento;
@@ -69,17 +69,16 @@ public class EventoVehicular {
         super();
     }
 
-    public EventoVehicular(long idEvento, String titulo, String descripcion,
-                           int kilometrajeEvento, boolean validadoPorTercero,
-                           LocalDate fechaEvento, TipoEvento tipoEvento,
+    public EventoVehicular(long idEvento, String titulo, int kilometrajeEvento,
+                           String descripcion, LocalDate fechaEvento, TipoEvento tipoEvento,
                            String hashEvento, LocalDateTime blockchainRecordedAt,
                            String blockchainTxId, String blockchainError,
-                           Usuarios usuario, List<DocVehiculo> docVehiculo, Vehiculos vehiculo) {
+                           Usuarios usuario, Vehiculos vehiculo,
+                           List<DocVehiculo> docVehiculo) {
         this.idEvento = idEvento;
         this.titulo = titulo;
-        this.descripcion = descripcion;
         this.kilometrajeEvento = kilometrajeEvento;
-        this.validadoPorTercero = validadoPorTercero;
+        this.descripcion = descripcion;
         this.fechaEvento = fechaEvento;
         this.tipoEvento = tipoEvento;
         this.hashEvento = hashEvento;
@@ -87,8 +86,8 @@ public class EventoVehicular {
         this.blockchainTxId = blockchainTxId;
         this.blockchainError = blockchainError;
         this.usuario = usuario;
-        this.docVehiculo = docVehiculo;
         this.vehiculo = vehiculo;
+        this.docVehiculo = docVehiculo;
     }
 
     @Override
@@ -98,7 +97,6 @@ public class EventoVehicular {
                 ", titulo='" + titulo + '\'' +
                 ", descripcion='" + descripcion + '\'' +
                 ", kilometrajeEvento=" + kilometrajeEvento +
-                ", validadoPorTercero=" + validadoPorTercero +
                 ", fechaEvento=" + fechaEvento +
                 ", tipoEvento=" + tipoEvento +
                 ", hashEvento='" + hashEvento + '\'' +
@@ -141,14 +139,6 @@ public class EventoVehicular {
 
     public void setKilometrajeEvento(int kilometrajeEvento) {
         this.kilometrajeEvento = kilometrajeEvento;
-    }
-
-    public boolean isValidadoPorTercero() {
-        return validadoPorTercero;
-    }
-
-    public void setValidadoPorTercero(boolean validadoPorTercero) {
-        this.validadoPorTercero = validadoPorTercero;
     }
 
     public LocalDate getFechaEvento() {
