@@ -18,8 +18,6 @@ public interface IDocVehiculoService {
                                   MultipartFile file,
                                   String nombre,
                                   String tipoDoc,
-                                  Integer nivelRiesgo,
-                                  Boolean validadoIA,
                                   Long eventoId);
 
     public List<DocVehiculoDTO> listarPorVehiculo(long vehiculoId);

@@ -8,6 +8,8 @@ import app.model.dao.IVehiculosDAO;
 import app.model.entity.DocVehiculo;
 import app.model.entity.EventoVehicular;
 import app.model.entity.Vehiculos;
+import app.service.AiClient;
+import app.service.AiResponse;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
@@ -30,6 +32,9 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
 
     @Autowired
     private IEventoVehicularDAO eventoVehicularDAO;
+
+    @Autowired
+    private AiClient aiClient;
 
     private final Cloudinary cloudinary;
     @Value("${cloudinary.folder-root}")
@@ -72,8 +77,6 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
                                          MultipartFile file,
                                          String nombre,
                                          String tipoDoc,
-                                         Integer nivelRiesgo,
-                                         Boolean validadoIA,
                                          Long eventoId) {
         Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
         if (vehiculo == null) {
@@ -126,6 +129,21 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             throw new RuntimeException("El evento no pertenece al vehículo indicado");
         }
 
+        int riesgoFinal = 0;          // default si la IA no responde
+        boolean validadoIAFinal = false;
+
+        // Llamada a la IA
+        try {
+            AiResponse ai = aiClient.analyze(file);
+            if (ai != null && ai.getRiskScore() != null) {
+                double score = Math.max(0, Math.min(100, ai.getRiskScore()));
+                riesgoFinal = (int) Math.round(score);
+                validadoIAFinal = true;  // la IA respondió OK
+            }
+        } catch (Exception ex) {
+            System.err.println("AI offline o error: " + ex.getMessage());
+        }
+
         try {
             String folder = folderRoot + "/docs/" + vehiculoId;
             Map<?, ?> upload = cloudinary.uploader().upload(
@@ -148,8 +166,8 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             d.setEventoVehicular(evento);
             d.setNombre(nombre != null && !nombre.isBlank() ? nombre : file.getOriginalFilename());
             d.setTipoDoc(tipoDoc != null ? DocVehiculo.TipoDoc.valueOf(tipoDoc.toUpperCase()) : DocVehiculo.TipoDoc.OTRO);
-            d.setNivelRiesgo(nivelRiesgo != null ? nivelRiesgo : 0);
-            d.setValidadoIA(Boolean.TRUE.equals(validadoIA));
+            d.setNivelRiesgo(riesgoFinal);
+            d.setValidadoIA(validadoIAFinal);
             d.setFechaSubida(LocalDate.now());
 
             d.setUrlDoc(secureUrl);

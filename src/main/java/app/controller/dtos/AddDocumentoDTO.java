@@ -4,9 +4,6 @@ import java.time.LocalDate;
 
 public class AddDocumentoDTO {
     public String nombre;
-    public String urlDoc;
-    public int nivelRiesgo;
-    public boolean validadoIA;
     public String tipoDoc;
     public Long vehiculoId;
     public Long eventoId;
@@ -17,30 +14,6 @@ public class AddDocumentoDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getUrlDoc() {
-        return urlDoc;
-    }
-
-    public void setUrlDoc(String urlDoc) {
-        this.urlDoc = urlDoc;
-    }
-
-    public int getNivelRiesgo() {
-        return nivelRiesgo;
-    }
-
-    public void setNivelRiesgo(int nivelRiesgo) {
-        this.nivelRiesgo = nivelRiesgo;
-    }
-
-    public boolean isValidadoIA() {
-        return validadoIA;
-    }
-
-    public void setValidadoIA(boolean validadoIA) {
-        this.validadoIA = validadoIA;
     }
 
     public String getTipoDoc() {

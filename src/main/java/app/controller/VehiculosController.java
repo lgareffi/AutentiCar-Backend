@@ -170,11 +170,9 @@ public class VehiculosController {
                                             @RequestParam("file") MultipartFile file,
                                             @RequestParam("nombre") String nombre,
                                             @RequestParam("tipoDoc") String tipoDoc,
-                                            @RequestParam(value = "nivelRiesgo", required = false) Integer nivelRiesgo,
-                                            @RequestParam(value = "validadoIA", required = false) Boolean validadoIA,
                                             @RequestParam(value = "eventoId", required = true) Long eventoId) {
         try {
-            DocVehiculoDTO dto = docVehiculoService.subirDocumento(vehiculoId, file, nombre, tipoDoc, nivelRiesgo, validadoIA, eventoId);
+            DocVehiculoDTO dto = docVehiculoService.subirDocumento(vehiculoId, file, nombre, tipoDoc, eventoId);
             return ResponseEntity.status(HttpStatus.CREATED).body(dto);
         } catch (app.Errors.NotFoundError e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
