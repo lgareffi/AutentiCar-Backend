@@ -24,4 +24,5 @@ public interface IVehiculosService {
     public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto);
 
     public void eliminarVehiculo(long vehiculoId);
+
 }
