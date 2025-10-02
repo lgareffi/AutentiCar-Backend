@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(
                         org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ⭐ IMPORTANTE: permitir el preflight OPTIONS para todas las rutas
+                        // IMPORTANTE: permitir el preflight OPTIONS para todas las rutas
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Públicos
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
@@ -65,7 +65,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/eventos").permitAll()
 
                         // Documentos (detalle)
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/documentos/*").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/documentos/**").permitAll()
 
                         // Eventos (detalle)
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/eventos/*").permitAll()

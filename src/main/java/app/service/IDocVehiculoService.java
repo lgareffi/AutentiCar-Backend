@@ -24,4 +24,6 @@ public interface IDocVehiculoService {
 
     public void eliminarDocumento(long documentoId);
 
+    public AiMlFullResponse obtenerAnalisisMlPorDocId(long docId);
+
 }

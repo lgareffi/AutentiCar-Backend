@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Map;
 import java.util.List;
 
@@ -218,6 +219,52 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
         } catch (Exception e) {
             throw new RuntimeException("No se pudo eliminar el documento: " + e.getMessage(), e);
         }
+    }
+
+    public AiMlFullResponse obtenerAnalisisMlPorDocId(long docId) {
+        DocVehiculo doc = docVehiculoDAO.findById(docId);
+        if (doc == null) throw new NotFoundError("Documento no encontrado");
+
+        String url = doc.getUrlDoc();
+        if (url == null || url.isBlank()) throw new RuntimeException("Documento sin URL");
+
+        // 1) Descargamos bytes desde Cloudinary (está bien como lo hacías)
+        AiClient.DownloadedFile dl = aiClient.download(url);
+
+        // 2) Determinar mime y filename con extensión (desde DB)
+        String dbMime = doc.getMimeType(); // ej "application/pdf" o "image/jpeg"
+        String baseName = (doc.getNombre() != null && !doc.getNombre().isBlank())
+                ? doc.getNombre()
+                : "documento";
+
+        String ext;
+        if ("application/pdf".equalsIgnoreCase(dbMime)) {
+            ext = ".pdf";
+        } else if (dbMime != null && dbMime.startsWith("image/")) {
+            String e = dbMime.substring("image/".length());
+            if ("jpeg".equalsIgnoreCase(e)) e = "jpg";
+            ext = "." + e;
+        } else {
+            // fallback por si no hay mime en DB
+            ext = inferExtFromUrl(url); // opcional (ver función abajo)
+            if (ext == null) ext = "";  // último recurso
+        }
+
+        String filename = baseName.endsWith(ext) ? baseName : (baseName + ext);
+
+        // 3) Enviar a /risk-ml con filename y contentType correctos
+        String contentTypeForMl = (dbMime != null) ? dbMime : dl.contentType; // preferí DB
+        return aiClient.analyzeBytes(dl.bytes, filename, contentTypeForMl);
+    }
+
+    // helper opcional (puede vivir en el service)
+    private String inferExtFromUrl(String url) {
+        String lower = url.toLowerCase(Locale.ROOT);
+        if (lower.contains(".pdf")) return ".pdf";
+        if (lower.contains(".jpg") || lower.contains(".jpeg")) return ".jpg";
+        if (lower.contains(".png")) return ".png";
+        if (lower.contains(".webp")) return ".webp";
+        return null;
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -16,6 +17,7 @@ import java.io.UncheckedIOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Map;
 
 @Service
 public class AiClient {
@@ -74,6 +76,76 @@ public class AiClient {
         body.add("file", fileRes);
 
         return new HttpEntity<>(body, headers);
+    }
+
+    public AiMlFullResponse analyzeBytes(byte[] bytes, String filename, String contentType) {
+        try {
+            String url = baseUrl + "/risk-ml?language=" +
+                    URLEncoder.encode(language, StandardCharsets.UTF_8);
+
+            // fallback por si vienen nulos
+            String safeContentType = (contentType != null && !contentType.isBlank())
+                    ? contentType
+                    : "application/octet-stream";
+
+            String safeFilename = (filename != null && !filename.isBlank())
+                    ? filename
+                    : "upload" + inferExt(safeContentType);
+
+            // Recurso con filename estable
+            ByteArrayResource fileRes = new ByteArrayResource(bytes) {
+                @Override public String getFilename() { return safeFilename; }
+            };
+
+            // Encabezados de la parte "file"
+            HttpHeaders partHeaders = new HttpHeaders();
+            partHeaders.setContentType(MediaType.parseMediaType(safeContentType));
+            partHeaders.setContentDisposition(ContentDisposition
+                    .builder("form-data")
+                    .name("file")
+                    .filename(safeFilename)
+                    .build());
+
+            HttpEntity<ByteArrayResource> filePart = new HttpEntity<>(fileRes, partHeaders);
+
+            // Multipart completo
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("file", filePart);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+            HttpEntity<MultiValueMap<String, Object>> req = new HttpEntity<>(body, headers);
+
+            ResponseEntity<AiMlFullResponse> resp =
+                    rest.postForEntity(url, req, AiMlFullResponse.class);
+
+            return resp.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Fallo al llamar IA (/risk-ml con bytes): " + e.getMessage(), e);
+        }
+    }
+
+    // Helper para bajar el archivo remoto (Cloudinary)
+    public DownloadedFile download(String fileUrl) {
+        try {
+            ResponseEntity<byte[]> r = rest.getForEntity(fileUrl, byte[].class);
+            String contentType = null;
+            if (r.getHeaders() != null && r.getHeaders().getContentType() != null) {
+                contentType = r.getHeaders().getContentType().toString();
+            }
+            byte[] bytes = r.getBody();
+            if (bytes == null || bytes.length == 0) throw new RuntimeException("Archivo vacío al descargar");
+            return new DownloadedFile(bytes, contentType);
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo descargar el archivo: " + e.getMessage(), e);
+        }
+    }
+
+    public static class DownloadedFile {
+        public final byte[] bytes;
+        public final String contentType;
+        public DownloadedFile(byte[] b, String ct) { this.bytes = b; this.contentType = ct; }
     }
 
     private String inferExt(String mime) {
