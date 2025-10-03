@@ -20,4 +20,5 @@ public interface IPublicacionService {
     public void eliminarPublicacion(long publicacionId);
 
     public void alternarEstado(long publicacionId);
+    
 }
