@@ -27,9 +27,6 @@ public class EventoVehicular {
     @Column(nullable = false)
     private int kilometrajeEvento;
 
-//    @Column(nullable = true, length = 40)
-//    private boolean validadoPorTercero = false;
-
     @Column(nullable = false, length = 40)
     private LocalDate fechaEvento;
 
@@ -37,7 +34,7 @@ public class EventoVehicular {
     private TipoEvento tipoEvento;
 
     public enum TipoEvento {
-        SERVICIO, REPARACION, SINIESTRO, VTV, TRANSFERENCIA, OTRO
+        SERVICIO, REPARACION, SINIESTRO, VTV, TRANSFERENCIA, DOCUMENTACION, OTRO
     }
 
     @Column(name = "hashEvento", length = 64, nullable = false)
