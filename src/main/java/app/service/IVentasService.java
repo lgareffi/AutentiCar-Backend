@@ -11,4 +11,5 @@ public interface IVentasService {
     public void save(Ventas venta);
 
     public void saveVentaDesdeDTO(AddVentasDTO dto);
+    
 }
