@@ -19,6 +19,10 @@ public class UsuariosDTO {
     private List<Long> publicaciones;
     private boolean esConcesionaria;
 
+    private String nivelUsuario;   // REGISTRADO / PENDIENTE / VALIDADO / RECHAZADO
+    private boolean tieneDniFrente;
+    private boolean tieneDniDorso;
+
     public UsuariosDTO(Usuarios usuario) {
         super();
         this.idUsuario = usuario.getIdUsuario();
@@ -28,6 +32,9 @@ public class UsuariosDTO {
         this.telefonoCelular = usuario.getTelefonoCelular();
         this.rol = usuario.getRol().name();
         this.esConcesionaria = usuario.isEsConcesionaria();
+        this.nivelUsuario = usuario.getNivelUsuario().name();
+        this.tieneDniFrente = usuario.getDniFrenteUrl() != null;
+        this.tieneDniDorso = usuario.getDniDorsoUrl() != null;
         this.comprasRealizadas = usuario.getComprasRealizadas()
                 .stream()
                 .map(Ventas::getIdVenta)
@@ -151,4 +158,27 @@ public class UsuariosDTO {
         this.telefonoCelular = telefonoCelular;
     }
 
+    public boolean isTieneDniFrente() {
+        return tieneDniFrente;
+    }
+
+    public void setTieneDniFrente(boolean tieneDniFrente) {
+        this.tieneDniFrente = tieneDniFrente;
+    }
+
+    public String getNivelUsuario() {
+        return nivelUsuario;
+    }
+
+    public void setNivelUsuario(String nivelUsuario) {
+        this.nivelUsuario = nivelUsuario;
+    }
+
+    public boolean isTieneDniDorso() {
+        return tieneDniDorso;
+    }
+
+    public void setTieneDniDorso(boolean tieneDniDorso) {
+        this.tieneDniDorso = tieneDniDorso;
+    }
 }

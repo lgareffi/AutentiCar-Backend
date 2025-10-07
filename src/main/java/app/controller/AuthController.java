@@ -177,6 +177,9 @@ public class AuthController {
             u.setRol(req.getRol());
             u.setEsConcesionaria(req.getRol() == Usuarios.Rol.CONCESIONARIO);
             u.setTelefonoCelular(req.getTelefonoCelular());
+            u.setNivelUsuario(Usuarios.NivelUsuario.REGISTRADO);
+            u.setDniFrenteUrl(null);
+            u.setDniDorsoUrl(null);
             usuariosService.save(u);
 
             String token = jwt.generarToken(u);

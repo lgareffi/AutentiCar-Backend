@@ -39,11 +39,25 @@ public class Usuarios {
     @Column(nullable = false)
     private boolean esConcesionaria;
 
+    @Column(nullable = true, length = 500)
+    private String dniFrenteUrl;
+
+    @Column(nullable = true, length = 500)
+    private String dniDorsoUrl;
+
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
     public enum Rol {
         PARTICULAR, TALLER, CONCESIONARIO, ADMIN
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private NivelUsuario nivelUsuario = NivelUsuario.REGISTRADO;
+
+    public enum NivelUsuario {
+        REGISTRADO, RECHAZADO, VALIDADO, PENDIENTE
     }
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede tener muchos autos
@@ -66,21 +80,25 @@ public class Usuarios {
         super();
     }
 
-    public Usuarios(long idUsuario, String nombre, int dni, String apellido, String password,
-                    String mail, LocalDate fechaRegistro, String telefonoCelular,
-                    boolean esConcesionaria, Rol rol, List<Vehiculos> vehiculos,
+    public Usuarios(long idUsuario, String nombre, String apellido, int dni, String mail,
+                    String password, String telefonoCelular, LocalDate fechaRegistro,
+                    boolean esConcesionaria, String dniFrenteUrl, String dniDorsoUrl,
+                    Rol rol, NivelUsuario nivelUsuario, List<Vehiculos> vehiculos,
                     List<EventoVehicular> eventoVehicular, List<Ventas> comprasRealizadas,
                     List<Ventas> ventasRealizadas, List<Publicacion> publicaciones) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
-        this.dni = dni;
         this.apellido = apellido;
-        this.password = password;
+        this.dni = dni;
         this.mail = mail;
-        this.fechaRegistro = fechaRegistro;
+        this.password = password;
         this.telefonoCelular = telefonoCelular;
+        this.fechaRegistro = fechaRegistro;
         this.esConcesionaria = esConcesionaria;
+        this.dniFrenteUrl = dniFrenteUrl;
+        this.dniDorsoUrl = dniDorsoUrl;
         this.rol = rol;
+        this.nivelUsuario = nivelUsuario;
         this.vehiculos = vehiculos;
         this.eventoVehicular = eventoVehicular;
         this.comprasRealizadas = comprasRealizadas;
@@ -100,7 +118,10 @@ public class Usuarios {
                 ", telefonoCelular='" + telefonoCelular + '\'' +
                 ", fechaRegistro=" + fechaRegistro +
                 ", esConcesionaria=" + esConcesionaria +
+                ", dniFrenteUrl='" + dniFrenteUrl + '\'' +
+                ", dniDorsoUrl='" + dniDorsoUrl + '\'' +
                 ", rol=" + rol +
+                ", nivelUsuario=" + nivelUsuario +
                 ", vehiculos=" + vehiculos +
                 ", eventoVehicular=" + eventoVehicular +
                 ", comprasRealizadas=" + comprasRealizadas +
@@ -227,5 +248,29 @@ public class Usuarios {
 
     public void setTelefonoCelular(String telefonoCelular) {
         this.telefonoCelular = telefonoCelular;
+    }
+
+    public String getDniFrenteUrl() {
+        return dniFrenteUrl;
+    }
+
+    public void setDniFrenteUrl(String dniFrenteUrl) {
+        this.dniFrenteUrl = dniFrenteUrl;
+    }
+
+    public String getDniDorsoUrl() {
+        return dniDorsoUrl;
+    }
+
+    public void setDniDorsoUrl(String dniDorsoUrl) {
+        this.dniDorsoUrl = dniDorsoUrl;
+    }
+
+    public NivelUsuario getNivelUsuario() {
+        return nivelUsuario;
+    }
+
+    public void setNivelUsuario(NivelUsuario nivelUsuario) {
+        this.nivelUsuario = nivelUsuario;
     }
 }

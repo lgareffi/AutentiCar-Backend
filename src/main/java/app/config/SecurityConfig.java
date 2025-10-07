@@ -73,6 +73,25 @@ public class SecurityConfig {
                         // Verificación concesionaria (form)
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/concesionariaVerif").permitAll()
 
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/usuarios/validacion/frente",
+                                "/usuarios/validacion/dorso",
+                                "/usuarios/validacion/enviar")
+                        .hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/usuarios/validacion/frente-url",
+                                "/usuarios/validacion/dorso-url")
+                        .hasAnyAuthority("ROL_USER","ROL_ADMIN")
+
+                        // Admin: ver urls de cualquier usuario + validar/rechazar
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/usuarios/validacion/*/dni")
+                        .hasAuthority("ROL_ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/usuarios/validacion/*/validar",
+                                "/usuarios/validacion/*/rechazar")
+                        .hasAuthority("ROL_ADMIN")
+
                         // Privados (requieren token)
                         .anyRequest().authenticated()
                 )
