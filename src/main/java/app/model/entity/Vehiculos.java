@@ -53,6 +53,13 @@ public class Vehiculos {
         ACTIVO, VENDIDO, INACTIVO
     }
 
+    @Enumerated(EnumType.STRING)
+    private Vehiculos.AllowedToSee allowedToSee = Vehiculos.AllowedToSee.REGISTRADO;
+
+    public enum AllowedToSee {
+        REGISTRADO, VALIDADO
+    }
+
     @ManyToOne // muchos vehiculos pueden pertenecer a un usuario
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
@@ -71,15 +78,15 @@ public class Vehiculos {
         super();
     }
 
-    public Vehiculos(long idVehiculo, String marca, String vin, String modelo, int anio,
+    public Vehiculos(long idVehiculo, String vin, String marca, String modelo, int anio,
                      int kilometraje, int puertas, double motor, String color,
                      String tipoCombustible, String tipoTransmision, LocalDate fechaAlta,
-                     Estado estado, Usuarios usuario,
+                     Estado estado, AllowedToSee allowedToSee, Usuarios usuario,
                      List<DocVehiculo> docVehiculo, List<EventoVehicular> eventoVehicular,
                      List<ImagenVehiculo> imagenVehiculos) {
         this.idVehiculo = idVehiculo;
-        this.marca = marca;
         this.vin = vin;
+        this.marca = marca;
         this.modelo = modelo;
         this.anio = anio;
         this.kilometraje = kilometraje;
@@ -90,6 +97,7 @@ public class Vehiculos {
         this.tipoTransmision = tipoTransmision;
         this.fechaAlta = fechaAlta;
         this.estado = estado;
+        this.allowedToSee = allowedToSee;
         this.usuario = usuario;
         this.docVehiculo = docVehiculo;
         this.eventoVehicular = eventoVehicular;
@@ -112,6 +120,7 @@ public class Vehiculos {
                 ", tipoTransmision='" + tipoTransmision + '\'' +
                 ", fechaAlta=" + fechaAlta +
                 ", estado=" + estado +
+                ", allowedToSee=" + allowedToSee +
                 ", usuario=" + usuario +
                 ", docVehiculo=" + docVehiculo +
                 ", eventoVehicular=" + eventoVehicular +
@@ -255,4 +264,11 @@ public class Vehiculos {
         this.imagenVehiculos = imagenVehiculos;
     }
 
+    public AllowedToSee getAllowedToSee() {
+        return allowedToSee;
+    }
+
+    public void setAllowedToSee(AllowedToSee allowedToSee) {
+        this.allowedToSee = allowedToSee;
+    }
 }

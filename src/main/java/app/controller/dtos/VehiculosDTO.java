@@ -22,6 +22,7 @@ public class VehiculosDTO {
     private String estado;
     private Long idUsuario;
     private String portadaUrl;
+    private String allowedToSee;
 
     private List<Long> idsDocumentos;
     private List<Long> idsEventos;
@@ -44,6 +45,7 @@ public class VehiculosDTO {
         this.fechaAlta = v.getFechaAlta();
         this.estado = v.getEstado().name();
         this.idUsuario = v.getUsuario().getIdUsuario();
+        this.allowedToSee = v.getAllowedToSee().name();
 
 
         this.idsDocumentos = v.getDocVehiculo() != null
@@ -215,5 +217,12 @@ public class VehiculosDTO {
         this.portadaUrl = portadaUrl;
     }
 
+    public String getAllowedToSee() {
+        return allowedToSee;
+    }
+
+    public void setAllowedToSee(String allowedToSee) {
+        this.allowedToSee = allowedToSee;
+    }
 }
 

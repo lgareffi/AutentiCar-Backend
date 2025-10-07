@@ -16,6 +16,7 @@ public class AddVehiculoDTO {
     public String tipoCombustible;
     public String tipoTransmision;
     public Long usuarioId;
+    public Vehiculos.AllowedToSee allowedToSee;
 
     public String getVin() {
         return vin;
@@ -105,4 +106,15 @@ public class AddVehiculoDTO {
         this.usuarioId = usuarioId;
     }
 
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public Vehiculos.AllowedToSee getAllowedToSee() {
+        return allowedToSee;
+    }
+
+    public void setAllowedToSee(Vehiculos.AllowedToSee allowedToSee) {
+        this.allowedToSee = allowedToSee;
+    }
 }
