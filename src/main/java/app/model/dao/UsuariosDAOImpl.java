@@ -56,14 +56,6 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
         return result.isEmpty() ? null : result.get(0);
     }
 
-
-//    @Override
-//    @Transactional
-//    public void save(Usuarios usuario) {
-//        Session currentSession = entityManager.unwrap(Session.class);
-//        currentSession.persist(usuario);
-//    }
-
     @Override
     @Transactional
     public void save(Usuarios usuario) {
@@ -81,5 +73,17 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
         Session s = entityManager.unwrap(Session.class);
         Usuarios managed = s.contains(usuario) ? usuario : s.merge(usuario);
         s.remove(managed);
+    }
+
+    @Override
+    @Transactional
+    public long countPublicacionesByUsuarioId(long usuarioId) {
+        Session s = entityManager.unwrap(org.hibernate.Session.class);
+        return s.createQuery(
+            "select count(p) from Publicacion p where p.usuario.idUsuario = :uid",
+            Long.class
+        )
+            .setParameter("uid", usuarioId)
+            .getSingleResult();
     }
 }

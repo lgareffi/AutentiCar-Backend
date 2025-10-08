@@ -234,4 +234,10 @@ public class UsuariosController {
         }
     }
 
+    @GetMapping("/usuarios/{id}/publicaciones/count")
+    public ResponseEntity<?> contarPublicacionesUsuario(@PathVariable long id) {
+        long count = usuariosService.contarPublicaciones(id);
+        return ResponseEntity.ok(java.util.Map.of("count", count));
+    }
+
 }

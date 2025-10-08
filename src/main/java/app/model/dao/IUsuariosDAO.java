@@ -18,4 +18,6 @@ public interface IUsuariosDAO {
 
     public void delete(Usuarios usuario);
 
+    public long countPublicacionesByUsuarioId(long usuarioId);
+
 }

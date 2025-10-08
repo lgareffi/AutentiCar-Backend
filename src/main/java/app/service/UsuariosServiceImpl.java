@@ -190,10 +190,6 @@ public class UsuariosServiceImpl implements IUsuariosService {
             u.getPublicaciones().clear();          // <<< importante
         }
 
-        // 4) (opcional) si querés, limpia también compras/ventas si te molestan las cascadas
-//        if (u.getComprasRealizadas() != null) u.getComprasRealizadas().clear();
-//        if (u.getVentasRealizadas() != null)  u.getVentasRealizadas().clear();
-
         // 5) Sincronizá el estado del usuario sin hijos antes de borrar
         usuariosDAO.save(u);   // hace merge del usuario con colecciones vacías
 
@@ -215,6 +211,12 @@ public class UsuariosServiceImpl implements IUsuariosService {
         } catch (Throwable e) {
             throw new Error(e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional
+    public long contarPublicaciones(long usuarioId) {
+        return usuariosDAO.countPublicacionesByUsuarioId(usuarioId);
     }
 
 }

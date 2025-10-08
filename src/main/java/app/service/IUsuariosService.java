@@ -29,4 +29,5 @@ public interface IUsuariosService {
 
     public void update(long id, Usuarios datos); // para cambiar la contraseña (probar si funciona)
 
+    public long contarPublicaciones(long usuarioId);
 }
