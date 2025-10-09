@@ -86,4 +86,5 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
             .setParameter("uid", usuarioId)
             .getSingleResult();
     }
+    
 }
