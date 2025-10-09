@@ -19,4 +19,24 @@ public interface IPublicacionDAO {
 
     List<Publicacion> findActivas();
 
+    // búsquedas
+    List<Publicacion> findActivasByMarca(String marca);
+    List<Publicacion> findActivasByMarcaAndModelo(String marca, String modelo);
+    List<Publicacion> findActivasByColor(String color);
+    List<Publicacion> findActivasByAnio(int anio);
+
+    List<Publicacion> findActivasByMarcaModeloColor(String marca, String modelo, String color);
+
+    List<Publicacion> searchActivasTextoLibre(String queryLibre);
+
+    List<String> findDistinctMarcasActivas();
+    List<String> findDistinctModelosActivosByMarca(String marca);
+    List<String> findDistinctColoresActivos();
+
+    //    List<Publicacion> findActivasByFiltros(
+//            List<String> marcas, List<String> modelos, List<String> colores,
+//            Integer anioDesde, Integer anioHasta, String queryLibre,
+//            String sortBy, boolean asc
+//    );
+
 }

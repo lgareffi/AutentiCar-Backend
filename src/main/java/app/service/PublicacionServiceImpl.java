@@ -9,7 +9,9 @@ import app.model.entity.*;
 import app.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -184,6 +186,72 @@ public class PublicacionServiceImpl implements IPublicacionService{
 
         pub.setEstadoPublicacion(nuevo);
         publicacionDAO.save(pub);
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByMarca(String marca) {
+        requireText("marca", marca);
+        return publicacionDAO.findActivasByMarca(marca.trim());
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByMarcaAndModelo(String marca, String modelo) {
+        requireText("marca", marca); requireText("modelo", modelo);
+        return publicacionDAO.findActivasByMarcaAndModelo(marca.trim(), modelo.trim());
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByColor(String color) {
+        requireText("color", color);
+        return publicacionDAO.findActivasByColor(color.trim());
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByAnio(int anio) {
+        if (anio < 1900) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El año es inválido");
+        return publicacionDAO.findActivasByAnio(anio);
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByMarcaModeloColor(String marca, String modelo, String color) {
+        requireText("marca", marca); requireText("modelo", modelo); requireText("color", color);
+        return publicacionDAO.findActivasByMarcaModeloColor(marca.trim(), modelo.trim(), color.trim());
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> searchActivasTextoLibre(String queryLibre) {
+        requireText("query", queryLibre);
+        return publicacionDAO.searchActivasTextoLibre(queryLibre.trim());
+    }
+
+    @Override
+    @Transactional
+    public List<String> findDistinctMarcasActivas() {
+        return publicacionDAO.findDistinctMarcasActivas();
+    }
+
+    @Override
+    @Transactional
+    public List<String> findDistinctModelosActivosByMarca(String marca) {
+        if (marca == null || marca.trim().isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo 'marca' es obligatorio");
+        return publicacionDAO.findDistinctModelosActivosByMarca(marca.trim());
+    }
+
+    @Override
+    @Transactional
+    public List<String> findDistinctColoresActivos() {
+        return publicacionDAO.findDistinctColoresActivos();
+    }
+
+    private void requireText(String field, String val) {
+        if (val == null || val.trim().isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo '" + field + "' es obligatorio");
     }
 
 }

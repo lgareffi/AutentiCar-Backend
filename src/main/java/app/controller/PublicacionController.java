@@ -107,4 +107,123 @@ public class PublicacionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
         }
     }
+
+    @GetMapping("/marca/{marca}")
+    public ResponseEntity<?> findActivasByMarca(@PathVariable String marca) {
+        try {
+            List<Publicacion> pubs = publicacionService.findActivasByMarca(marca);
+            List<PublicacionDTO> dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("No hay publicaciones de " + marca, HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/marcaModelo")
+    public ResponseEntity<?> findActivasByMarcaAndModelo(
+            @RequestParam String marca,
+            @RequestParam String modelo) {
+        try {
+            List<Publicacion> pubs = publicacionService.findActivasByMarcaAndModelo(marca, modelo);
+            List<PublicacionDTO> dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("No hay " + marca + " " + modelo, HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/color/{color}")
+    public ResponseEntity<?> findActivasByColor(@PathVariable String color) {
+        try {
+            List<Publicacion> pubs = publicacionService.findActivasByColor(color);
+            List<PublicacionDTO> dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("No hay publicaciones color " + color, HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/anio/{anio}")
+    public ResponseEntity<?> findActivasByAnio(@PathVariable int anio) {
+        try {
+            List<Publicacion> pubs = publicacionService.findActivasByAnio(anio);
+            List<PublicacionDTO> dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("No hay publicaciones del año " + anio, HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/combo")
+    public ResponseEntity<?> findActivasByMarcaModeloColor(
+            @RequestParam String marca,
+            @RequestParam String modelo,
+            @RequestParam String color) {
+        try {
+            List<Publicacion> pubs = publicacionService.findActivasByMarcaModeloColor(marca, modelo, color);
+            List<PublicacionDTO> dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("No hay " + marca + " " + modelo + " " + color, HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<?> searchActivasTextoLibre(@RequestParam("q") String queryLibre) {
+        try {
+            List<Publicacion> pubs = publicacionService.searchActivasTextoLibre(queryLibre);
+            List<PublicacionDTO> dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("Sin resultados para: " + queryLibre, HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/filtros/marcas")
+    public ResponseEntity<?> findDistinctMarcasActivas() {
+        try {
+            List<String> marcas = publicacionService.findDistinctMarcasActivas();
+            return marcas.isEmpty()
+                    ? new ResponseEntity<>("Sin marcas activas", HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(marcas, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/filtros/modelos")
+    public ResponseEntity<?> findDistinctModelosActivosByMarca(@RequestParam String marca) {
+        try {
+            List<String> modelos = publicacionService.findDistinctModelosActivosByMarca(marca);
+            return modelos.isEmpty()
+                    ? new ResponseEntity<>("Sin modelos activos para " + marca, HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(modelos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/filtros/colores")
+    public ResponseEntity<?> findDistinctColoresActivos() {
+        try {
+            List<String> colores = publicacionService.findDistinctColoresActivos();
+            return colores.isEmpty()
+                    ? new ResponseEntity<>("Sin colores activos", HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(colores, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
