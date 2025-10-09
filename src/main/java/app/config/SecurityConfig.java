@@ -93,6 +93,17 @@ public class SecurityConfig {
                                 "/usuarios/validacion/*/rechazar")
                         .hasAuthority("ROL_ADMIN")
 
+                        //Favoritos
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/usuarios/*/favoritos/**")
+                        .hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/usuarios/*/favoritos/**")
+                        .hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE,
+                                "/usuarios/*/favoritos/**")
+                        .hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+
                         // Privados (requieren token)
                         .anyRequest().authenticated()
                 )
