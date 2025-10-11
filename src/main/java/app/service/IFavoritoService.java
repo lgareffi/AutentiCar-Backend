@@ -12,4 +12,5 @@ public interface IFavoritoService {
     public boolean esFavorito(long usuarioId, long publicacionId);
 
     List<Publicacion> listarPublicacionesFavoritas(long usuarioId);
+    
 }
