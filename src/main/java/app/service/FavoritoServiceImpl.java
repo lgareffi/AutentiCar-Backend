@@ -55,4 +55,5 @@ public class FavoritoServiceImpl implements IFavoritoService{
     public List<Publicacion> listarPublicacionesFavoritas(long usuarioId) {
         return favoritoDAO.findAllPublicacionesByUsuario(usuarioId);
     }
+    
 }
