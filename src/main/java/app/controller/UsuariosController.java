@@ -4,12 +4,14 @@ import app.Errors.NotFoundError;
 import app.controller.dtos.*;
 import app.model.dao.IUsuariosDAO;
 import app.model.entity.*;
+import app.service.IImagenVehiculoService;
 import app.service.IUsuariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -24,6 +26,8 @@ public class UsuariosController {
     private IUsuariosService usuariosService;
     @Autowired
     private IUsuariosDAO usuariosDAO;
+    @Autowired
+    private IImagenVehiculoService imagenVehiculoService;
 
     @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}")
@@ -238,6 +242,48 @@ public class UsuariosController {
     public ResponseEntity<?> contarPublicacionesUsuario(@PathVariable long id) {
         long count = usuariosService.contarPublicaciones(id);
         return ResponseEntity.ok(java.util.Map.of("count", count));
+    }
+
+    @GetMapping("/usuarios/{usuarioId}/fotoPerfil")
+    public ResponseEntity<?> getFotoPerfil(@PathVariable long usuarioId) {
+        try {
+            Usuarios usuario = usuariosService.findById(usuarioId);
+            if (usuario == null || usuario.getProfilePicUrl() == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El usuario no tiene foto de perfil");
+            }
+            return ResponseEntity.ok(usuario.getProfilePicUrl());
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener la foto de perfil");
+        }
+    }
+
+    @PostMapping("/usuarios/{usuarioId}/fotoPerfil")
+    public ResponseEntity<?> subirFotoPerfil(
+            @PathVariable long usuarioId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String url = imagenVehiculoService.subirImagenPerfil(usuarioId, file);
+            return ResponseEntity.ok(url);
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado al subir la foto de perfil");
+        }
+    }
+
+    @DeleteMapping("/usuarios/{usuarioId}/fotoPerfil")
+    public ResponseEntity<?> eliminarFotoPerfil(@PathVariable long usuarioId) {
+        try {
+            imagenVehiculoService.eliminarImagenPerfil(usuarioId);
+            return ResponseEntity.ok("Foto de perfil eliminada correctamente");
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado al eliminar la foto de perfil");
+        }
     }
 
 }

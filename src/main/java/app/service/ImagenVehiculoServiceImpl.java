@@ -4,7 +4,9 @@ import app.Errors.NotFoundError;
 import app.controller.dtos.AddImagenDTO;
 import app.controller.dtos.ImagenVehiculoDTO;
 import app.model.dao.IImagenVehiculoDAO;
+import app.model.dao.IUsuariosDAO;
 import app.model.dao.IVehiculosDAO;
+import app.model.entity.Usuarios;
 import app.model.entity.Vehiculos;
 import app.model.entity.ImagenVehiculo;
 import com.cloudinary.Cloudinary;
@@ -28,16 +30,21 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     @Autowired
     private IVehiculosDAO vehiculosDAO;
 
+    @Autowired
+    private IUsuariosDAO usuariosDAO;
+
     private final Cloudinary cloudinary;
     @Value("${cloudinary.folder-root}")
     private String folderRoot;
 
     public ImagenVehiculoServiceImpl(Cloudinary cloudinary,
                                      IVehiculosDAO vehiculosDAO,
-                                     IImagenVehiculoDAO imagenDAO) {
+                                     IImagenVehiculoDAO imagenDAO,
+                                     IUsuariosDAO usuariosDAO) {
         this.cloudinary = cloudinary;
         this.vehiculosDAO = vehiculosDAO;
         this.imagenVehiculoDAO = imagenDAO;
+        this.usuariosDAO = usuariosDAO;
     }
 
     @Override
@@ -147,6 +154,67 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
             imagenVehiculoDAO.delete(img);
         } catch (Exception e) {
             throw new RuntimeException("No se pudo eliminar la imagen: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public String subirImagenPerfil(long usuarioId, MultipartFile file) {
+        Usuarios usuario = usuariosDAO.findById(usuarioId);
+        if (usuario == null)
+            throw new NotFoundError("No se encontró el usuario con ID " + usuarioId);
+
+        if (file == null || file.isEmpty())
+            throw new RuntimeException("Archivo vacío");
+        if (file.getSize() > 10 * 1024 * 1024)
+            throw new RuntimeException("La imagen excede 10MB");
+
+        try {
+            String folder = folderRoot + "/usuarios/perfiles";
+
+            String publicId = folder + "/" + usuarioId;
+
+            Map<?, ?> upload = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap(
+                            "public_id", publicId,
+                            "folder", folder,
+                            "resource_type", "image",
+                            "overwrite", true,
+                            "invalidate", true,
+                            "unique_filename", false,
+                            "use_filename", true
+                    )
+            );
+
+            String secureUrl = (String) upload.get("secure_url");
+            if (secureUrl == null)
+                throw new RuntimeException("Error al obtener URL segura de Cloudinary");
+
+            usuario.setProfilePicUrl(secureUrl);
+            usuariosDAO.save(usuario);
+
+            return secureUrl;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error subiendo imagen de perfil: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public void eliminarImagenPerfil(long usuarioId) {
+        Usuarios usuario = usuariosDAO.findById(usuarioId);
+        if (usuario == null)
+            throw new NotFoundError("Usuario no encontrado");
+
+        try {
+            String publicId = folderRoot + "/usuarios/perfiles/" + usuarioId;
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+
+            usuario.setProfilePicUrl(null);
+            usuariosDAO.save(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException("Error eliminando imagen de perfil: " + e.getMessage(), e);
         }
     }
 

@@ -45,6 +45,9 @@ public class Usuarios {
     @Column(nullable = true, length = 500)
     private String dniDorsoUrl;
 
+    @Column(nullable = true, length = 500)
+    private String profilePicUrl;
+
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
@@ -80,12 +83,13 @@ public class Usuarios {
         super();
     }
 
-    public Usuarios(long idUsuario, String nombre, String apellido, int dni, String mail,
-                    String password, String telefonoCelular, LocalDate fechaRegistro,
-                    boolean esConcesionaria, String dniFrenteUrl, String dniDorsoUrl,
-                    Rol rol, NivelUsuario nivelUsuario, List<Vehiculos> vehiculos,
-                    List<EventoVehicular> eventoVehicular, List<Ventas> comprasRealizadas,
-                    List<Ventas> ventasRealizadas, List<Publicacion> publicaciones) {
+    public Usuarios(long idUsuario, String nombre, String apellido, int dni,
+                    String mail, String password, String telefonoCelular,
+                    LocalDate fechaRegistro, String dniFrenteUrl, boolean esConcesionaria,
+                    String dniDorsoUrl, String profilePicUrl, Rol rol, NivelUsuario nivelUsuario,
+                    List<Vehiculos> vehiculos, List<EventoVehicular> eventoVehicular,
+                    List<Ventas> comprasRealizadas, List<Ventas> ventasRealizadas,
+                    List<Publicacion> publicaciones) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -94,9 +98,10 @@ public class Usuarios {
         this.password = password;
         this.telefonoCelular = telefonoCelular;
         this.fechaRegistro = fechaRegistro;
-        this.esConcesionaria = esConcesionaria;
         this.dniFrenteUrl = dniFrenteUrl;
+        this.esConcesionaria = esConcesionaria;
         this.dniDorsoUrl = dniDorsoUrl;
+        this.profilePicUrl = profilePicUrl;
         this.rol = rol;
         this.nivelUsuario = nivelUsuario;
         this.vehiculos = vehiculos;
@@ -120,6 +125,7 @@ public class Usuarios {
                 ", esConcesionaria=" + esConcesionaria +
                 ", dniFrenteUrl='" + dniFrenteUrl + '\'' +
                 ", dniDorsoUrl='" + dniDorsoUrl + '\'' +
+                ", profilePicUrl='" + profilePicUrl + '\'' +
                 ", rol=" + rol +
                 ", nivelUsuario=" + nivelUsuario +
                 ", vehiculos=" + vehiculos +
@@ -272,5 +278,13 @@ public class Usuarios {
 
     public void setNivelUsuario(NivelUsuario nivelUsuario) {
         this.nivelUsuario = nivelUsuario;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
     }
 }

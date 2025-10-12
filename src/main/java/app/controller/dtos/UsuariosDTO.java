@@ -22,6 +22,7 @@ public class UsuariosDTO {
     private String nivelUsuario;   // REGISTRADO / PENDIENTE / VALIDADO / RECHAZADO
     private boolean tieneDniFrente;
     private boolean tieneDniDorso;
+    private String profilePicUrl;
 
     public UsuariosDTO(Usuarios usuario) {
         super();
@@ -35,6 +36,7 @@ public class UsuariosDTO {
         this.nivelUsuario = usuario.getNivelUsuario().name();
         this.tieneDniFrente = usuario.getDniFrenteUrl() != null;
         this.tieneDniDorso = usuario.getDniDorsoUrl() != null;
+        this.profilePicUrl = usuario.getProfilePicUrl();
         this.comprasRealizadas = usuario.getComprasRealizadas()
                 .stream()
                 .map(Ventas::getIdVenta)
@@ -180,5 +182,13 @@ public class UsuariosDTO {
 
     public void setTieneDniDorso(boolean tieneDniDorso) {
         this.tieneDniDorso = tieneDniDorso;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
     }
 }

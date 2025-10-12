@@ -20,6 +20,10 @@ public interface IImagenVehiculoService {
 
     public void eliminarImagen(long imagenId);
 
+    public String subirImagenPerfil(long usuarioId, MultipartFile file);
+
+    public void eliminarImagenPerfil(long usuarioId);
+
 //    public ImagenVehiculo findByUrl(String urlImagen);
     
 }

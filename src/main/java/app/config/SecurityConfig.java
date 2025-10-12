@@ -93,6 +93,11 @@ public class SecurityConfig {
                                 "/usuarios/validacion/*/rechazar")
                         .hasAuthority("ROL_ADMIN")
 
+                        // Usuarios - Fotos de perfil
+                        .requestMatchers(HttpMethod.GET, "/usuarios/*/fotoPerfil").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/*/fotoPerfil").hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/*/fotoPerfil").hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+
                         //Favoritos
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/usuarios/*/favoritos/**")
