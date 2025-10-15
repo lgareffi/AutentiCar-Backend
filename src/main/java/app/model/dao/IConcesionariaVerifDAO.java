@@ -10,4 +10,5 @@ public interface IConcesionariaVerifDAO {
     public void delete(ConcesionariaVerif concesionariaVerif);
 
     public ConcesionariaVerif findByUsuarioId(long usuarioId);
+
 }
