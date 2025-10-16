@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import jakarta.transaction.Transactional;
 
@@ -19,6 +20,9 @@ import java.util.Objects;
 public class PublicacionDAOImpl implements IPublicacionDAO {
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Value("${app.precio.usd_ars:1400}")
+    private java.math.BigDecimal tasaUsdArs;
 
     private Session s() { return entityManager.unwrap(Session.class); }
 
@@ -230,10 +234,149 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         return q.getResultList();
     }
 
+    @Override
+    @Transactional
+    public List<Integer> findDistinctAniosActivos() {
+        var q = s().createQuery(
+                "SELECT DISTINCT v.anio " +
+                        "FROM Publicacion p JOIN p.vehiculo v " +
+                        "WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA " +
+                        "ORDER BY v.anio DESC",
+                Integer.class
+        );
+        return q.getResultList();
+    }
+
+
+
     private List<String> normalizarTokens(String q) {
         if (q == null) return List.of();
         return Arrays.stream(q.toLowerCase().trim().split("\\s+"))
                 .filter(t -> !t.isBlank()).toList();
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByPrecioEnArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs) {
+        var s = entityManager.unwrap(org.hibernate.Session.class);
+
+        // Limites (si son null, uso valores extremos)
+        long min = (minArs != null) ? minArs : 0L;
+        long max = (maxArs != null) ? maxArs : Long.MAX_VALUE;
+
+        // HQL: PESOS directo; DOLARES * tasa
+        var q = s.createQuery(
+                "SELECT p FROM Publicacion p " +
+                        "WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA " +
+                        "AND ( " +
+                        "  (p.moneda = app.model.entity.Publicacion.Moneda.PESOS   AND p.precio BETWEEN :min AND :max) " +
+                        "  OR " +
+                        "  (p.moneda = app.model.entity.Publicacion.Moneda.DOLARES AND (p.precio * :tasa) BETWEEN :min AND :max) " +
+                        ") " +
+                        "ORDER BY p.fechaPublicacion DESC",
+                Publicacion.class
+        );
+        q.setParameter("min", min);
+        q.setParameter("max", max);
+        q.setParameter("tasa", tasaUsdArs); // BigDecimal ok en HQL para multiplicar
+
+        return q.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm) {
+        String base =
+                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
+                        "WHERE p.estadoPublicacion = :activa ";
+
+        if (minKm != null) base += "AND v.kilometraje >= :minKm ";
+        if (maxKm != null) base += "AND v.kilometraje <= :maxKm ";
+
+        base += "ORDER BY p.fechaPublicacion DESC";
+
+        var q = s().createQuery(base, Publicacion.class);
+        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
+        if (minKm != null) q.setParameter("minKm", minKm);
+        if (maxKm != null) q.setParameter("maxKm", maxKm);
+
+        return q.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByFiltro(
+            String marca, String color, Integer anio,
+            Integer minPrecioArs, Integer maxPrecioArs,
+            Integer minKm, Integer maxKm,
+            String queryLibre
+    ) {
+        var s = s(); // Session
+        var sb = new StringBuilder();
+        sb.append("""
+       SELECT p FROM Publicacion p
+       JOIN p.vehiculo v
+       WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA
+    """);
+
+        // Precio normalizado a ARS: CASE (si DOLARES => precio*tasa)
+        if (minPrecioArs != null) {
+            sb.append("""
+          AND (
+            CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
+                 THEN (p.precio * :tasa)
+                 ELSE p.precio
+            END
+          ) >= :minArs
+        """);
+        }
+        if (maxPrecioArs != null) {
+            sb.append("""
+          AND (
+            CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
+                 THEN (p.precio * :tasa)
+                 ELSE p.precio
+            END
+          ) <= :maxArs
+        """);
+        }
+
+        if (marca != null) sb.append(" AND LOWER(v.marca) = :marca");
+        if (color != null) sb.append(" AND LOWER(v.color) = :color");
+        if (anio  != null) sb.append(" AND v.anio = :anio");
+        if (minKm != null) sb.append(" AND v.kilometraje >= :minKm");
+        if (maxKm != null) sb.append(" AND v.kilometraje <= :maxKm");
+
+        if (queryLibre != null) {
+            sb.append("""
+          AND (
+              LOWER(v.marca)  LIKE :ql
+           OR LOWER(v.modelo) LIKE :ql
+           OR LOWER(v.color)  LIKE :ql
+           OR LOWER(p.titulo) LIKE :ql
+           OR LOWER(p.descripcion) LIKE :ql
+          )
+        """);
+        }
+
+        sb.append(" ORDER BY p.fechaPublicacion DESC");
+
+        var q = s.createQuery(sb.toString(), Publicacion.class);
+
+        if (minPrecioArs != null) q.setParameter("minArs", minPrecioArs);
+        if (maxPrecioArs != null) q.setParameter("maxArs", maxPrecioArs);
+        if (minPrecioArs != null || maxPrecioArs != null) {
+            q.setParameter("tasa", tasaUsdArs);
+        }
+
+        if (marca != null) q.setParameter("marca", marca.toLowerCase());
+        if (color != null) q.setParameter("color", color.toLowerCase());
+        if (anio  != null) q.setParameter("anio", anio);
+        if (minKm != null) q.setParameter("minKm", minKm);
+        if (maxKm != null) q.setParameter("maxKm", maxKm);
+        if (queryLibre != null) q.setParameter("ql", "%" + queryLibre.toLowerCase() + "%");
+
+        return q.getResultList();
     }
 
 }

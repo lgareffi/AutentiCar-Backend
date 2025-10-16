@@ -9,6 +9,7 @@ import app.model.entity.*;
 import app.security.SecurityUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +27,9 @@ public class PublicacionServiceImpl implements IPublicacionService{
 
     @Autowired
     private IVehiculosDAO vehiculosDAO;
+
+    @Value("${app.precio.usd_ars:1400}")
+    private java.math.BigDecimal defaultUsdArs;
 
     @Override
     @Transactional
@@ -238,6 +242,12 @@ public class PublicacionServiceImpl implements IPublicacionService{
 
     @Override
     @Transactional
+    public List<Integer> findDistinctAniosActivos() {
+        return publicacionDAO.findDistinctAniosActivos();
+    }
+
+    @Override
+    @Transactional
     public List<String> findDistinctModelosActivosByMarca(String marca) {
         if (marca == null || marca.trim().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo 'marca' es obligatorio");
@@ -250,8 +260,54 @@ public class PublicacionServiceImpl implements IPublicacionService{
         return publicacionDAO.findDistinctColoresActivos();
     }
 
+//    @Override
+//    @Transactional
+//    public List<Publicacion> findActivasByPrecioBetween(Integer min, Integer max) {
+//        if (min != null && min < 0) throw new IllegalArgumentException("Precio mínimo inválido");
+//        if (max != null && max < 0) throw new IllegalArgumentException("Precio máximo inválido");
+//        if (min != null && max != null && min > max) throw new IllegalArgumentException("Rango de precios inválido");
+//        return publicacionDAO.findActivasByPrecioBetween(min, max);
+//    }
+//
     private void requireText(String field, String val) {
         if (val == null || val.trim().isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo '" + field + "' es obligatorio");
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByPrecioArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs) {
+        java.math.BigDecimal tasa = (tasaUsdArs != null) ? tasaUsdArs : defaultUsdArs;
+        if (tasa.compareTo(java.math.BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Tasa USD/ARS inválida");
+        }
+        return publicacionDAO.findActivasByPrecioEnArs(minArs, maxArs, tasa);
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm) {
+        if (minKm != null && minKm < 0) throw new IllegalArgumentException("Kilometraje mínimo inválido");
+        if (maxKm != null && maxKm < 0) throw new IllegalArgumentException("Kilometraje máximo inválido");
+        if (minKm != null && maxKm != null && minKm > maxKm) throw new IllegalArgumentException("Rango de kilometraje inválido");
+        return publicacionDAO.findActivasByKilometrajeBetween(minKm, maxKm);
+    }
+
+    @Override
+    @Transactional
+    public List<Publicacion> findActivasByFiltro(
+            String marca, String color, Integer anio,
+            Integer minPrecioArs, Integer maxPrecioArs,
+            Integer minKm, Integer maxKm,
+            String queryLibre
+    ) {
+        return publicacionDAO.findActivasByFiltro(
+                (marca != null && !marca.isBlank()) ? marca.trim() : null,
+                (color != null && !color.isBlank()) ? color.trim() : null,
+                anio,
+                minPrecioArs, maxPrecioArs,
+                minKm, maxKm,
+                (queryLibre != null && !queryLibre.isBlank()) ? queryLibre.trim() : null
+        );
     }
 
 }

@@ -3,6 +3,7 @@ package app.model.dao;
 
 import app.model.entity.Publicacion;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -32,11 +33,17 @@ public interface IPublicacionDAO {
     List<String> findDistinctMarcasActivas();
     List<String> findDistinctModelosActivosByMarca(String marca);
     List<String> findDistinctColoresActivos();
+    List<Integer> findDistinctAniosActivos();
 
-    //    List<Publicacion> findActivasByFiltros(
-//            List<String> marcas, List<String> modelos, List<String> colores,
-//            Integer anioDesde, Integer anioHasta, String queryLibre,
-//            String sortBy, boolean asc
-//    );
+    List<Publicacion> findActivasByPrecioEnArs(Integer minArs, Integer maxArs, BigDecimal tasaUsdArs);
+    List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm);
+
+    List<Publicacion> findActivasByFiltro(
+            String marca, String color, Integer anio,
+            Integer minPrecioArs, Integer maxPrecioArs,
+            Integer minKm, Integer maxKm,
+            String queryLibre
+    );
+
 
 }

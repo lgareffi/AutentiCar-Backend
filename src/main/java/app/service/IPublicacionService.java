@@ -32,5 +32,17 @@ public interface IPublicacionService {
     public List<String> findDistinctMarcasActivas();
     public List<String> findDistinctModelosActivosByMarca(String marca);
     public List<String> findDistinctColoresActivos();
+    public List<Integer> findDistinctAniosActivos();
+
+    //public List<Publicacion> findActivasByPrecioBetween(Integer min, Integer max);
+    public List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm);
+    public List<Publicacion> findActivasByPrecioArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs);
+
+    public List<Publicacion> findActivasByFiltro(
+            String marca, String color, Integer anio,
+            Integer minPrecioArs, Integer maxPrecioArs,
+            Integer minKm, Integer maxKm,
+            String queryLibre
+    );
     
 }

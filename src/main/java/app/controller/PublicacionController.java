@@ -226,4 +226,89 @@ public class PublicacionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/filtros/anios")
+    public ResponseEntity<?> findDistinctAniosActivos() {
+        try {
+            List<Integer> anios = publicacionService.findDistinctAniosActivos();
+            return anios.isEmpty()
+                    ? new ResponseEntity<>("Sin años activos", HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(anios, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+//    @GetMapping("/precio")
+//    public ResponseEntity<?> getActivasByPrecio(
+//            @RequestParam(required = false) Integer min,
+//            @RequestParam(required = false) Integer max
+//    ) {
+//        try {
+//            List<Publicacion> list = publicacionService.findActivasByPrecioBetween(min, max);
+//            List<PublicacionDTO> dtos = list.stream().map(PublicacionDTO::new).toList();
+//            return dtos.isEmpty()
+//                    ? new ResponseEntity<>("Sin publicaciones para ese rango de precio", HttpStatus.NOT_FOUND)
+//                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+//        } catch (Throwable e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
+
+    @GetMapping("/precio")
+    public ResponseEntity<?> findByPrecioArs(
+            @RequestParam(required = false) Integer min,
+            @RequestParam(required = false) Integer max,
+            @RequestParam(required = false) java.math.BigDecimal tasaUsdArs // opcional
+    ) {
+        try {
+            List<Publicacion> pubs = publicacionService.findActivasByPrecioArs(min, max, tasaUsdArs);
+            List<PublicacionDTO> dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("Sin resultados para el rango de precio", HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/kilometraje")
+    public ResponseEntity<?> getActivasByKilometraje(
+            @RequestParam(required = false) Integer min,
+            @RequestParam(required = false) Integer max
+    ) {
+        try {
+            List<Publicacion> list = publicacionService.findActivasByKilometrajeBetween(min, max);
+            List<PublicacionDTO> dtos = list.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("Sin publicaciones para ese rango de kilometraje", HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/filtro")
+    public ResponseEntity<?> findActivasByFiltro(
+            @RequestParam(required = false) String marca,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = false) Integer anio,
+            @RequestParam(required = false) Integer minPrecio,   // en ARS
+            @RequestParam(required = false) Integer maxPrecio,   // en ARS
+            @RequestParam(required = false) Integer minKm,
+            @RequestParam(required = false) Integer maxKm,
+            @RequestParam(required = false) String q
+    ) {
+        try {
+            var pubs = publicacionService.findActivasByFiltro(
+                    marca, color, anio, minPrecio, maxPrecio, minKm, maxKm, q
+            );
+            var dtos = pubs.stream().map(PublicacionDTO::new).toList();
+            return dtos.isEmpty()
+                    ? new ResponseEntity<>("Sin resultados", HttpStatus.NOT_FOUND)
+                    : new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
