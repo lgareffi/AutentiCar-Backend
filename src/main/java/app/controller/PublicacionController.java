@@ -289,26 +289,20 @@ public class PublicacionController {
     }
 
     @GetMapping("/filtro")
-    public ResponseEntity<?> findActivasByFiltro(
-            @RequestParam(required = false) String marca,
-            @RequestParam(required = false) String color,
-            @RequestParam(required = false) Integer anio,
-            @RequestParam(required = false) Integer minPrecio,   // en ARS
-            @RequestParam(required = false) Integer maxPrecio,   // en ARS
-            @RequestParam(required = false) Integer minKm,
-            @RequestParam(required = false) Integer maxKm,
-            @RequestParam(required = false) String q
+    public ResponseEntity<?> filtro(
+            @RequestParam(required = false) String q,
+            @RequestParam(name="marca",  required = false) List<String> marcas,
+            @RequestParam(name="color",  required = false) List<String> colores,
+            @RequestParam(name="anio",   required = false) List<Integer> anios,
+            @RequestParam(name="minPrecio", required = false) List<Integer> minPrecios,
+            @RequestParam(name="maxPrecio", required = false) List<Integer> maxPrecios,
+            @RequestParam(name="minKm",  required = false) List<Integer> minKms,
+            @RequestParam(name="maxKm",  required = false) List<Integer> maxKms
     ) {
-        try {
-            var pubs = publicacionService.findActivasByFiltro(
-                    marca, color, anio, minPrecio, maxPrecio, minKm, maxKm, q
-            );
-            var dtos = pubs.stream().map(PublicacionDTO::new).toList();
-            return dtos.isEmpty()
-                    ? new ResponseEntity<>("Sin resultados", HttpStatus.NOT_FOUND)
-                    : new ResponseEntity<>(dtos, HttpStatus.OK);
-        } catch (Throwable e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        var pubs = publicacionService.findActivasByFiltro(
+                marcas, colores, anios, minPrecios, maxPrecios, minKms, maxKms, q
+        );
+        var dtos = pubs.stream().map(PublicacionDTO::new).toList();
+        return ResponseEntity.ok(dtos);
     }
 }

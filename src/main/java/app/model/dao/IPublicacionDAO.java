@@ -39,11 +39,14 @@ public interface IPublicacionDAO {
     List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm);
 
     List<Publicacion> findActivasByFiltro(
-            String marca, String color, Integer anio,
-            Integer minPrecioArs, Integer maxPrecioArs,
-            Integer minKm, Integer maxKm,
+            List<String> marcas,
+            List<String> colores,
+            List<Integer> anios,
+            List<Integer> minPrecioArs,
+            List<Integer> maxPrecioArs,
+            List<Integer> minKm,
+            List<Integer> maxKm,
             String queryLibre
     );
-
 
 }

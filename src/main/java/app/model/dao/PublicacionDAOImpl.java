@@ -306,56 +306,108 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
     @Override
     @Transactional
     public List<Publicacion> findActivasByFiltro(
-            String marca, String color, Integer anio,
-            Integer minPrecioArs, Integer maxPrecioArs,
-            Integer minKm, Integer maxKm,
+            List<String> marcas,
+            List<String> colores,
+            List<Integer> anios,
+            List<Integer> minPrecioArs,   // pares (min_i, max_i) => OR de rangos
+            List<Integer> maxPrecioArs,
+            List<Integer> minKm,
+            List<Integer> maxKm,
             String queryLibre
     ) {
-        var s = s(); // Session
-        var sb = new StringBuilder();
-        sb.append("""
-       SELECT p FROM Publicacion p
-       JOIN p.vehiculo v
-       WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA
+        var s = s();
+
+        StringBuilder sb = new StringBuilder("""
+        SELECT p FROM Publicacion p
+        JOIN p.vehiculo v
+        WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA
     """);
 
-        // Precio normalizado a ARS: CASE (si DOLARES => precio*tasa)
-        if (minPrecioArs != null) {
-            sb.append("""
-          AND (
-            CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
-                 THEN (p.precio * :tasa)
-                 ELSE p.precio
-            END
-          ) >= :minArs
-        """);
-        }
-        if (maxPrecioArs != null) {
-            sb.append("""
-          AND (
-            CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
-                 THEN (p.precio * :tasa)
-                 ELSE p.precio
-            END
-          ) <= :maxArs
-        """);
+        // --- IN por listas simples ---
+        if (marcas != null && !marcas.isEmpty()) sb.append(" AND LOWER(v.marca) IN (:marcas) ");
+        if (colores != null && !colores.isEmpty()) sb.append(" AND LOWER(v.color) IN (:colores) ");
+        if (anios   != null && !anios.isEmpty())   sb.append(" AND v.anio IN (:anios) ");
+
+        // --- Precio normalizado a ARS (OR de rangos) ---
+        // CASE WHEN p.moneda = DOLARES THEN p.precio * :tasa ELSE p.precio END
+        String precioArsExpr = """
+        (CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
+              THEN (p.precio * :tasa)
+              ELSE p.precio END)
+    """;
+
+        int priceClauses = 0;
+        if ((minPrecioArs != null && !minPrecioArs.isEmpty()) ||
+                (maxPrecioArs != null && !maxPrecioArs.isEmpty())) {
+
+            sb.append(" AND (");
+            int n = Math.max(
+                    (minPrecioArs != null ? minPrecioArs.size() : 0),
+                    (maxPrecioArs != null ? maxPrecioArs.size() : 0)
+            );
+            for (int i = 0; i < n; i++) {
+                Integer min = (minPrecioArs != null && i < minPrecioArs.size()) ? minPrecioArs.get(i) : null;
+                Integer max = (maxPrecioArs != null && i < maxPrecioArs.size()) ? maxPrecioArs.get(i) : null;
+                if (min == null && max == null) continue;
+
+                if (priceClauses++ > 0) sb.append(" OR ");
+                if (min != null && max != null) {
+                    sb.append(precioArsExpr).append(" BETWEEN :pMin").append(i).append(" AND :pMax").append(i);
+                } else if (min != null) {
+                    sb.append(precioArsExpr).append(" >= :pMin").append(i);
+                } else {
+                    sb.append(precioArsExpr).append(" <= :pMax").append(i);
+                }
+            }
+            // Si todas las parejas eran nulas, no dejamos "AND ()"
+            if (priceClauses == 0) {
+                int idx = sb.lastIndexOf(" AND (");
+                if (idx >= 0) sb.delete(idx, sb.length());
+            } else {
+                sb.append(") ");
+            }
         }
 
-        if (marca != null) sb.append(" AND LOWER(v.marca) = :marca");
-        if (color != null) sb.append(" AND LOWER(v.color) = :color");
-        if (anio  != null) sb.append(" AND v.anio = :anio");
-        if (minKm != null) sb.append(" AND v.kilometraje >= :minKm");
-        if (maxKm != null) sb.append(" AND v.kilometraje <= :maxKm");
+        // --- Kilometraje (OR de rangos) ---
+        int kmClauses = 0;
+        if ((minKm != null && !minKm.isEmpty()) || (maxKm != null && !maxKm.isEmpty())) {
+            sb.append(" AND (");
+            int n = Math.max(
+                    (minKm != null ? minKm.size() : 0),
+                    (maxKm != null ? maxKm.size() : 0)
+            );
+            for (int i = 0; i < n; i++) {
+                Integer min = (minKm != null && i < minKm.size()) ? minKm.get(i) : null;
+                Integer max = (maxKm != null && i < maxKm.size()) ? maxKm.get(i) : null;
+                if (min == null && max == null) continue;
 
-        if (queryLibre != null) {
+                if (kmClauses++ > 0) sb.append(" OR ");
+                if (min != null && max != null) {
+                    sb.append(" v.kilometraje BETWEEN :kMin").append(i).append(" AND :kMax").append(i);
+                } else if (min != null) {
+                    sb.append(" v.kilometraje >= :kMin").append(i);
+                } else {
+                    sb.append(" v.kilometraje <= :kMax").append(i);
+                }
+            }
+            if (kmClauses == 0) {
+                int idx = sb.lastIndexOf(" AND (");
+                if (idx >= 0) sb.delete(idx, sb.length());
+            } else {
+                sb.append(") ");
+            }
+        }
+
+        // --- Búsqueda libre ---
+        if (queryLibre != null && !queryLibre.isBlank()) {
             sb.append("""
-          AND (
-              LOWER(v.marca)  LIKE :ql
-           OR LOWER(v.modelo) LIKE :ql
-           OR LOWER(v.color)  LIKE :ql
-           OR LOWER(p.titulo) LIKE :ql
-           OR LOWER(p.descripcion) LIKE :ql
-          )
+           AND (
+                LOWER(v.marca)  LIKE :ql
+             OR LOWER(v.modelo) LIKE :ql
+             OR LOWER(v.color)  LIKE :ql
+             OR LOWER(p.titulo) LIKE :ql
+             OR LOWER(p.descripcion) LIKE :ql
+           )
         """);
         }
 
@@ -363,18 +415,47 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
 
         var q = s.createQuery(sb.toString(), Publicacion.class);
 
-        if (minPrecioArs != null) q.setParameter("minArs", minPrecioArs);
-        if (maxPrecioArs != null) q.setParameter("maxArs", maxPrecioArs);
-        if (minPrecioArs != null || maxPrecioArs != null) {
-            q.setParameter("tasa", tasaUsdArs);
+        // Parámetros simples
+        if (marcas != null && !marcas.isEmpty())
+            q.setParameterList("marcas", marcas.stream().map(String::toLowerCase).toList());
+        if (colores != null && !colores.isEmpty())
+            q.setParameterList("colores", colores.stream().map(String::toLowerCase).toList());
+        if (anios != null && !anios.isEmpty())
+            q.setParameterList("anios", anios);
+
+        // Tasa (si hubo algún filtro de precio)
+        if (priceClauses > 0) q.setParameter("tasa", tasaUsdArs);
+
+        // Parámetros de precio (indexados)
+        if (priceClauses > 0) {
+            int n = Math.max(
+                    (minPrecioArs != null ? minPrecioArs.size() : 0),
+                    (maxPrecioArs != null ? maxPrecioArs.size() : 0)
+            );
+            for (int i = 0; i < n; i++) {
+                Integer min = (minPrecioArs != null && i < minPrecioArs.size()) ? minPrecioArs.get(i) : null;
+                Integer max = (maxPrecioArs != null && i < maxPrecioArs.size()) ? maxPrecioArs.get(i) : null;
+                if (min != null) q.setParameter("pMin" + i, min);
+                if (max != null) q.setParameter("pMax" + i, max);
+            }
         }
 
-        if (marca != null) q.setParameter("marca", marca.toLowerCase());
-        if (color != null) q.setParameter("color", color.toLowerCase());
-        if (anio  != null) q.setParameter("anio", anio);
-        if (minKm != null) q.setParameter("minKm", minKm);
-        if (maxKm != null) q.setParameter("maxKm", maxKm);
-        if (queryLibre != null) q.setParameter("ql", "%" + queryLibre.toLowerCase() + "%");
+        // Parámetros de km (indexados)
+        if (kmClauses > 0) {
+            int n = Math.max(
+                    (minKm != null ? minKm.size() : 0),
+                    (maxKm != null ? maxKm.size() : 0)
+            );
+            for (int i = 0; i < n; i++) {
+                Integer min = (minKm != null && i < minKm.size()) ? minKm.get(i) : null;
+                Integer max = (maxKm != null && i < maxKm.size()) ? maxKm.get(i) : null;
+                if (min != null) q.setParameter("kMin" + i, min);
+                if (max != null) q.setParameter("kMax" + i, max);
+            }
+        }
+
+        if (queryLibre != null && !queryLibre.isBlank())
+            q.setParameter("ql", "%" + queryLibre.toLowerCase() + "%");
 
         return q.getResultList();
     }

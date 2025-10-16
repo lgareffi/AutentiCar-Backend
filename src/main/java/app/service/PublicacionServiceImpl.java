@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PublicacionServiceImpl implements IPublicacionService{
@@ -293,21 +294,45 @@ public class PublicacionServiceImpl implements IPublicacionService{
     }
 
     @Override
-    @Transactional
     public List<Publicacion> findActivasByFiltro(
-            String marca, String color, Integer anio,
-            Integer minPrecioArs, Integer maxPrecioArs,
-            Integer minKm, Integer maxKm,
+            List<String> marcas,
+            List<String> colores,
+            List<Integer> anios,
+            List<Integer> minPrecioArs,
+            List<Integer> maxPrecioArs,
+            List<Integer> minKm,
+            List<Integer> maxKm,
             String queryLibre
     ) {
+        // normalizaciones
+        var marcasN   = normalizeStrings(marcas);
+        var coloresN  = normalizeStrings(colores);
+        var aniosN    = emptyToNull(anios);
+        var minPrcN   = emptyToNull(minPrecioArs);
+        var maxPrcN   = emptyToNull(maxPrecioArs);
+        var minKmN    = emptyToNull(minKm);
+        var maxKmN    = emptyToNull(maxKm);
+        var ql        = (queryLibre != null && !queryLibre.isBlank()) ? queryLibre.trim() : null;
+
         return publicacionDAO.findActivasByFiltro(
-                (marca != null && !marca.isBlank()) ? marca.trim() : null,
-                (color != null && !color.isBlank()) ? color.trim() : null,
-                anio,
-                minPrecioArs, maxPrecioArs,
-                minKm, maxKm,
-                (queryLibre != null && !queryLibre.isBlank()) ? queryLibre.trim() : null
+                marcasN, coloresN, aniosN, minPrcN, maxPrcN, minKmN, maxKmN, ql
         );
+    }
+
+    // ===== helpers =====
+    private List<String> normalizeStrings(List<String> xs) {
+        if (xs == null) return null;
+        var out = xs.stream()
+                .filter(s -> s != null && !s.isBlank())
+                .map(String::trim)
+                .toList();
+        return out.isEmpty() ? null : out;
+    }
+
+    private <T> List<T> emptyToNull(List<T> xs) {
+        if (xs == null) return null;
+        var out = xs.stream().filter(Objects::nonNull).toList();
+        return out.isEmpty() ? null : out;
     }
 
 }
