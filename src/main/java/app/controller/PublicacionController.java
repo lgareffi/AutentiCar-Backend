@@ -305,4 +305,5 @@ public class PublicacionController {
         var dtos = pubs.stream().map(PublicacionDTO::new).toList();
         return ResponseEntity.ok(dtos);
     }
+    
 }
