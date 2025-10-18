@@ -6,4 +6,5 @@ public interface IVentasDAO {
     public Ventas findById(long id);
 
     public void save(Ventas ventas);
+    
 }
