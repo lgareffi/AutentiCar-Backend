@@ -16,4 +16,5 @@ public interface IDNIUsuarioService {
     void validar(Long usuarioId);
 
     void rechazar(Long usuarioId);
+    
 }
