@@ -49,7 +49,7 @@ public class DocVehiculo {
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
     Vehiculos vehiculo;
 
-    @ManyToOne // muchos documentos pueden pertenecer a 1 evento
+    @ManyToOne (fetch = FetchType.LAZY) // muchos documentos pueden pertenecer a 1 evento
     @JoinColumn(name = "eventoId", referencedColumnName = "idEvento",nullable = false)
     EventoVehicular eventoVehicular;
 

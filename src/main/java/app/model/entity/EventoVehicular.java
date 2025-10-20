@@ -56,13 +56,16 @@ public class EventoVehicular {
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
 
-    @ManyToOne // muchos eventos se le pueden hacer a 1 vehiculo
+    @ManyToOne (fetch = FetchType.LAZY) // muchos eventos se le pueden hacer a 1 vehiculo
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
     Vehiculos vehiculo;
 
     // 1 evento puede tener varios documentos (ej. una reparación puede tener una factura y un informe técnico)
+//    @OneToMany(mappedBy = "eventoVehicular",
+//            cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @OneToMany(mappedBy = "eventoVehicular",
-            cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     List<DocVehiculo> docVehiculo;
 
     public EventoVehicular() {

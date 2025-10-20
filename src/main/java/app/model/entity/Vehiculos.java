@@ -66,18 +66,26 @@ public class Vehiculos {
         REGISTRADO, VALIDADO
     }
 
-    @ManyToOne // muchos vehiculos pueden pertenecer a un usuario
+    @ManyToOne (fetch = FetchType.LAZY) // muchos vehiculos pueden pertenecer a un usuario
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
 
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL) // 1 vehiculo puede tener muchos documentos
     List<DocVehiculo> docVehiculo;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL) // 1 vehiculo tiene muchos eventos
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true) // 1 vehiculo tiene muchos eventos
     List<EventoVehicular> eventoVehicular;
 
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL) // 1 vehiculo tiene muchas imágenes
     List<ImagenVehiculo> imagenVehiculos;
+
+    @OneToOne(
+            mappedBy = "vehiculo",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private Publicacion publicacion;
 
 
     public Vehiculos() {

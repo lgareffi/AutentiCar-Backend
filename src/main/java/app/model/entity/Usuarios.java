@@ -66,7 +66,7 @@ public class Usuarios {
         REGISTRADO, RECHAZADO, VALIDADO, PENDIENTE
     }
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede tener muchos autos
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 1 usuario puede tener muchos autos
     List<Vehiculos> vehiculos = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL) // 1 usuario puede registrar muchos eventos
