@@ -1,5 +1,6 @@
 package app.model.entity;
 
+import app.service.CapitalizeFirstConverter;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -17,9 +18,11 @@ public class Vehiculos {
     private String vin;
 
     @Column(nullable = false,length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String marca;
 
     @Column(nullable = false, length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String modelo;
 
     @Column(nullable = false)
@@ -35,12 +38,15 @@ public class Vehiculos {
     private double motor;
 
     @Column(nullable = false, length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String color;
 
     @Column(nullable = false, length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String tipoCombustible;
 
     @Column(nullable = false, length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String tipoTransmision;
 
     @Column(nullable = false, length = 40)

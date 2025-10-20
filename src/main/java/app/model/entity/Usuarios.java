@@ -1,5 +1,6 @@
 package app.model.entity;
 
+import app.service.CapitalizeFirstConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -16,9 +17,11 @@ public class Usuarios {
     private long idUsuario;
 
     @Column(nullable = false,length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String nombre;
 
-    @Column(nullable = true,length = 150) // si es una concesionaria o un taller, no tienen apellido
+    @Column(nullable = true,length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String apellido;
 
     @Column(nullable = false)

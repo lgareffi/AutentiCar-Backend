@@ -1,5 +1,6 @@
 package app.model.entity;
 
+import app.service.CapitalizeFirstConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +14,7 @@ public class DocVehiculo {
     private long idDocVehiculo;
 
     @Column(nullable = false,length = 150)
+    @Convert(converter = CapitalizeFirstConverter.class)
     private String nombre;
 
     @Column(nullable = false,length = 255)
