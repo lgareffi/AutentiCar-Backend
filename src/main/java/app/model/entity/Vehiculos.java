@@ -285,4 +285,12 @@ public class Vehiculos {
     public void setAllowedToSee(AllowedToSee allowedToSee) {
         this.allowedToSee = allowedToSee;
     }
+
+    public Publicacion getPublicacion() {
+        return publicacion;
+    }
+
+    public void setPublicacion(Publicacion publicacion) {
+        this.publicacion = publicacion;
+    }
 }
