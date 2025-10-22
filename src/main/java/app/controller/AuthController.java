@@ -175,11 +175,12 @@ public class AuthController {
             u.setPassword(encoder.encode(req.getPassword())); // BCrypt
             u.setFechaRegistro(LocalDate.now());
             u.setRol(req.getRol());
-            u.setEsConcesionaria(req.getRol() == Usuarios.Rol.CONCESIONARIO);
+            u.setEsConcesionariaTaller(req.getRol() == Usuarios.Rol.CONCESIONARIO);
             u.setTelefonoCelular(req.getTelefonoCelular());
             u.setNivelUsuario(Usuarios.NivelUsuario.REGISTRADO);
             u.setDniFrenteUrl(null);
             u.setDniDorsoUrl(null);
+            u.setQuiereOferta(false);
             usuariosService.save(u);
 
             String token = jwt.generarToken(u);

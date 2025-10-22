@@ -139,6 +139,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setTipoEvento(EventoVehicular.TipoEvento.valueOf(dto.tipoEvento.toUpperCase()));
         evento.setUsuario(registrador);
         evento.setVehiculo(vehiculo);
+        evento.setEstaEliminado(false);
 
         //  calcular hash y setear campos on-chain
         String vin = vehiculo.getVin(); // asegurate que Vehiculos tenga getVin()

@@ -4,7 +4,7 @@ import app.Errors.NotFoundError;
 import app.controller.dtos.AddConcesionariaVerifDTO;
 import app.model.dao.IConcesionariaVerifDAO;
 import app.model.dao.IUsuariosDAO;
-import app.model.entity.ConcesionariaVerif;
+import app.model.entity.ConcesionarioTallerVerif;
 import app.model.entity.Usuarios;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,10 @@ public class ConcesionariaVerifServiceImpl implements IConcesionariaVerifService
 
     @Override
     @Transactional
-    public ConcesionariaVerif findById(long id) {
+    public ConcesionarioTallerVerif findById(long id) {
         try {
-            ConcesionariaVerif concesionariaVerif = concesionariaVerifDAO.findById(id);
-            return concesionariaVerif;
+            ConcesionarioTallerVerif concesionarioTallerVerif = concesionariaVerifDAO.findById(id);
+            return concesionarioTallerVerif;
         }catch (Throwable e) {
             System.out.println("Error al buscar la verificación de concesionaria con ID: " + id + " - " + e.getMessage());
             throw new NotFoundError("La verificación de concesionaria no existe");
@@ -34,50 +34,36 @@ public class ConcesionariaVerifServiceImpl implements IConcesionariaVerifService
 
     @Override
     @Transactional
-    public void save(ConcesionariaVerif concesionariaVerif) {
+    public void save(ConcesionarioTallerVerif concesionarioTallerVerif) {
         try {
-            concesionariaVerifDAO.save(concesionariaVerif);
+            concesionariaVerifDAO.save(concesionarioTallerVerif);
         }catch (Throwable e){
             throw new Error("Error al guardar la verificación" + e.getMessage());
         }
     }
 
-    @Override
-    @Transactional
-    public void saveVerificacionDesdeDTO(AddConcesionariaVerifDTO dto) {
-        // 1) Usuario
-        Usuarios usuario = usuariosDAO.findById(dto.usuarioId);
-        if (usuario == null) {
-            throw new NotFoundError("No se encontró al usuario: " + dto.usuarioId);
-        }
-
-        // 2) Buscar existente por usuario (1:1)
-        ConcesionariaVerif cv = concesionariaVerifDAO.findByUsuarioId(usuario.getIdUsuario());
-
-        if (cv == null) {
-            // Crear nueva
-            cv = new ConcesionariaVerif();
-            cv.setUsuario(usuario);
-            cv.setFechaSolicitud(LocalDate.now());
-            cv.setEstado(ConcesionariaVerif.EstadoVerificacion.PENDIENTE);
-        } else {
-            // (Opcional) si ya está VERIFICADA y no querés permitir cambios, descomentá:
-            // if (cv.getEstado() == ConcesionariaVerif.EstadoVerificacion.VERIFICADA) {
-            //     throw new IllegalStateException("La verificación ya fue aprobada y no puede modificarse.");
-            // }
-            // Si estuvo RECHAZADA o PENDIENTE, la “reenvías” dejando PENDIENTE de nuevo:
-            cv.setEstado(ConcesionariaVerif.EstadoVerificacion.PENDIENTE);
-        }
-
-        // 3) Setear/actualizar datos
-        cv.setRazonSocial(dto.razonSocial);
-        cv.setCuit(dto.cuit);
-        cv.setNotas(dto.notas);
-        cv.setFechaActualizacion(LocalDate.now());
-
-        // 4) Persistir (sin try/catch innecesario; si hay error de integridad, que se vea la causa real)
-        concesionariaVerifDAO.save(cv);
-    }
+//    @Override
+//    @Transactional
+//    public void saveVerificacionDesdeDTO(AddConcesionariaVerifDTO dto) {
+//        // 1) Usuario
+//        Usuarios usuario = usuariosDAO.findById(dto.usuarioId);
+//        if (usuario == null) {
+//            throw new NotFoundError("No se encontró al usuario: " + dto.usuarioId);
+//        }
+//
+//        // 2) Buscar existente por usuario (1:1)
+//        ConcesionarioTallerVerif cv = concesionariaVerifDAO.findByUsuarioId(usuario.getIdUsuario());
+//
+//        if (cv == null) {
+//            // Crear nueva
+//            cv = new ConcesionarioTallerVerif();
+//            cv.setUsuario(usuario);
+//            cv.setArchivoUrl();
+//            cv.setDomicilio();
+//
+//        // 4) Persistir (sin try/catch innecesario; si hay error de integridad, que se vea la causa real)
+//        concesionariaVerifDAO.save(cv);
+//    }
 
 //    @Override
 //    @Transactional
@@ -110,40 +96,5 @@ public class ConcesionariaVerifServiceImpl implements IConcesionariaVerifService
 //        }
 //    }
 
-    @Override
-    @Transactional
-    public void eliminarConcesionariaVerif(long concesionariaId) {
-        ConcesionariaVerif concesionariaVerif = concesionariaVerifDAO.findById(concesionariaId);
-        if (concesionariaVerif == null) {
-            throw new NotFoundError("Verificación de concesionaria no encontrada: " + concesionariaId);
-        }
-        concesionariaVerifDAO.delete(concesionariaVerif);
-    }
-
-    @Override
-    @Transactional
-    public void cambiarEstadoVerificacion(long verificacionId,
-                                          ConcesionariaVerif.EstadoVerificacion nuevoEstado,
-                                          String notas) {
-//         TODO: cuando implementes roles, validar que quien invoca sea ADMIN
-
-        ConcesionariaVerif cv = concesionariaVerifDAO.findById(verificacionId);
-        if (cv == null) {
-            throw new NotFoundError("Verificación no encontrada: " + verificacionId);
-        }
-
-        if (nuevoEstado == null) {
-            throw new IllegalArgumentException("Debe indicar el nuevo estado de verificación");
-        }
-
-        // Actualizo estado, notas y fecha
-        cv.setEstado(nuevoEstado);
-        if (notas != null && !notas.isBlank()) {
-            cv.setNotas(notas);
-        }
-        cv.setFechaActualizacion(LocalDate.now());
-
-        concesionariaVerifDAO.save(cv);
-    }
 
 }

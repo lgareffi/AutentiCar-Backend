@@ -52,6 +52,9 @@ public class EventoVehicular {
     @Column(name = "bc_error", length = 255)
     private String blockchainError;
 
+    @Column(nullable = false)
+    private boolean estaEliminado;
+
     @ManyToOne // muchos eventos pueden ser cargados por 1 usuario
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
@@ -72,22 +75,23 @@ public class EventoVehicular {
         super();
     }
 
-    public EventoVehicular(long idEvento, String titulo, int kilometrajeEvento,
-                           String descripcion, LocalDate fechaEvento, TipoEvento tipoEvento,
-                           String hashEvento, LocalDateTime blockchainRecordedAt,
-                           String blockchainTxId, String blockchainError,
-                           Usuarios usuario, Vehiculos vehiculo,
-                           List<DocVehiculo> docVehiculo) {
+    public EventoVehicular(long idEvento, String titulo, String descripcion,
+                           int kilometrajeEvento, LocalDate fechaEvento,
+                           TipoEvento tipoEvento, String hashEvento,
+                           LocalDateTime blockchainRecordedAt, String blockchainTxId,
+                           String blockchainError, boolean estaEliminado, Usuarios usuario,
+                           Vehiculos vehiculo, List<DocVehiculo> docVehiculo) {
         this.idEvento = idEvento;
         this.titulo = titulo;
-        this.kilometrajeEvento = kilometrajeEvento;
         this.descripcion = descripcion;
+        this.kilometrajeEvento = kilometrajeEvento;
         this.fechaEvento = fechaEvento;
         this.tipoEvento = tipoEvento;
         this.hashEvento = hashEvento;
         this.blockchainRecordedAt = blockchainRecordedAt;
         this.blockchainTxId = blockchainTxId;
         this.blockchainError = blockchainError;
+        this.estaEliminado = estaEliminado;
         this.usuario = usuario;
         this.vehiculo = vehiculo;
         this.docVehiculo = docVehiculo;
@@ -106,6 +110,7 @@ public class EventoVehicular {
                 ", blockchainRecordedAt=" + blockchainRecordedAt +
                 ", blockchainTxId='" + blockchainTxId + '\'' +
                 ", blockchainError='" + blockchainError + '\'' +
+                ", estaEliminado=" + estaEliminado +
                 ", usuario=" + usuario +
                 ", vehiculo=" + vehiculo +
                 ", docVehiculo=" + docVehiculo +
@@ -216,4 +221,11 @@ public class EventoVehicular {
         this.blockchainError = blockchainError;
     }
 
+    public boolean isEstaEliminado() {
+        return estaEliminado;
+    }
+
+    public void setEstaEliminado(boolean estaEliminado) {
+        this.estaEliminado = estaEliminado;
+    }
 }

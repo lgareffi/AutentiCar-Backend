@@ -1,7 +1,7 @@
 package app.model.dao;
 
 import app.Errors.NotFoundError;
-import app.model.entity.ConcesionariaVerif;
+import app.model.entity.ConcesionarioTallerVerif;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.query.Query;
@@ -18,43 +18,43 @@ public class ConcesionariaVerifDAOImpl implements IConcesionariaVerifDAO{
 
     @Override
     @Transactional
-    public ConcesionariaVerif findById(long id){
+    public ConcesionarioTallerVerif findById(long id){
         Session currentSession = entityManager.unwrap(Session.class);
-        ConcesionariaVerif concesionariaVerif = currentSession.get(ConcesionariaVerif.class, id);
-        if (concesionariaVerif != null)
-            return concesionariaVerif;
+        ConcesionarioTallerVerif concesionarioTallerVerif = currentSession.get(ConcesionarioTallerVerif.class, id);
+        if (concesionarioTallerVerif != null)
+            return concesionarioTallerVerif;
         throw new NotFoundError("No se encontro la concesionaria");
     }
 
     @Override
     @Transactional
-    public void save(ConcesionariaVerif concesionariaVerif) {
+    public void save(ConcesionarioTallerVerif concesionarioTallerVerif) {
         Session s = entityManager.unwrap(Session.class);
-        if (concesionariaVerif.getIdConcesionariaVerif() == 0) {
-            s.persist(concesionariaVerif); // INSERT
+        if (concesionarioTallerVerif.getIdConcesionarioTallerVerif() == 0) {
+            s.persist(concesionarioTallerVerif); // INSERT
         } else {
-            s.merge(concesionariaVerif);   // UPDATE
+            s.merge(concesionarioTallerVerif);   // UPDATE
         }
     }
 
     @Override
     @Transactional
-    public void delete(ConcesionariaVerif concesionariaVerif) {
+    public void delete(ConcesionarioTallerVerif concesionarioTallerVerif) {
         Session s = entityManager.unwrap(Session.class);
-        ConcesionariaVerif managed = s.contains(concesionariaVerif) ? concesionariaVerif : s.merge(concesionariaVerif);
+        ConcesionarioTallerVerif managed = s.contains(concesionarioTallerVerif) ? concesionarioTallerVerif : s.merge(concesionarioTallerVerif);
         s.remove(managed);
     }
 
     @Override
     @Transactional
-    public ConcesionariaVerif findByUsuarioId(long usuarioId) {
+    public ConcesionarioTallerVerif findByUsuarioId(long usuarioId) {
         Session currentSession = entityManager.unwrap(Session.class);
-        Query<ConcesionariaVerif> query = currentSession.createQuery(
+        Query<ConcesionarioTallerVerif> query = currentSession.createQuery(
                 "FROM ConcesionariaVerif WHERE usuario.idUsuario = :usuarioId",
-                ConcesionariaVerif.class
+                ConcesionarioTallerVerif.class
         );
         query.setParameter("usuarioId", usuarioId);
-        List<ConcesionariaVerif> result = query.getResultList();
+        List<ConcesionarioTallerVerif> result = query.getResultList();
         return result.isEmpty() ? null : result.get(0);
     }
 

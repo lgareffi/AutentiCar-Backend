@@ -1,14 +1,14 @@
 package app.model.dao;
 
-import app.model.entity.ConcesionariaVerif;
+import app.model.entity.ConcesionarioTallerVerif;
 
 public interface IConcesionariaVerifDAO {
-    public ConcesionariaVerif findById(long id);
+    public ConcesionarioTallerVerif findById(long id);
 
-    public void save(ConcesionariaVerif concesionariaVerif);
+    public void save(ConcesionarioTallerVerif concesionarioTallerVerif);
 
-    public void delete(ConcesionariaVerif concesionariaVerif);
+    public void delete(ConcesionarioTallerVerif concesionarioTallerVerif);
 
-    public ConcesionariaVerif findByUsuarioId(long usuarioId);
+    public ConcesionarioTallerVerif findByUsuarioId(long usuarioId);
 
 }

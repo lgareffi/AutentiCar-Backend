@@ -14,6 +14,7 @@ public class EventoVehicularDTO {
     private int kilometrajeEvento;
     private LocalDate fechaEvento;
     private String tipoEvento;
+    private boolean estaEliminado;
 
     private Long idUsuario;    // ID del usuario que creó el evento
     private Long idVehiculo;   // ID del vehículo relacionado
@@ -39,6 +40,7 @@ public class EventoVehicularDTO {
         this.blockchainRecordedAt = evento.getBlockchainRecordedAt();
         this.blockchainTxId = evento.getBlockchainTxId();
         this.blockchainError = evento.getBlockchainError();
+        this.estaEliminado = evento.isEstaEliminado();
 
         this.idsDocumentos = evento.getDocVehiculo() != null
                 ? evento.getDocVehiculo().stream()
@@ -155,5 +157,12 @@ public class EventoVehicularDTO {
         this.blockchainError = blockchainError;
     }
 
+    public boolean isEstaEliminado() {
+        return estaEliminado;
+    }
+
+    public void setEstaEliminado(boolean estaEliminado) {
+        this.estaEliminado = estaEliminado;
+    }
 }
 

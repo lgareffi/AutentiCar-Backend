@@ -17,7 +17,8 @@ public class UsuariosDTO {
     private List<Long> vehiculos;
     private List<Long> eventos;
     private List<Long> publicaciones;
-    private boolean esConcesionaria;
+    private boolean esConcesionariaTaller;
+    private boolean quiereOferta;
 
     private String nivelUsuario;   // REGISTRADO / PENDIENTE / VALIDADO / RECHAZADO
     private boolean tieneDniFrente;
@@ -32,7 +33,8 @@ public class UsuariosDTO {
         this.mail = usuario.getMail();
         this.telefonoCelular = usuario.getTelefonoCelular();
         this.rol = usuario.getRol().name();
-        this.esConcesionaria = usuario.isEsConcesionaria();
+        this.esConcesionariaTaller = usuario.isEsConcesionariaTaller();
+        this.quiereOferta = usuario.isQuiereOferta();
         this.nivelUsuario = usuario.getNivelUsuario().name();
         this.tieneDniFrente = usuario.getDniFrenteUrl() != null;
         this.tieneDniDorso = usuario.getDniDorsoUrl() != null;
@@ -136,12 +138,12 @@ public class UsuariosDTO {
         this.mail = mail;
     }
 
-    public boolean isEsConcesionaria() {
-        return esConcesionaria;
+    public boolean isEsConcesionariaTaller() {
+        return esConcesionariaTaller;
     }
 
-    public void setEsConcesionaria(boolean esConcesionaria) {
-        this.esConcesionaria = esConcesionaria;
+    public void setEsConcesionariaTaller(boolean esConcesionariaTaller) {
+        this.esConcesionariaTaller = esConcesionariaTaller;
     }
 
     public String getRol() {
@@ -190,5 +192,13 @@ public class UsuariosDTO {
 
     public void setProfilePicUrl(String profilePicUrl) {
         this.profilePicUrl = profilePicUrl;
+    }
+
+    public boolean isQuiereOferta() {
+        return quiereOferta;
+    }
+
+    public void setQuiereOferta(boolean quiereOferta) {
+        this.quiereOferta = quiereOferta;
     }
 }

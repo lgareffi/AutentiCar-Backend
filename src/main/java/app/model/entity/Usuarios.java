@@ -40,7 +40,10 @@ public class Usuarios {
     private LocalDate fechaRegistro;
 
     @Column(nullable = false)
-    private boolean esConcesionaria;
+    private boolean esConcesionariaTaller;
+
+    @Column(nullable = false)
+    private boolean quiereOferta;
 
     @Column(nullable = true, length = 500)
     private String dniFrenteUrl;
@@ -86,23 +89,22 @@ public class Usuarios {
         super();
     }
 
-    public Usuarios(long idUsuario, String nombre, String apellido, int dni,
-                    String mail, String password, String telefonoCelular,
-                    LocalDate fechaRegistro, String dniFrenteUrl, boolean esConcesionaria,
-                    String dniDorsoUrl, String profilePicUrl, Rol rol, NivelUsuario nivelUsuario,
-                    List<Vehiculos> vehiculos, List<EventoVehicular> eventoVehicular,
-                    List<Ventas> comprasRealizadas, List<Ventas> ventasRealizadas,
+    public Usuarios(String nombre, long idUsuario, int dni, String apellido, String mail, String password, String telefonoCelular,
+                    LocalDate fechaRegistro, boolean esConcesionariaTaller, boolean quiereOferta, String dniFrenteUrl,
+                    String dniDorsoUrl, String profilePicUrl, Rol rol, NivelUsuario nivelUsuario, List<Vehiculos> vehiculos,
+                    List<EventoVehicular> eventoVehicular, List<Ventas> comprasRealizadas, List<Ventas> ventasRealizadas,
                     List<Publicacion> publicaciones) {
-        this.idUsuario = idUsuario;
         this.nombre = nombre;
-        this.apellido = apellido;
+        this.idUsuario = idUsuario;
         this.dni = dni;
+        this.apellido = apellido;
         this.mail = mail;
         this.password = password;
         this.telefonoCelular = telefonoCelular;
         this.fechaRegistro = fechaRegistro;
+        this.esConcesionariaTaller = esConcesionariaTaller;
+        this.quiereOferta = quiereOferta;
         this.dniFrenteUrl = dniFrenteUrl;
-        this.esConcesionaria = esConcesionaria;
         this.dniDorsoUrl = dniDorsoUrl;
         this.profilePicUrl = profilePicUrl;
         this.rol = rol;
@@ -125,7 +127,8 @@ public class Usuarios {
                 ", password='" + password + '\'' +
                 ", telefonoCelular='" + telefonoCelular + '\'' +
                 ", fechaRegistro=" + fechaRegistro +
-                ", esConcesionaria=" + esConcesionaria +
+                ", esConcesionariaTaller=" + esConcesionariaTaller +
+                ", quiereOferta=" + quiereOferta +
                 ", dniFrenteUrl='" + dniFrenteUrl + '\'' +
                 ", dniDorsoUrl='" + dniDorsoUrl + '\'' +
                 ", profilePicUrl='" + profilePicUrl + '\'' +
@@ -243,12 +246,12 @@ public class Usuarios {
         this.publicaciones = publicaciones;
     }
 
-    public boolean isEsConcesionaria() {
-        return esConcesionaria;
+    public boolean isEsConcesionariaTaller() {
+        return esConcesionariaTaller;
     }
 
-    public void setEsConcesionaria(boolean esConcesionaria) {
-        this.esConcesionaria = esConcesionaria;
+    public void setEsConcesionariaTaller(boolean esConcesionariaTaller) {
+        this.esConcesionariaTaller = esConcesionariaTaller;
     }
 
     public String getTelefonoCelular() {
@@ -289,5 +292,13 @@ public class Usuarios {
 
     public void setProfilePicUrl(String profilePicUrl) {
         this.profilePicUrl = profilePicUrl;
+    }
+
+    public boolean isQuiereOferta() {
+        return quiereOferta;
+    }
+
+    public void setQuiereOferta(boolean quiereOferta) {
+        this.quiereOferta = quiereOferta;
     }
 }
