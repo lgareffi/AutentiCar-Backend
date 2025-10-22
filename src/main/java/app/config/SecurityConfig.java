@@ -56,6 +56,10 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/usuarios/publico/*").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/usuarios/*/publicaciones/count").permitAll()
 
+                        //Usuarios
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/usuarios/*/oferta/toggle")
+                        .hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+
                         // Publicaciones (lista + detalle)
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/publicaciones/**").permitAll()
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -283,6 +284,27 @@ public class UsuariosController {
         } catch (Throwable e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error inesperado al eliminar la foto de perfil");
+        }
+    }
+
+    @PutMapping("/usuarios/{usuarioId}/oferta/toggle")
+    public ResponseEntity<?> toggleOferta(@PathVariable long usuarioId) {
+        try {
+            Usuarios u = usuariosService.findById(usuarioId);
+            if (u == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+
+            u.setQuiereOferta(!u.isQuiereOferta());
+            usuariosService.save(u);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", u.isQuiereOferta()
+                            ? "Solicitud de plan mensual activada"
+                            : "Solicitud de plan mensual cancelada",
+                    "quiereOferta", u.isQuiereOferta()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al procesar la solicitud");
         }
     }
 

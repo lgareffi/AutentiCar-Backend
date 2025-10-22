@@ -43,7 +43,7 @@ public class Usuarios {
     private boolean esConcesionariaTaller;
 
     @Column(nullable = false)
-    private boolean quiereOferta;
+    private boolean quiereOferta = false;
 
     @Column(nullable = true, length = 500)
     private String dniFrenteUrl;
