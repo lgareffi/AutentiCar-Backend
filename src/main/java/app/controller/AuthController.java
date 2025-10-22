@@ -166,6 +166,11 @@ public class AuthController {
                         .body(new ErrorResponse("Ya existe una cuenta registrada con ese DNI"));
             }
 
+            String telefono = req.getTelefonoCelular().replaceAll("\\D", ""); // eliminar espacios, guiones, etc.
+            if (!telefono.startsWith("549")) {
+                telefono = "549" + telefono;
+            }
+
             // Crear y guardar
             Usuarios u = new Usuarios();
             u.setNombre(req.getNombre());
@@ -176,7 +181,7 @@ public class AuthController {
             u.setFechaRegistro(LocalDate.now());
             u.setRol(req.getRol());
             u.setEsConcesionariaTaller(req.getRol() == Usuarios.Rol.CONCESIONARIO);
-            u.setTelefonoCelular(req.getTelefonoCelular());
+            u.setTelefonoCelular(telefono);
             u.setNivelUsuario(Usuarios.NivelUsuario.REGISTRADO);
             u.setDniFrenteUrl(null);
             u.setDniDorsoUrl(null);
