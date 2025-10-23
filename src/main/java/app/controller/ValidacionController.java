@@ -1,8 +1,11 @@
 package app.controller;
 
+import app.service.IConcesionariaTallerVerifService;
 import app.service.IDNIUsuarioService;
 import app.service.IUsuariosService;
 import app.service.IVehiculosService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,9 @@ public class ValidacionController {
 
     @Autowired
     private IDNIUsuarioService dniUsuarioService;
+
+    @Autowired
+    private IConcesionariaTallerVerifService concesionariaTallerVerifService;
 
     @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @PostMapping(value = "/frente", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -77,6 +83,42 @@ public class ValidacionController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_TALLER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @PostMapping(value = "/archivo/{usuarioId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> subirArchivo(@RequestParam("file") MultipartFile file, @PathVariable Long usuarioId) {
+        concesionariaTallerVerifService.subirArchivo(file, usuarioId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_TALLER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @PostMapping("/enviarValidacion/{usuarioId}")
+    public ResponseEntity<?> enviarValidacionTallerConcesionaria(@PathVariable Long usuarioId, @RequestBody DomicilioDTO dto) {
+        concesionariaTallerVerifService.enviarValidacion(usuarioId, dto.getDomicilio());
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_ADMIN')")
+    @PostMapping("/{usuarioId}/validarTallerConcesionaria")
+    public ResponseEntity<?> validarTallerConcesionaria(@PathVariable Long usuarioId) {
+        concesionariaTallerVerifService.validar(usuarioId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_ADMIN')")
+    @PostMapping("/{usuarioId}/rechazarTallerConcesionaria")
+    public ResponseEntity<?> rechazarTallerConcesionaria(@PathVariable Long usuarioId) {
+        concesionariaTallerVerifService.rechazar(usuarioId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_ADMIN','ROL_TALLER','ROL_CONCESIONARIO')")
+    @GetMapping("/{usuarioId}/archivo")
+    public ResponseEntity<?> getArchivoUrl(@PathVariable Long usuarioId) {
+        String url = concesionariaTallerVerifService.getArchivoUrl(usuarioId);
+        return ResponseEntity.ok(new ArchivoDTO(url));
+    }
+
+
     private Long currentUserId() {
         var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         return (Long) auth.getPrincipal();
@@ -86,5 +128,10 @@ public class ValidacionController {
     static class UrlDTO { private String url; }
     @lombok.Data @lombok.AllArgsConstructor
     static class DniDTO { private String frenteUrl; private String dorsoUrl; }
+    @Data @AllArgsConstructor
+    static class DomicilioDTO { private String domicilio; }
+    @Data
+    @AllArgsConstructor
+    static class ArchivoDTO { private String url; }
 }
 

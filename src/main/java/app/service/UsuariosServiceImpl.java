@@ -2,7 +2,7 @@ package app.service;
 
 
 import app.Errors.NotFoundError;
-import app.model.dao.IConcesionariaVerifDAO;
+import app.model.dao.IConcesionariaTallerVerifDAO;
 import app.model.dao.IUsuariosDAO;
 import app.model.entity.*;
 import jakarta.transaction.Transactional;
@@ -25,7 +25,7 @@ public class UsuariosServiceImpl implements IUsuariosService {
     private IPublicacionService publicacionService;
 
     @Autowired
-    private IConcesionariaVerifDAO concesionariaVerifDAO;
+    private IConcesionariaTallerVerifDAO concesionariaVerifDAO;
 
     @Override
     @Transactional

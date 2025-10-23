@@ -11,7 +11,7 @@ public class ConcesionarioTallerVerif {
     @Column(nullable = false)
     private long idConcesionarioTallerVerif;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = true, length = 150)
     private String domicilio;
 
     @Column(nullable = true, length = 500)
@@ -73,4 +73,6 @@ public class ConcesionarioTallerVerif {
     public void setArchivoUrl(String archivoUrl) {
         this.archivoUrl = archivoUrl;
     }
+
+
 }

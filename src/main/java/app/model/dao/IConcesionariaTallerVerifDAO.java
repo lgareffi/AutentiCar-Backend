@@ -2,7 +2,7 @@ package app.model.dao;
 
 import app.model.entity.ConcesionarioTallerVerif;
 
-public interface IConcesionariaVerifDAO {
+public interface IConcesionariaTallerVerifDAO {
     public ConcesionarioTallerVerif findById(long id);
 
     public void save(ConcesionarioTallerVerif concesionarioTallerVerif);

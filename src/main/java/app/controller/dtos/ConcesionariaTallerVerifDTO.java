@@ -2,15 +2,13 @@ package app.controller.dtos;
 
 import app.model.entity.ConcesionarioTallerVerif;
 
-import java.time.LocalDate;
-
-public class ConcesionariaVerifDTO {
+public class ConcesionariaTallerVerifDTO {
     private long idConcesionarioTallerVerif;
     private long usuarioId;
     private String domicilio;
     private String archivoUrl;
 
-    public ConcesionariaVerifDTO(ConcesionarioTallerVerif cv) {
+    public ConcesionariaTallerVerifDTO(ConcesionarioTallerVerif cv) {
         super();
         this.idConcesionarioTallerVerif = cv.getIdConcesionarioTallerVerif();
         this.usuarioId = cv.getUsuario() != null ? cv.getUsuario().getIdUsuario() : 0;

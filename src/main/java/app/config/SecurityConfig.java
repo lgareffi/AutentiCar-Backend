@@ -79,6 +79,7 @@ public class SecurityConfig {
                         // Verificación concesionaria (form)
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/concesionariaVerif").permitAll()
 
+                        // Validaciones
                         .requestMatchers(org.springframework.http.HttpMethod.POST,
                                 "/usuarios/validacion/frente",
                                 "/usuarios/validacion/dorso",
@@ -96,6 +97,22 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.POST,
                                 "/usuarios/validacion/*/validar",
                                 "/usuarios/validacion/*/rechazar")
+                        .hasAuthority("ROL_ADMIN")
+
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/usuarios/validacion/archivo/*",
+                                "/usuarios/validacion/enviarValidacion/*")
+                        .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+
+                        // Obtener URL del archivo (taller/concesionario o admin)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/usuarios/validacion/*/archivo")
+                        .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+
+                        // Admin: aprobar / rechazar verificación de taller/concesionaria
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/usuarios/validacion/*/validarTallerConcesionaria",
+                                "/usuarios/validacion/*/rechazarTallerConcesionaria")
                         .hasAuthority("ROL_ADMIN")
 
                         // Usuarios - Fotos de perfil

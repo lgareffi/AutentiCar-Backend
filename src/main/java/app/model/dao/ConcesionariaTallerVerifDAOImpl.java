@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class ConcesionariaVerifDAOImpl implements IConcesionariaVerifDAO{
+public class ConcesionariaTallerVerifDAOImpl implements IConcesionariaTallerVerifDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -23,7 +23,7 @@ public class ConcesionariaVerifDAOImpl implements IConcesionariaVerifDAO{
         ConcesionarioTallerVerif concesionarioTallerVerif = currentSession.get(ConcesionarioTallerVerif.class, id);
         if (concesionarioTallerVerif != null)
             return concesionarioTallerVerif;
-        throw new NotFoundError("No se encontro la concesionaria");
+        throw new NotFoundError("No se encontro");
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ConcesionariaVerifDAOImpl implements IConcesionariaVerifDAO{
     public ConcesionarioTallerVerif findByUsuarioId(long usuarioId) {
         Session currentSession = entityManager.unwrap(Session.class);
         Query<ConcesionarioTallerVerif> query = currentSession.createQuery(
-                "FROM ConcesionariaVerif WHERE usuario.idUsuario = :usuarioId",
+                "FROM ConcesionarioTallerVerif WHERE usuario.idUsuario = :usuarioId",
                 ConcesionarioTallerVerif.class
         );
         query.setParameter("usuarioId", usuarioId);
