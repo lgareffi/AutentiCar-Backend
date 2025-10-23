@@ -74,6 +74,19 @@ public class VehiculosController {
         }
     }
 
+    @GetMapping("/{vehiculoId}/eventos/eliminados")
+    public ResponseEntity<?> getEventosEliminados(@PathVariable long vehiculoId) {
+        try {
+            List<EventoVehicular> eventosVehiculo = this.vehiculosService.getEventosEliminados(vehiculoId);
+            List<EventoVehicularDTO> eventosDTO = eventosVehiculo.stream()
+                    .map(EventoVehicularDTO::new)
+                    .toList();
+            return new ResponseEntity<>(eventosDTO, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
     @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @PostMapping
     public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO dto) {

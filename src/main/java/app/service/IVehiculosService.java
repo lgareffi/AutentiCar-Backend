@@ -19,6 +19,8 @@ public interface IVehiculosService {
 
     public List<EventoVehicular> getEventoVehicular(long id);
 
+    public List<EventoVehicular> getEventosEliminados(long id);
+
     public List<ImagenVehiculo> getImagenVehiculos(long id);
 
     public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto);

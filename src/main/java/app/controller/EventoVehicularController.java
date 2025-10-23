@@ -5,6 +5,7 @@ import app.controller.dtos.AddEventoDTO;
 import app.controller.dtos.DocVehiculoDTO;
 import app.controller.dtos.EventoVehicularDTO;
 import app.controller.dtos.VehiculosDTO;
+import app.model.dao.IEventoVehicularDAO;
 import app.model.entity.DocVehiculo;
 import app.model.entity.EventoVehicular;
 import app.model.entity.Vehiculos;
@@ -25,6 +26,9 @@ import java.util.Map;
 public class EventoVehicularController {
     @Autowired
     private IEventoVehicularService eventoVehicularService;
+
+    @Autowired
+    private IEventoVehicularDAO eventoVehicularDAO;
 
     @GetMapping("/{eventoId}")
     public ResponseEntity<?> getEvento(@PathVariable long eventoId) {
@@ -84,6 +88,28 @@ public class EventoVehicularController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Throwable t) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado");
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PutMapping("/{eventoId}/eliminarLogico")
+    public ResponseEntity<?> eliminarEventoLogico(@PathVariable long eventoId) {
+        try {
+            EventoVehicular eventoVehicular = eventoVehicularService.findById(eventoId);
+
+            if (eventoVehicular.isEstaEliminado()) {
+                return ResponseEntity.badRequest()
+                        .body("El evento ya se encuentra marcado como eliminado");
+            }
+
+            eventoVehicular.setEstaEliminado(true);
+            eventoVehicularDAO.save(eventoVehicular);
+
+            return ResponseEntity.ok("Evento marcado como eliminado correctamente");
+
+        } catch (Throwable t) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado al marcar el evento como eliminado");
         }
     }
 

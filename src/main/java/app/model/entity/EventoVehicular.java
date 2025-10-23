@@ -53,7 +53,7 @@ public class EventoVehicular {
     private String blockchainError;
 
     @Column(nullable = false)
-    private boolean estaEliminado;
+    private boolean estaEliminado = false;
 
     @ManyToOne // muchos eventos pueden ser cargados por 1 usuario
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)

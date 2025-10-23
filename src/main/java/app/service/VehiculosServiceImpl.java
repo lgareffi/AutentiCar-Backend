@@ -93,16 +93,52 @@ public class VehiculosServiceImpl implements IVehiculosService{
         }
     }
 
+//    @Override
+//    @Transactional
+//    public List<EventoVehicular> getEventoVehicular(long id){
+//        try {
+//            Vehiculos v = this.vehiculosDAO.findById(id);
+//            if (v == null)
+//                throw new NotFoundError("No se encontro el vehiculo");
+//            if (v.getEventoVehicular().isEmpty())
+//                throw new Error("No se encontraron eventos hechos al auto");
+//            return v.getEventoVehicular();
+//        } catch(Throwable e) {
+//            throw new Error(e.getMessage());
+//        }
+//    }
+
     @Override
     @Transactional
     public List<EventoVehicular> getEventoVehicular(long id){
         try {
             Vehiculos v = this.vehiculosDAO.findById(id);
             if (v == null)
-                throw new NotFoundError("No se encontro el vehiculo");
-            if (v.getEventoVehicular().isEmpty())
-                throw new Error("No se encontraron eventos hechos al auto");
-            return v.getEventoVehicular();
+                throw new NotFoundError("No se encontró el vehículo");
+
+            List<EventoVehicular> eventos = v.getEventoVehicular();
+            if (eventos.isEmpty())
+                return eventos;
+
+            // 🔹 Filtrar solo los activos
+            return eventos.stream()
+                    .filter(e -> !e.isEstaEliminado())
+                    .toList();
+        } catch(Throwable e) {
+            throw new Error(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<EventoVehicular> getEventosEliminados(long id){
+        try {
+            Vehiculos v = this.vehiculosDAO.findById(id);
+            if (v == null)
+                throw new NotFoundError("No se encontró el vehículo");
+            return v.getEventoVehicular().stream()
+                    .filter(EventoVehicular::isEstaEliminado)
+                    .toList();
         } catch(Throwable e) {
             throw new Error(e.getMessage());
         }

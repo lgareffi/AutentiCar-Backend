@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/documentos").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/imagenes").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/eventos").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/eventos/eliminados").permitAll()
 
                         // Documentos (detalle)
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/documentos/**").permitAll()
