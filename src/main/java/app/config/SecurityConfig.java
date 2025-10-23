@@ -76,8 +76,8 @@ public class SecurityConfig {
                         // Eventos (detalle)
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/eventos/*").permitAll()
 
-                        // Verificación concesionaria (form)
-                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/concesionariaVerif").permitAll()
+                        // Verificación concesionaria y taller
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/concesionariaTallerVerif/**").permitAll()
 
                         // Validaciones
                         .requestMatchers(org.springframework.http.HttpMethod.POST,

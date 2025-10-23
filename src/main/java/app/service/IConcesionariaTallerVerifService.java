@@ -13,6 +13,8 @@ public interface IConcesionariaTallerVerifService {
 
     public void eliminarConcesionariaTallerVerif(long id);
 
+    public ConcesionarioTallerVerif findByUsuarioId(long usuarioId);
+
     void subirArchivo(MultipartFile file, Long usuarioId);
     void enviarValidacion(Long usuarioId, String domicilio);
     void validar(Long usuarioId);

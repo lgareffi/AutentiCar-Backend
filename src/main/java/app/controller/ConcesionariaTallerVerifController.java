@@ -16,16 +16,29 @@ public class ConcesionariaTallerVerifController {
     @Autowired
     private IConcesionariaTallerVerifService concesionariaTallerVerifService;
 
-    @GetMapping("/{verificacionId}")
-    public ResponseEntity<?> getConcesinariaVerif(@PathVariable long concesinariaVerifId) {
-        try {
-            ConcesionarioTallerVerif concesionarioTallerVerif = concesionariaTallerVerifService.findById(concesinariaVerifId);
-            ConcesionariaTallerVerifDTO dto = new ConcesionariaTallerVerifDTO(concesionarioTallerVerif);
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+//    @GetMapping("/{verificacionId}")
+//    public ResponseEntity<?> getConcesinariaVerif(@PathVariable long concesinariaVerifId) {
+//        try {
+//            ConcesionarioTallerVerif concesionarioTallerVerif = concesionariaTallerVerifService.findById(concesinariaVerifId);
+//            ConcesionariaTallerVerifDTO dto = new ConcesionariaTallerVerifDTO(concesionarioTallerVerif);
+//            return new ResponseEntity<>(dto, HttpStatus.OK);
+//
+//        } catch (Throwable e) {
+//            String msj = "No se encontro la verificación de la concesionaria con id: " + concesinariaVerifId;
+//            return new ResponseEntity<>(msj, HttpStatus.NOT_FOUND);
+//        }
+//    }
 
-        } catch (Throwable e) {
-            String msj = "No se encontro la verificación de la concesionaria con id: " + concesinariaVerifId;
-            return new ResponseEntity<>(msj, HttpStatus.NOT_FOUND);
+    @GetMapping("/{usuarioId}")
+    public ResponseEntity<?> getByUsuarioId(@PathVariable long usuarioId) {
+        try {
+            ConcesionarioTallerVerif verif = concesionariaTallerVerifService.findByUsuarioId(usuarioId);
+            if (verif == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(verif);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error al obtener verificación del usuario");
         }
     }
 

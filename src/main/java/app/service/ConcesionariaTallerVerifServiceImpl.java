@@ -25,9 +25,6 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
     private IUsuariosDAO usuariosDAO;
 
     @Autowired
-    private IConcesionariaTallerVerifDAO concesionariaVerifDAO;
-
-    @Autowired
     private Cloudinary cloudinary;
 
     @Value("${app.cloudinary.folderRoot:app}")
@@ -55,6 +52,12 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
         }catch (Throwable e){
             throw new Error("Error al guardar la verificación" + e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional
+    public ConcesionarioTallerVerif findByUsuarioId(long usuarioId) {
+        return concesionariaTallerVerifDAO.findByUsuarioId(usuarioId);
     }
 
     @Override
@@ -102,7 +105,7 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
         Usuarios usuario = usuariosDAO.findById(usuarioId);
         if (usuario == null) throw new NotFoundError("Usuario no encontrado");
 
-        ConcesionarioTallerVerif verif = concesionariaVerifDAO.findByUsuarioId(usuarioId);
+        ConcesionarioTallerVerif verif = concesionariaTallerVerifDAO.findByUsuarioId(usuarioId);
         if (verif == null) {
             verif = new ConcesionarioTallerVerif();
             verif.setUsuario(usuario);
@@ -111,7 +114,7 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
         Map<String, String> up = uploadToCloudinary(file, usuarioId);
         verif.setArchivoUrl(up.get("secure_url"));
 
-        concesionariaVerifDAO.save(verif);
+        concesionariaTallerVerifDAO.save(verif);
 
         // Si estaba RECHAZADO, se resetea
         if (usuario.getNivelUsuario() == Usuarios.NivelUsuario.RECHAZADO) {
@@ -126,13 +129,13 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
         Usuarios usuario = usuariosDAO.findById(usuarioId);
         if (usuario == null) throw new NotFoundError("Usuario no encontrado");
 
-        ConcesionarioTallerVerif verif = concesionariaVerifDAO.findByUsuarioId(usuarioId);
+        ConcesionarioTallerVerif verif = concesionariaTallerVerifDAO.findByUsuarioId(usuarioId);
         if (verif == null || verif.getArchivoUrl() == null) {
             throw new RuntimeException("Debés subir un archivo antes de enviar la validación");
         }
 
         verif.setDomicilio(domicilio);
-        concesionariaVerifDAO.save(verif);
+        concesionariaTallerVerifDAO.save(verif);
 
         usuario.setNivelUsuario(Usuarios.NivelUsuario.PENDIENTE);
         usuariosDAO.save(usuario);
@@ -144,7 +147,7 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
         Usuarios usuario = usuariosDAO.findById(usuarioId);
         if (usuario == null) throw new NotFoundError("Usuario no encontrado");
 
-        ConcesionarioTallerVerif verif = concesionariaVerifDAO.findByUsuarioId(usuarioId);
+        ConcesionarioTallerVerif verif = concesionariaTallerVerifDAO.findByUsuarioId(usuarioId);
         if (verif == null || verif.getArchivoUrl() == null) {
             throw new RuntimeException("Faltan datos para validar");
         }
@@ -165,7 +168,7 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
 
     @Override
     public String getArchivoUrl(Long usuarioId) {
-        ConcesionarioTallerVerif verif = concesionariaVerifDAO.findByUsuarioId(usuarioId);
+        ConcesionarioTallerVerif verif = concesionariaTallerVerifDAO.findByUsuarioId(usuarioId);
         return verif != null ? verif.getArchivoUrl() : null;
     }
 
