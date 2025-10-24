@@ -27,4 +27,6 @@ public interface IVehiculosService {
 
     public void eliminarVehiculo(long vehiculoId);
 
+    public Vehiculos transferirTitularidad(Long vehiculoId, Long nuevoTitularId);
+
 }

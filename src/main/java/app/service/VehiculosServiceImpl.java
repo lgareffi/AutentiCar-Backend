@@ -41,7 +41,6 @@ public class VehiculosServiceImpl implements IVehiculosService{
     @Autowired
     private IImagenVehiculoDAO imagenVehiculoDAO;
 
-
     @Override
     @Transactional
     public Vehiculos findById(long id) {
@@ -239,6 +238,34 @@ public class VehiculosServiceImpl implements IVehiculosService{
 
         // 5) Finalmente, eliminar el vehículo
         vehiculosDAO.delete(vehiculo);
+    }
+
+    @Override
+    @Transactional
+    public Vehiculos transferirTitularidad(Long vehiculoId, Long nuevoTitularId) {
+        Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
+        if (vehiculo == null) {
+            throw new NotFoundError("No se encontró el vehículo con id " + vehiculoId);
+        }
+
+        Usuarios nuevoTitular = usuariosDAO.findById(nuevoTitularId);
+        if (nuevoTitular == null) {
+            throw new NotFoundError("No se encontró el nuevo titular con id " + nuevoTitularId);
+        }
+
+        // Cambiar titular
+        vehiculo.setUsuario(nuevoTitular);
+
+        // Actualizar también la publicación asociada
+        Publicacion publicacion = vehiculo.getPublicacion();
+        if (publicacion != null) {
+            publicacion.setUsuario(nuevoTitular);
+            publicacion.setEstadoPublicacion(Publicacion.EstadoPublicacion.PAUSADA);
+        }
+
+        vehiculosDAO.save(vehiculo);
+
+        return vehiculo;
     }
 
 

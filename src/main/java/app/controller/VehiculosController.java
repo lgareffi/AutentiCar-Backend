@@ -222,4 +222,20 @@ public class VehiculosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @PostMapping("/{vehiculoId}/transferir")
+    public ResponseEntity<?> transferirTitularidad(
+            @PathVariable Long vehiculoId,
+            @RequestParam Long nuevoTitularId) {
+        try {
+            Vehiculos vehiculoActualizado = vehiculosService.transferirTitularidad(vehiculoId, nuevoTitularId);
+            VehiculosDTO dto = new VehiculosDTO(vehiculoActualizado);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (NotFoundError e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Throwable e) {
+            return new ResponseEntity<>("Error al transferir la titularidad del vehículo.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
