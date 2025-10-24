@@ -14,6 +14,8 @@ public interface IUsuariosDAO {
 
     public Usuarios findByDni(int dni);
 
+    public List<Usuarios> findByNombreApellido(String search);
+
     public void save(Usuarios usuario);
 
     public void delete(Usuarios usuario);

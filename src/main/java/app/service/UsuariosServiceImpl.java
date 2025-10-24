@@ -82,6 +82,16 @@ public class UsuariosServiceImpl implements IUsuariosService {
 
     @Override
     @Transactional
+    public List<Usuarios> findByNombreApellido(String search) {
+        List<Usuarios> usuarios = usuariosDAO.findByNombreApellido(search);
+        if (usuarios.isEmpty()) {
+            throw new NotFoundError("No se encontraron usuarios que coincidan con la búsqueda: " + search);
+        }
+        return usuarios;
+    }
+
+    @Override
+    @Transactional
     public List<Ventas> getComprasRealizadas(long id){
         try {
             Usuarios u = this.usuariosDAO.findById(id);

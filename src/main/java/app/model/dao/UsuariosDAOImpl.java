@@ -58,6 +58,17 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
 
     @Override
     @Transactional
+    public List<Usuarios> findByNombreApellido(String search) {
+        Session currentSession = entityManager.unwrap(Session.class);
+        String queryStr = "FROM Usuarios WHERE LOWER(nombre) LIKE :search OR LOWER(apellido) LIKE :search";
+        Query<Usuarios> query = currentSession.createQuery(queryStr, Usuarios.class);
+        query.setParameter("search", "%" + search.toLowerCase() + "%");
+        query.setMaxResults(5); // solo 5 coincidencias
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
     public void save(Usuarios usuario) {
         Session s = entityManager.unwrap(Session.class);
         if (usuario.getIdUsuario() == 0) {

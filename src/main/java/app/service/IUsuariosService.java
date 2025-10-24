@@ -15,6 +15,8 @@ public interface IUsuariosService {
 
     public Usuarios findByDni(int dni);
 
+    public List<Usuarios> findByNombreApellido(String search);
+
     public List<Ventas> getComprasRealizadas(long id);
 
     public List<Ventas> getVentasRealizadas(long id);

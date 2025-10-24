@@ -179,7 +179,6 @@ public class PublicacionServiceImpl implements IPublicacionService{
                     "No autorizado para cambiar el estado de esta publicación");
         }
 
-        // Regla: si está VENDIDA, no se permite alternar (podés cambiar esta regla si querés)
         if (pub.getEstadoPublicacion() == Publicacion.EstadoPublicacion.VENDIDA) {
             throw new RuntimeException("No se puede cambiar el estado de una publicación vendida.");
         }

@@ -60,6 +60,23 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @GetMapping("/usuarios/buscar")
+    public ResponseEntity<?> buscarUsuarios(@RequestParam("q") String search) {
+        try {
+            List<Usuarios> usuarios = usuariosService.findByNombreApellido(search);
+            List<UsuariosDTO> usuariosDTO = usuarios.stream()
+                    .map(UsuariosDTO::new)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(usuariosDTO, HttpStatus.OK);
+        } catch (NotFoundError e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Throwable e) {
+            String msj = "Error al buscar usuarios.";
+            return new ResponseEntity<>(msj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
     @GetMapping("/usuarios/{usuarioId}/comprasRealizadas")
     public ResponseEntity<?> getComprasRealizadas(@PathVariable long usuarioId) {
@@ -169,47 +186,6 @@ public class UsuariosController {
         }
     }
 
-
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerUsuario(@RequestBody Usuarios datos) {
-//        try {
-//            // Verificar si ya existe usuario con ese mail
-//            Usuarios existenteMail = usuariosDAO.findByMail(datos.getMail());
-//            if (existenteMail != null) {
-//                return new ResponseEntity<>("Ya existe una cuenta registrada con ese correo", HttpStatus.CONFLICT);
-//            }
-//
-//            // Verificar si ya existe usuario con ese DNI
-//            Usuarios existenteDni = usuariosDAO.findByDni(datos.getDni());
-//            if (existenteDni != null) {
-//                return new ResponseEntity<>("Ya existe una cuenta registrada con ese DNI", HttpStatus.CONFLICT);
-//            }
-//
-//            if (datos.getRol() == null) {
-//                return new ResponseEntity<>("Debe seleccionar un rol válido", HttpStatus.BAD_REQUEST);
-//            }
-//
-//            // Setear fecha de registro
-//            datos.setFechaRegistro(LocalDate.now());
-//
-//            // Setear flag según rol seleccionado
-//            datos.setEsConcesionariaTaller(datos.getRol() == Usuarios.Rol.CONCESIONARIO);
-//
-//            // Guardar usuario nuevo
-//            usuariosService.save(datos);
-//
-//            //return new ResponseEntity<>("Usuario registrado con éxito", HttpStatus.CREATED);
-//            return ResponseEntity.status(HttpStatus.CREATED)
-//                    .body(java.util.Map.of(
-//                            "mensaje", "Usuario registrado con éxito",
-//                            "usuario", new UsuariosDTO(datos)
-//                    ));
-//
-//        } catch (Exception e) {
-//            return new ResponseEntity<>("Error al registrar usuario: " + e.getMessage(),
-//                    HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
     @DeleteMapping("/usuarios/{usuarioId}")
