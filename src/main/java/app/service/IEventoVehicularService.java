@@ -16,4 +16,5 @@ public interface IEventoVehicularService {
     public Long saveEventoDesdeDTO(AddEventoDTO dto);
 
     public void eliminarEvento(long eventoId);
+
 }
