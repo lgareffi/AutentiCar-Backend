@@ -13,4 +13,5 @@ public interface IDocVehiculoDAO {
     public void delete(DocVehiculo docVehiculo);
 
     public List<DocVehiculo> findByVehiculo(Vehiculos vehiculo);
+    
 }
