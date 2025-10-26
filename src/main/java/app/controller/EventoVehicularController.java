@@ -55,7 +55,7 @@ public class EventoVehicularController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PostMapping
     public ResponseEntity<?> agregarEvento(@RequestBody AddEventoDTO eventoDTO) {
         try {
@@ -76,7 +76,7 @@ public class EventoVehicularController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @DeleteMapping("/{eventoId}")
     public ResponseEntity<?> eliminarEvento(@PathVariable long eventoId) {
         try {
@@ -91,7 +91,7 @@ public class EventoVehicularController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PutMapping("/{eventoId}/eliminarLogico")
     public ResponseEntity<?> eliminarEventoLogico(@PathVariable long eventoId) {
         try {

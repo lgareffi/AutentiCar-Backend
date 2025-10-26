@@ -87,7 +87,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PostMapping
     public ResponseEntity<?> agregarVehiculo(@RequestBody AddVehiculoDTO dto) {
         try {
@@ -112,7 +112,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @DeleteMapping("/{vehiculoId}")
     public ResponseEntity<?> eliminarVehiculo(@PathVariable long vehiculoId) {
         try {
@@ -127,7 +127,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PostMapping( value = "/{vehiculoId}/imagenes",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> subirImagenes(
@@ -162,7 +162,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @DeleteMapping("/imagenes/{imagenId}")
     public ResponseEntity<?> eliminarImagen(@PathVariable long imagenId) {
         try {
@@ -177,7 +177,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PostMapping(value = "/{vehiculoId}/documentos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> subirDocumento(@PathVariable long vehiculoId,
                                             @RequestParam("file") MultipartFile file,
@@ -207,7 +207,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @DeleteMapping("/documentos/{documentoId}")
     public ResponseEntity<?> eliminarDocumento(@PathVariable long documentoId) {
         try {
@@ -222,7 +222,7 @@ public class VehiculosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PostMapping("/{vehiculoId}/transferir")
     public ResponseEntity<?> transferirTitularidad(
             @PathVariable Long vehiculoId,

@@ -67,7 +67,7 @@ public class PublicacionController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PostMapping
     public ResponseEntity<?> agregarPublicacion(@RequestBody AddPublicacionDTO dto) {
         try {
@@ -78,7 +78,7 @@ public class PublicacionController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @DeleteMapping("/{publicacionId}")
     public ResponseEntity<?> eliminarPublicacion(@PathVariable long publicacionId) {
         try {
@@ -93,7 +93,7 @@ public class PublicacionController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @PutMapping("/{publicacionId}/estado")
     public ResponseEntity<?> alternarEstado(@PathVariable long publicacionId) {
         try {

@@ -30,7 +30,7 @@ public class UsuariosController {
     @Autowired
     private IImagenVehiculoService imagenVehiculoService;
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @GetMapping("/usuarios/{usuarioId}")
     public ResponseEntity<?> getUsuario(@PathVariable long usuarioId) {
         try {
@@ -77,7 +77,7 @@ public class UsuariosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @GetMapping("/usuarios/{usuarioId}/comprasRealizadas")
     public ResponseEntity<?> getComprasRealizadas(@PathVariable long usuarioId) {
         try {
@@ -91,7 +91,7 @@ public class UsuariosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @GetMapping("/usuarios/{usuarioId}/ventasRealizadas")
     public ResponseEntity<?> getVentasRealizadas(@PathVariable long usuarioId) {
         try {
@@ -105,7 +105,7 @@ public class UsuariosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @GetMapping("/usuarios/{usuarioId}/vehiculos")
     public ResponseEntity<?> getVehiculos(@PathVariable long usuarioId) {
         try {
@@ -119,7 +119,7 @@ public class UsuariosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @GetMapping("/usuarios/{usuarioId}/eventos")
     public ResponseEntity<?> getEventoVehicular(@PathVariable long usuarioId) {
         try {
@@ -133,7 +133,7 @@ public class UsuariosController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @GetMapping("/usuarios/{usuarioId}/publicaciones")
     public ResponseEntity<?> getPublicaciones(@PathVariable long usuarioId) {
         try {
@@ -187,7 +187,7 @@ public class UsuariosController {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @DeleteMapping("/usuarios/{usuarioId}")
     public ResponseEntity<?> eliminarCuenta(@PathVariable long usuarioId) {
         try {
