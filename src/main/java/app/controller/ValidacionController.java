@@ -83,14 +83,14 @@ public class ValidacionController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_TALLER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_TALLER','ROL_CONCESIONARIO','ROL_ADMIN','ROL_USER')")
     @PostMapping(value = "/archivo/{usuarioId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> subirArchivo(@RequestParam("file") MultipartFile file, @PathVariable Long usuarioId) {
         concesionariaTallerVerifService.subirArchivo(file, usuarioId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_TALLER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROL_TALLER','ROL_CONCESIONARIO','ROL_ADMIN','ROL_USER')")
     @PostMapping("/enviarValidacion/{usuarioId}")
     public ResponseEntity<?> enviarValidacionTallerConcesionaria(@PathVariable Long usuarioId, @RequestBody DomicilioDTO dto) {
         concesionariaTallerVerifService.enviarValidacion(usuarioId, dto.getDomicilio());
@@ -111,7 +111,7 @@ public class ValidacionController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAnyAuthority('ROL_ADMIN','ROL_TALLER','ROL_CONCESIONARIO')")
+    @PreAuthorize("hasAnyAuthority('ROL_ADMIN','ROL_TALLER','ROL_CONCESIONARIO','ROL_USER')")
     @GetMapping("/{usuarioId}/archivo")
     public ResponseEntity<?> getArchivoUrl(@PathVariable Long usuarioId) {
         String url = concesionariaTallerVerifService.getArchivoUrl(usuarioId);

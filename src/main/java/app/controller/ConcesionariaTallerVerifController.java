@@ -36,7 +36,8 @@ public class ConcesionariaTallerVerifController {
             if (verif == null) {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(verif);
+            ConcesionariaTallerVerifDTO dto = new ConcesionariaTallerVerifDTO(verif);
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error al obtener verificación del usuario");
         }

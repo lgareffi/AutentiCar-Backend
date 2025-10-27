@@ -102,12 +102,12 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.POST,
                                 "/usuarios/validacion/archivo/*",
                                 "/usuarios/validacion/enviarValidacion/*")
-                        .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+                        .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN","ROL_USER")
 
                         // Obtener URL del archivo (taller/concesionario o admin)
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/usuarios/validacion/*/archivo")
-                        .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
+                        .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN","ROL_USER")
 
                         // Admin: aprobar / rechazar verificación de taller/concesionaria
                         .requestMatchers(org.springframework.http.HttpMethod.POST,
