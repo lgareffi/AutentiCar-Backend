@@ -63,9 +63,6 @@ public class EventoVehicular {
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
     Vehiculos vehiculo;
 
-    // 1 evento puede tener varios documentos (ej. una reparación puede tener una factura y un informe técnico)
-//    @OneToMany(mappedBy = "eventoVehicular",
-//            cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @OneToMany(mappedBy = "eventoVehicular",
             cascade = CascadeType.ALL,
             orphanRemoval = true)

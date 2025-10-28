@@ -16,7 +16,6 @@ public final class SecurityUtils {
         return a;
     }
 
-    /** principal es el ID (Long) del usuario, según tu JwtAuthFilter */
     public static Long currentUserId() {
         return (Long) auth().getPrincipal();
     }
@@ -31,7 +30,7 @@ public final class SecurityUtils {
     public static boolean isUser()   { return hasAuthority("ROL_USER"); }
     public static boolean isTaller() { return hasAuthority("ROL_TALLER"); }
 
-    /** Lanza 403 si el usuario autenticado no es el target y no es admin */
+
     public static void requireAdminOrSelf(Long targetUserId) {
         Long me = currentUserId();
         if (!isAdmin() && (targetUserId == null || !targetUserId.equals(me))) {
