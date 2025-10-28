@@ -260,11 +260,9 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
     public List<Publicacion> findActivasByPrecioEnArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs) {
         var s = entityManager.unwrap(org.hibernate.Session.class);
 
-        // Limites (si son null, uso valores extremos)
         long min = (minArs != null) ? minArs : 0L;
         long max = (maxArs != null) ? maxArs : Long.MAX_VALUE;
 
-        // HQL: PESOS directo; DOLARES * tasa
         var q = s.createQuery(
                 "SELECT p FROM Publicacion p " +
                         "WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA " +
@@ -278,7 +276,7 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         );
         q.setParameter("min", min);
         q.setParameter("max", max);
-        q.setParameter("tasa", tasaUsdArs); // BigDecimal ok en HQL para multiplicar
+        q.setParameter("tasa", tasaUsdArs);
 
         return q.getResultList();
     }
@@ -309,7 +307,7 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
             List<String> marcas,
             List<String> colores,
             List<Integer> anios,
-            List<Integer> minPrecioArs,   // pares (min_i, max_i) => OR de rangos
+            List<Integer> minPrecioArs,
             List<Integer> maxPrecioArs,
             List<Integer> minKm,
             List<Integer> maxKm,
@@ -323,13 +321,10 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA
     """);
 
-        // --- IN por listas simples ---
         if (marcas != null && !marcas.isEmpty()) sb.append(" AND LOWER(v.marca) IN (:marcas) ");
         if (colores != null && !colores.isEmpty()) sb.append(" AND LOWER(v.color) IN (:colores) ");
         if (anios   != null && !anios.isEmpty())   sb.append(" AND v.anio IN (:anios) ");
 
-        // --- Precio normalizado a ARS (OR de rangos) ---
-        // CASE WHEN p.moneda = DOLARES THEN p.precio * :tasa ELSE p.precio END
         String precioArsExpr = """
         (CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
               THEN (p.precio * :tasa)
@@ -359,7 +354,7 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
                     sb.append(precioArsExpr).append(" <= :pMax").append(i);
                 }
             }
-            // Si todas las parejas eran nulas, no dejamos "AND ()"
+
             if (priceClauses == 0) {
                 int idx = sb.lastIndexOf(" AND (");
                 if (idx >= 0) sb.delete(idx, sb.length());
@@ -368,7 +363,6 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
             }
         }
 
-        // --- Kilometraje (OR de rangos) ---
         int kmClauses = 0;
         if ((minKm != null && !minKm.isEmpty()) || (maxKm != null && !maxKm.isEmpty())) {
             sb.append(" AND (");
@@ -398,7 +392,6 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
             }
         }
 
-        // --- Búsqueda libre ---
         if (queryLibre != null && !queryLibre.isBlank()) {
             sb.append("""
            AND (
@@ -415,7 +408,6 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
 
         var q = s.createQuery(sb.toString(), Publicacion.class);
 
-        // Parámetros simples
         if (marcas != null && !marcas.isEmpty())
             q.setParameterList("marcas", marcas.stream().map(String::toLowerCase).toList());
         if (colores != null && !colores.isEmpty())
@@ -423,10 +415,8 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         if (anios != null && !anios.isEmpty())
             q.setParameterList("anios", anios);
 
-        // Tasa (si hubo algún filtro de precio)
         if (priceClauses > 0) q.setParameter("tasa", tasaUsdArs);
 
-        // Parámetros de precio (indexados)
         if (priceClauses > 0) {
             int n = Math.max(
                     (minPrecioArs != null ? minPrecioArs.size() : 0),
@@ -440,7 +430,6 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
             }
         }
 
-        // Parámetros de km (indexados)
         if (kmClauses > 0) {
             int n = Math.max(
                     (minKm != null ? minKm.size() : 0),

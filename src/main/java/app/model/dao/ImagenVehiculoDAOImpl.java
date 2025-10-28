@@ -69,7 +69,6 @@ public class ImagenVehiculoDAOImpl implements IImagenVehiculoDAO {
     @Transactional
     public void delete(ImagenVehiculo imagenVehiculo) {
         Session s = entityManager.unwrap(Session.class);
-        // asegurarse que esté en contexto de persistencia
         ImagenVehiculo managed = s.contains(imagenVehiculo) ? imagenVehiculo : s.merge(imagenVehiculo);
         s.remove(managed);
     }

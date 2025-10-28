@@ -20,7 +20,6 @@ public interface IPublicacionDAO {
 
     List<Publicacion> findActivas();
 
-    // búsquedas
     List<Publicacion> findActivasByMarca(String marca);
     List<Publicacion> findActivasByMarcaAndModelo(String marca, String modelo);
     List<Publicacion> findActivasByColor(String color);

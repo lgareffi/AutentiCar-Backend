@@ -31,9 +31,9 @@ public class ConcesionariaTallerVerifDAOImpl implements IConcesionariaTallerVeri
     public void save(ConcesionarioTallerVerif concesionarioTallerVerif) {
         Session s = entityManager.unwrap(Session.class);
         if (concesionarioTallerVerif.getIdConcesionarioTallerVerif() == 0) {
-            s.persist(concesionarioTallerVerif); // INSERT
+            s.persist(concesionarioTallerVerif);
         } else {
-            s.merge(concesionarioTallerVerif);   // UPDATE
+            s.merge(concesionarioTallerVerif);
         }
     }
 

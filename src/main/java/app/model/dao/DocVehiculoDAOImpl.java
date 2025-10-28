@@ -30,9 +30,9 @@ public class DocVehiculoDAOImpl implements IDocVehiculoDAO {
     public void save(DocVehiculo doc) {
         Session s = entityManager.unwrap(Session.class);
         if (doc.getIdDocVehiculo() == 0) {
-            s.persist(doc); // INSERT
+            s.persist(doc);
         } else {
-            s.merge(doc);   // UPDATE
+            s.merge(doc);
         }
     }
 

@@ -63,7 +63,7 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
         String queryStr = "FROM Usuarios WHERE LOWER(nombre) LIKE :search OR LOWER(apellido) LIKE :search";
         Query<Usuarios> query = currentSession.createQuery(queryStr, Usuarios.class);
         query.setParameter("search", "%" + search.toLowerCase() + "%");
-        query.setMaxResults(5); // solo 5 coincidencias
+        query.setMaxResults(5);
         return query.getResultList();
     }
 
