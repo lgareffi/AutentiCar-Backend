@@ -54,7 +54,6 @@ public class AiClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        // Leer los bytes y manejar IOException acá
         final byte[] bytes;
         try {
             bytes = file.getBytes();
@@ -83,7 +82,6 @@ public class AiClient {
             String url = baseUrl + "/risk-ml?language=" +
                     URLEncoder.encode(language, StandardCharsets.UTF_8);
 
-            // fallback por si vienen nulos
             String safeContentType = (contentType != null && !contentType.isBlank())
                     ? contentType
                     : "application/octet-stream";
@@ -92,12 +90,10 @@ public class AiClient {
                     ? filename
                     : "upload" + inferExt(safeContentType);
 
-            // Recurso con filename estable
             ByteArrayResource fileRes = new ByteArrayResource(bytes) {
                 @Override public String getFilename() { return safeFilename; }
             };
 
-            // Encabezados de la parte "file"
             HttpHeaders partHeaders = new HttpHeaders();
             partHeaders.setContentType(MediaType.parseMediaType(safeContentType));
             partHeaders.setContentDisposition(ContentDisposition
@@ -108,7 +104,6 @@ public class AiClient {
 
             HttpEntity<ByteArrayResource> filePart = new HttpEntity<>(fileRes, partHeaders);
 
-            // Multipart completo
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
             body.add("file", filePart);
 
@@ -126,7 +121,6 @@ public class AiClient {
         }
     }
 
-    // Helper para bajar el archivo remoto (Cloudinary)
     public DownloadedFile download(String fileUrl) {
         try {
             ResponseEntity<byte[]> r = rest.getForEntity(fileUrl, byte[].class);

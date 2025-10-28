@@ -8,8 +8,6 @@ import app.model.dao.IVehiculosDAO;
 import app.model.entity.DocVehiculo;
 import app.model.entity.EventoVehicular;
 import app.model.entity.Vehiculos;
-import app.service.AiClient;
-import app.service.AiResponse;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
@@ -111,16 +109,13 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             throw new RuntimeException("Archivo vacío");
         }
 
-        // validaciones básicas
         long maxBytes = 15L * 1024 * 1024; // 15MB
         if (file.getSize() > maxBytes) throw new RuntimeException("Archivo supera 15MB");
 
         final String mime = file.getContentType() != null ? file.getContentType() : "application/octet-stream";
 
-        // PDF e imágenes como "image" para permitir thumbnails; otros como "raw"
         final String resourceType = (mime.startsWith("image/") || "application/pdf".equals(mime)) ? "image" : "raw";
 
-        // 4) validar que el evento exista y pertenezca al mismo vehículo
         if (eventoId == null) {
             throw new RuntimeException("Debe indicar el eventoId para asociar el documento");
         }
@@ -130,16 +125,15 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             throw new RuntimeException("El evento no pertenece al vehículo indicado");
         }
 
-        int riesgoFinal = 0;          // default si la IA no responde
+        int riesgoFinal = 0;
         boolean validadoIAFinal = false;
 
-        // Llamada a la IA
         try {
             AiResponse ai = aiClient.analyze(file);
             if (ai != null && ai.getRiskScore() != null) {
                 double score = Math.max(0, Math.min(100, ai.getRiskScore()));
                 riesgoFinal = (int) Math.round(score);
-                validadoIAFinal = true;  // la IA respondió OK
+                validadoIAFinal = true;
             }
         } catch (Exception ex) {
             System.err.println("AI offline o error: " + ex.getMessage());
@@ -191,7 +185,7 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
 
         List<DocVehiculo> docs = docVehiculoDAO.findByVehiculo(v);
         if (docs == null || docs.isEmpty()) {
-            return java.util.Collections.emptyList(); // ← 200 [] en el controller
+            return java.util.Collections.emptyList();
         }
         return docs.stream().map(DocVehiculoDTO::new).toList();
     }
@@ -204,7 +198,6 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             throw new NotFoundError("Documento no encontrado");
         }
 
-        // validar: dueño del vehículo o admin
         Long ownerId = d.getVehiculo().getUsuario().getIdUsuario();
         app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
 
@@ -228,11 +221,9 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
         String url = doc.getUrlDoc();
         if (url == null || url.isBlank()) throw new RuntimeException("Documento sin URL");
 
-        // 1) Descargamos bytes desde Cloudinary (está bien como lo hacías)
         AiClient.DownloadedFile dl = aiClient.download(url);
 
-        // 2) Determinar mime y filename con extensión (desde DB)
-        String dbMime = doc.getMimeType(); // ej "application/pdf" o "image/jpeg"
+        String dbMime = doc.getMimeType();
         String baseName = (doc.getNombre() != null && !doc.getNombre().isBlank())
                 ? doc.getNombre()
                 : "documento";
@@ -245,19 +236,16 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             if ("jpeg".equalsIgnoreCase(e)) e = "jpg";
             ext = "." + e;
         } else {
-            // fallback por si no hay mime en DB
-            ext = inferExtFromUrl(url); // opcional (ver función abajo)
-            if (ext == null) ext = "";  // último recurso
+            ext = inferExtFromUrl(url);
+            if (ext == null) ext = "";
         }
 
         String filename = baseName.endsWith(ext) ? baseName : (baseName + ext);
 
-        // 3) Enviar a /risk-ml con filename y contentType correctos
-        String contentTypeForMl = (dbMime != null) ? dbMime : dl.contentType; // preferí DB
+        String contentTypeForMl = (dbMime != null) ? dbMime : dl.contentType;
         return aiClient.analyzeBytes(dl.bytes, filename, contentTypeForMl);
     }
 
-    // helper opcional (puede vivir en el service)
     private String inferExtFromUrl(String url) {
         String lower = url.toLowerCase(Locale.ROOT);
         if (lower.contains(".pdf")) return ".pdf";

@@ -14,14 +14,13 @@ public class CapitalizeFirstConverter implements AttributeConverter<String, Stri
         if (attribute == null) return null;
         String s = attribute.trim();
         if (s.isEmpty()) return s;
-        // Solo primera letra en mayúscula, resto tal cual
-        String lower = s.toLowerCase(ES);                // resto en minúscula
-        return lower.substring(0,1).toUpperCase(ES)      // primera letra en mayúscula
+        String lower = s.toLowerCase(ES);
+        return lower.substring(0,1).toUpperCase(ES)
                 + lower.substring(1);
     }
 
     @Override
     public String convertToEntityAttribute(String dbData) {
-        return dbData; // no tocamos lo que viene de la BD
+        return dbData;
     }
 }

@@ -78,7 +78,6 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
 
             concesionariaTallerVerifDAO.save(cv);
 
-        // 6) Cambiar el nivel del usuario a PENDIENTE (manteniendo tu lógica)
         usuario.setNivelUsuario(Usuarios.NivelUsuario.PENDIENTE);
         usuariosDAO.save(usuario);
         }
@@ -116,7 +115,6 @@ public class ConcesionariaTallerVerifServiceImpl implements IConcesionariaTaller
 
         concesionariaTallerVerifDAO.save(verif);
 
-        // Si estaba RECHAZADO, se resetea
         if (usuario.getNivelUsuario() == Usuarios.NivelUsuario.RECHAZADO) {
             usuario.setNivelUsuario(Usuarios.NivelUsuario.REGISTRADO);
         }

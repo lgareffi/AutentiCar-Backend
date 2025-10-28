@@ -27,40 +27,98 @@ public class AiMlFullResponse {
     @JsonProperty("validadoIA")
     private Boolean validadoIA;
 
-    // getters/setters …
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Reason {
         public String code;
-        @JsonProperty("msg") public String message;
-        @JsonProperty("w")   public Double weight;
+        @JsonProperty("msg")
+        public String message;
+        @JsonProperty("w")
+        public Double weight;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Debug {
-        @JsonProperty("ocr_stats")       public OcrStats ocrStats;
-        @JsonProperty("metadata_summary") public Map<String, Object> metadataSummary;
+        @JsonProperty("ocr_stats")
+        public OcrStats ocrStats;
+        @JsonProperty("metadata_summary")
+        public Map<String, Object> metadataSummary;
 
-        @JsonProperty("text_summary")    public TextSummary textSummary;
+        @JsonProperty("text_summary")
+        public TextSummary textSummary;
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class OcrStats {
             public Integer pages;
-            @JsonProperty("total_chars") public Integer totalChars;
-            @JsonProperty("time_ms")     public Integer timeMs;
+            @JsonProperty("total_chars")
+            public Integer totalChars;
+            @JsonProperty("time_ms")
+            public Integer timeMs;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class TextSummary {
-            @JsonProperty("has_date")             public Boolean hasDate;
-            @JsonProperty("length")               public Integer length;
-            @JsonProperty("has_patente")          public Boolean hasPatente;
-            @JsonProperty("has_vin")              public Boolean hasVin;
-            @JsonProperty("has_cuit")             public Boolean hasCuit;
-            @JsonProperty("has_vencimiento")      public Boolean hasVencimiento;
-            @JsonProperty("has_entidad_emisora")  public Boolean hasEntidadEmisora;
-            // Si no querés exponer el texto completo, podés omitir raw_text
-            // @JsonProperty("raw_text")          public String rawText;
+            @JsonProperty("has_date")
+            public Boolean hasDate;
+            @JsonProperty("length")
+            public Integer length;
+            @JsonProperty("has_patente")
+            public Boolean hasPatente;
+            @JsonProperty("has_vin")
+            public Boolean hasVin;
+            @JsonProperty("has_cuit")
+            public Boolean hasCuit;
+            @JsonProperty("has_vencimiento")
+            public Boolean hasVencimiento;
+            @JsonProperty("has_entidad_emisora")
+            public Boolean hasEntidadEmisora;
         }
+    }
+
+    public Double getRiskScore() {
+        return riskScore;
+    }
+
+    public void setRiskScore(Double riskScore) {
+        this.riskScore = riskScore;
+    }
+
+    public String getRiskLabel() {
+        return riskLabel;
+    }
+
+    public void setRiskLabel(String riskLabel) {
+        this.riskLabel = riskLabel;
+    }
+
+    public List<String> getFeaturesUsed() {
+        return featuresUsed;
+    }
+
+    public void setFeaturesUsed(List<String> featuresUsed) {
+        this.featuresUsed = featuresUsed;
+    }
+
+    public List<Reason> getReasons() {
+        return reasons;
+    }
+
+    public void setReasons(List<Reason> reasons) {
+        this.reasons = reasons;
+    }
+
+    public Debug getDebug() {
+        return debug;
+    }
+
+    public void setDebug(Debug debug) {
+        this.debug = debug;
+    }
+
+    public Boolean getValidadoIA() {
+        return validadoIA;
+    }
+
+    public void setValidadoIA(Boolean validadoIA) {
+        this.validadoIA = validadoIA;
     }
 }
