@@ -33,7 +33,6 @@ public class DocVehiculoDTO {
         this.idEventoVehicular = (doc.getEventoVehicular() != null)
                 ? doc.getEventoVehicular().getIdEvento()
                 : null;
-//        this.idEventoVehicular = doc.getEventoVehicular().getIdEvento();
     }
 
     public DocVehiculoDTO() {

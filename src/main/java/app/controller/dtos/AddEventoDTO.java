@@ -6,7 +6,7 @@ public class AddEventoDTO {
     public String titulo;
     public String descripcion;
     public int kilometrajeEvento;
-    public String tipoEvento; // debe coincidir con los valores del enum
+    public String tipoEvento;
     public Long usuarioId;
     public Long vehiculoId;
 

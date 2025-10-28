@@ -61,8 +61,8 @@ public class VehiculosDTO {
                 : List.of();
 
         this.portadaUrl = (v.getImagenVehiculos() != null && !v.getImagenVehiculos().isEmpty())
-                ? v.getImagenVehiculos().stream()              // elegí el criterio que quieras
-                .sorted((a,b) -> b.getIdImagen() < a.getIdImagen() ? -1 : 1) // más nueva por id
+                ? v.getImagenVehiculos().stream()
+                .sorted((a,b) -> b.getIdImagen() < a.getIdImagen() ? -1 : 1)
                 .findFirst()
                 .map(ImagenVehiculo::getUrlImagen)
                 .orElse(null)

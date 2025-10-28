@@ -16,15 +16,15 @@ public class EventoVehicularDTO {
     private String tipoEvento;
     private boolean estaEliminado;
 
-    private Long idUsuario;    // ID del usuario que creó el evento
-    private Long idVehiculo;   // ID del vehículo relacionado
+    private Long idUsuario;
+    private Long idVehiculo;
 
     private String hashEvento;
     private java.time.LocalDateTime blockchainRecordedAt;
     private String blockchainTxId;
     private String blockchainError;
 
-    private List<Long> idsDocumentos; // IDs de los documentos relacionados
+    private List<Long> idsDocumentos;
 
     public EventoVehicularDTO(EventoVehicular evento) {
         super();

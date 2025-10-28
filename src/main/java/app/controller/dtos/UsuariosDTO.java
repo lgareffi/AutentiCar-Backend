@@ -1,6 +1,5 @@
 package app.controller.dtos;
 import app.model.entity.Usuarios;
-import app.model.entity.Ventas;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ public class UsuariosDTO {
     private boolean esConcesionariaTaller;
     private boolean quiereOferta;
 
-    private String nivelUsuario;   // REGISTRADO / PENDIENTE / VALIDADO / RECHAZADO
+    private String nivelUsuario;
     private boolean tieneDniFrente;
     private boolean tieneDniDorso;
     private String profilePicUrl;
