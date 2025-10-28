@@ -55,11 +55,11 @@ public class EventoVehicular {
     @Column(nullable = false)
     private boolean estaEliminado = false;
 
-    @ManyToOne // muchos eventos pueden ser cargados por 1 usuario
+    @ManyToOne
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
 
-    @ManyToOne (fetch = FetchType.LAZY) // muchos eventos se le pueden hacer a 1 vehiculo
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
     Vehiculos vehiculo;
 

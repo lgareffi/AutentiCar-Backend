@@ -41,11 +41,10 @@ public class Publicacion {
         PESOS, DOLARES
     }
 
-    @ManyToOne // muchas publicaciones puede hacer 1 usuario
+    @ManyToOne
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
 
-//    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}) // 1 publicacion pertence a 1 auto
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehiculoId",referencedColumnName = "idVehiculo", nullable = true)
     Vehiculos vehiculo;

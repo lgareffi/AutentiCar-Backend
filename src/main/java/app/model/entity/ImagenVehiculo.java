@@ -21,7 +21,7 @@ public class ImagenVehiculo {
     @Column(nullable = false, length = 200)
     private String publicId;
 
-    @ManyToOne // muchas imágenes pueden pertenecer a 1 vehiculo
+    @ManyToOne
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
     Vehiculos vehiculo;
 

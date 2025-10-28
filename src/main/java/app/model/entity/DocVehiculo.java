@@ -32,10 +32,10 @@ public class DocVehiculo {
     @Column(length = 200, nullable = true)
     private String publicId;
 
-    @Column(length = 20, nullable = true)   // "image" | "raw"
+    @Column(length = 20, nullable = true)
     private String resourceType;
 
-    @Column(length = 80, nullable = true)   // "application/pdf", "image/jpeg", etc.
+    @Column(length = 80, nullable = true)
     private String mimeType;
 
     @Enumerated(EnumType.STRING)
@@ -45,11 +45,11 @@ public class DocVehiculo {
         TITULO, CEDULA, VTV, SEGURO, INFORME, SERVICE, OTRO
     }
 
-    @ManyToOne // muchos documentos pueden pertenecer a 1 vehiculo
+    @ManyToOne
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
     Vehiculos vehiculo;
 
-    @ManyToOne (fetch = FetchType.LAZY) // muchos documentos pueden pertenecer a 1 evento
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "eventoId", referencedColumnName = "idEvento",nullable = false)
     EventoVehicular eventoVehicular;
 

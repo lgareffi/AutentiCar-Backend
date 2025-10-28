@@ -18,11 +18,11 @@ public class Ventas {
     @Column(nullable = false, length = 40)
     private LocalDate fechaVenta;
 
-    @ManyToOne // muchas ventas pueden pertenecer al usuario que COMPRO
+    @ManyToOne
     @JoinColumn(name = "compradorId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuarioComprador;
 
-    @ManyToOne // muchas ventas pueden pertenecer al usuario que VENDIO
+    @ManyToOne
     @JoinColumn(name = "vendedorId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuarioVendedor;
 
