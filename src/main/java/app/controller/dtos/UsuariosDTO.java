@@ -39,14 +39,6 @@ public class UsuariosDTO {
         this.tieneDniFrente = usuario.getDniFrenteUrl() != null;
         this.tieneDniDorso = usuario.getDniDorsoUrl() != null;
         this.profilePicUrl = usuario.getProfilePicUrl();
-        this.comprasRealizadas = usuario.getComprasRealizadas()
-                .stream()
-                .map(Ventas::getIdVenta)
-                .toList();
-        this.ventasRealizadas = usuario.getVentasRealizadas()
-                .stream()
-                .map(Ventas::getIdVenta)
-                .collect(Collectors.toList());
         this.vehiculos = usuario.getVehiculos()
                 .stream()
                 .map(v -> v.getIdVehiculo())

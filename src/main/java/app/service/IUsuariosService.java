@@ -17,10 +17,6 @@ public interface IUsuariosService {
 
     public List<Usuarios> findByNombreApellido(String search);
 
-    public List<Ventas> getComprasRealizadas(long id);
-
-    public List<Ventas> getVentasRealizadas(long id);
-
     public List<Vehiculos> getVehiculos(long id);
 
     public List<EventoVehicular> getEventoVehicular(long id);

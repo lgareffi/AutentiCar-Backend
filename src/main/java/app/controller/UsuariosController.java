@@ -78,34 +78,6 @@ public class UsuariosController {
     }
 
     @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
-    @GetMapping("/usuarios/{usuarioId}/comprasRealizadas")
-    public ResponseEntity<?> getComprasRealizadas(@PathVariable long usuarioId) {
-        try {
-            List<Ventas> comprasRealizadas = this.usuariosService.getComprasRealizadas(usuarioId);
-            List<VentasDTO> comprasDTO = comprasRealizadas.stream()
-                    .map(VentasDTO::new) // llama al constructor VentasDTO(Ventas v)
-                    .toList();
-            return new ResponseEntity<>(comprasDTO, HttpStatus.OK);
-        } catch (Throwable e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
-    }
-
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
-    @GetMapping("/usuarios/{usuarioId}/ventasRealizadas")
-    public ResponseEntity<?> getVentasRealizadas(@PathVariable long usuarioId) {
-        try {
-            List<Ventas> ventasRealizadas = this.usuariosService.getVentasRealizadas(usuarioId);
-            List<VentasDTO> ventasDTO = ventasRealizadas.stream()
-                    .map(VentasDTO::new) // llama al constructor VentasDTO(Ventas v)
-                    .toList();
-            return new ResponseEntity<>(ventasDTO, HttpStatus.OK);
-        } catch (Throwable e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
-    }
-
-    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @GetMapping("/usuarios/{usuarioId}/vehiculos")
     public ResponseEntity<?> getVehiculos(@PathVariable long usuarioId) {
         try {

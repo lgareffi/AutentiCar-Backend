@@ -92,36 +92,6 @@ public class UsuariosServiceImpl implements IUsuariosService {
 
     @Override
     @Transactional
-    public List<Ventas> getComprasRealizadas(long id){
-        try {
-            Usuarios u = this.usuariosDAO.findById(id);
-            if (u == null)
-                throw new NotFoundError("No se encontro al usuario");
-            if (u.getComprasRealizadas().isEmpty())
-                throw new Error("No se encontraron compras realizadas por el usuario");
-            return u.getComprasRealizadas();
-        } catch(Throwable e) {
-            throw new Error(e.getMessage());
-        }
-    }
-
-    @Override
-    @Transactional
-    public List<Ventas> getVentasRealizadas(long id){
-        try {
-            Usuarios u = this.usuariosDAO.findById(id);
-            if (u == null)
-                throw new NotFoundError("No se encontro al usuario");
-            if (u.getVentasRealizadas().isEmpty())
-                throw new Error("No se encontraron ventas realizadas por el usuario");
-            return u.getVentasRealizadas();
-        } catch(Throwable e) {
-            throw new Error(e.getMessage());
-        }
-    }
-
-    @Override
-    @Transactional
     public List<Vehiculos> getVehiculos(long id){
         try {
             Usuarios u = this.usuariosDAO.findById(id);

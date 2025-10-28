@@ -75,12 +75,6 @@ public class Usuarios {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     List<EventoVehicular> eventoVehicular = new java.util.ArrayList<>();
 
-    @OneToMany(mappedBy = "usuarioComprador", cascade = CascadeType.ALL)
-    List<Ventas> comprasRealizadas = new java.util.ArrayList<>();
-
-    @OneToMany(mappedBy = "usuarioVendedor", cascade = CascadeType.ALL)
-    List<Ventas> ventasRealizadas = new java.util.ArrayList<>();
-
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     List<Publicacion> publicaciones = new java.util.ArrayList<>();
 
@@ -92,7 +86,7 @@ public class Usuarios {
     public Usuarios(String nombre, long idUsuario, int dni, String apellido, String mail, String password, String telefonoCelular,
                     LocalDate fechaRegistro, boolean esConcesionariaTaller, boolean quiereOferta, String dniFrenteUrl,
                     String dniDorsoUrl, String profilePicUrl, Rol rol, NivelUsuario nivelUsuario, List<Vehiculos> vehiculos,
-                    List<EventoVehicular> eventoVehicular, List<Ventas> comprasRealizadas, List<Ventas> ventasRealizadas,
+                    List<EventoVehicular> eventoVehicular,
                     List<Publicacion> publicaciones) {
         this.nombre = nombre;
         this.idUsuario = idUsuario;
@@ -111,8 +105,6 @@ public class Usuarios {
         this.nivelUsuario = nivelUsuario;
         this.vehiculos = vehiculos;
         this.eventoVehicular = eventoVehicular;
-        this.comprasRealizadas = comprasRealizadas;
-        this.ventasRealizadas = ventasRealizadas;
         this.publicaciones = publicaciones;
     }
 
@@ -136,8 +128,6 @@ public class Usuarios {
                 ", nivelUsuario=" + nivelUsuario +
                 ", vehiculos=" + vehiculos +
                 ", eventoVehicular=" + eventoVehicular +
-                ", comprasRealizadas=" + comprasRealizadas +
-                ", ventasRealizadas=" + ventasRealizadas +
                 ", publicaciones=" + publicaciones +
                 '}';
     }
@@ -220,22 +210,6 @@ public class Usuarios {
 
     public void setEventoVehicular(List<EventoVehicular> eventoVehicular) {
         this.eventoVehicular = eventoVehicular;
-    }
-
-    public List<Ventas> getComprasRealizadas() {
-        return comprasRealizadas;
-    }
-
-    public void setComprasRealizadas(List<Ventas> comprasRealizadas) {
-        this.comprasRealizadas = comprasRealizadas;
-    }
-
-    public List<Ventas> getVentasRealizadas() {
-        return ventasRealizadas;
-    }
-
-    public void setVentasRealizadas(List<Ventas> ventasRealizadas) {
-        this.ventasRealizadas = ventasRealizadas;
     }
 
     public List<Publicacion> getPublicaciones() {
