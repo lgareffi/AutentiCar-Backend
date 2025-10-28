@@ -28,14 +28,4 @@ public class ImagenVehiculoController {
         }
     }
 
-//    @PostMapping
-//    public ResponseEntity<?> agregarImagen(@RequestBody AddImagenDTO imagenDTO) {
-//        try {
-//            imagenVehiculoService.saveImagenDesdeDTO(imagenDTO);
-//            return new ResponseEntity<>("Imágen agregada correctamente", HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
 }

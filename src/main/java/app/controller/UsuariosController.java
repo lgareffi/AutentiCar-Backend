@@ -130,35 +130,6 @@ public class UsuariosController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Usuarios datos) {
-        try {
-            String mail = datos.getMail();
-            String password = datos.getPassword();
-
-            Usuarios existe = usuariosService.findByMail(mail);
-
-            if (existe.getPassword().equals(password)) {
-                Map<String, Object> response = new HashMap<>();
-                response.put("mensaje", "Fuiste loggeado exitosamente");
-                response.put("id", existe.getIdUsuario());
-
-                return new ResponseEntity<>(response, HttpStatus.OK);
-//                return new ResponseEntity<>("Fuiste loggeado exitosamente", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Credenciales inválidas", HttpStatus.UNAUTHORIZED);
-            }
-
-        } catch (NotFoundError e) { // o escribio mal el mail o no esta registrado
-            // Captura específicamente el caso de "mail no encontrado"
-            return new ResponseEntity<>("Credenciales inválidas", HttpStatus.UNAUTHORIZED);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error interno: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
     @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_TALLER','ROL_ADMIN','ROL_CONCESIONARIO')")
     @DeleteMapping("/usuarios/{usuarioId}")
     public ResponseEntity<?> eliminarCuenta(@PathVariable long usuarioId) {

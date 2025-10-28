@@ -54,7 +54,6 @@ public class AuthController {
         public String getMensaje() { return mensaje; }
     }
 
-    // ====== REQUEST DTOs ======
     public static class LoginRequest {
         private String mail;
         private String password;
@@ -66,12 +65,12 @@ public class AuthController {
 
     public static class RegisterRequest {
         private String nombre;
-        private String apellido;        // opcional
-        private int dni;                // obligatorio
-        private String mail;            // obligatorio
-        private String password;        // obligatorio
-        private String telefonoCelular; // obligatorio
-        private Usuarios.Rol rol;       // obligatorio (PARTICULAR / CONCESIONARIO / TALLER)
+        private String apellido;
+        private int dni;
+        private String mail;
+        private String password;
+        private String telefonoCelular;
+        private Usuarios.Rol rol;
 
         public String getNombre() { return nombre; }
         public void setNombre(String nombre) { this.nombre = nombre; }
@@ -89,7 +88,6 @@ public class AuthController {
         public void setRol(Usuarios.Rol rol) { this.rol = rol; }
     }
 
-    // ====== LOGIN ======
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         try {
@@ -99,14 +97,14 @@ public class AuthController {
 
             Usuarios u;
             try {
-                u = usuariosService.findByMail(req.getMail()); // lanza NotFoundError si no existe
+                u = usuariosService.findByMail(req.getMail());
             } catch (NotFoundError nf) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(new ErrorResponse("Credenciales inválidas"));
             }
 
             boolean ok = encoder.matches(req.getPassword(), u.getPassword());
-            // Fallback temporal si aún tenés contraseñas planas en DB (quitá esto cuando migres todo a BCrypt):
+
             if (!ok) ok = req.getPassword().equals(u.getPassword());
             if (!ok) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Credenciales inválidas"));
@@ -123,7 +121,6 @@ public class AuthController {
         }
     }
 
-    // ====== REGISTER ======
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
         try {
@@ -138,11 +135,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(new ErrorResponse("El DNI debe ser un número válido"));
             if (req.getTelefonoCelular() == null || req.getTelefonoCelular().isBlank())
                 return ResponseEntity.badRequest().body(new ErrorResponse("El teléfono celular es obligatorio"));
-            // (Opcional) validación simple de formato:
-            // if (!req.getTelefonoCelular().matches("^[+\\d][\\d\\s\\-().]{6,}$"))
-            //     return ResponseEntity.badRequest().body(new ErrorResponse("Formato de teléfono inválido"));
 
-            // Duplicados
             boolean emailEnUso;
             try {
                 emailEnUso = (usuariosService.findByMail(req.getMail()) != null);
@@ -154,7 +147,6 @@ public class AuthController {
                         .body(new ErrorResponse("Ya existe una cuenta registrada con ese correo"));
             }
 
-            // ---- Duplicados por DNI (si tu service.findByDni también lanza NotFoundError)
             boolean dniEnUso;
             try {
                 dniEnUso = (usuariosService.findByDni(req.getDni()) != null);
@@ -171,7 +163,6 @@ public class AuthController {
                 telefono = "549" + telefono;
             }
 
-            // Crear y guardar
             Usuarios u = new Usuarios();
             u.setNombre(req.getNombre());
             u.setApellido(req.getApellido());

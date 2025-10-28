@@ -51,7 +51,7 @@ public class VehiculosController {
         try {
             List<Vehiculos> vehiculos = vehiculosService.findAll();
             List<VehiculosDTO> vehiculosDTO = vehiculos.stream()
-                    .map(VehiculosDTO::new)     //.stream().map(VehiculosDTO::new) convierte cada entidad Vehiculos a su VehiculosDTO correspondiente usando tu constructor.
+                    .map(VehiculosDTO::new)
                     .collect(Collectors.toList());
             return new ResponseEntity<>(vehiculosDTO, HttpStatus.OK);
 
@@ -100,11 +100,9 @@ public class VehiculosController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
 
         } catch (NotFoundError e) {
-            // usuario no encontrado u otros not found del dominio
             return new ResponseEntity<>("No se encontró el usuario", HttpStatus.NOT_FOUND);
 
         } catch (RuntimeException e) {
-            // por ejemplo: VIN duplicado
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 
         } catch (Exception e) {
