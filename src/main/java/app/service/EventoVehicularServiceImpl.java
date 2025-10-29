@@ -79,7 +79,6 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
     @Override
     @Transactional
     public Long saveEventoDesdeDTO(AddEventoDTO dto) {
-        // 1) Validaciones básicas
         if (dto.vehiculoId == null) {
             throw new IllegalArgumentException("vehiculoId es obligatorio");
         }
@@ -91,20 +90,17 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
             throw new IllegalArgumentException("tipoEvento es obligatorio");
         }
 
-        // Validar vehículo
         Vehiculos vehiculo = this.vehiculosDAO.findById(dto.vehiculoId);
         if (vehiculo == null)
             throw new NotFoundError("No se encontró el vehículo");
 
         Long ownerId = vehiculo.getUsuario().getIdUsuario();
 
-        // Usuario autenticado y rol
         Long me = SecurityUtils.currentUserId();
         boolean esAdmin  = SecurityUtils.isAdmin();
         boolean esTaller = SecurityUtils.isTaller();
         boolean esUser   = app.security.SecurityUtils.isUser();
 
-        // Determinar quién será el "registrador" del evento
         Long registradorId = esAdmin && dto.usuarioId != null ? dto.usuarioId : me;
 
         Usuarios registrador = this.usuariosDAO.findById(registradorId);
@@ -112,9 +108,8 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
             throw new NotFoundError("No se encontró el usuario registrador");
         }
 
-        // Autorización de la acción
         if (esAdmin) {
-            // ok sin más
+            // ok
         } else if (esTaller) {
             if (!registradorId.equals(me)) {
                 throw new AccessDeniedException("Un taller solo puede registrar eventos como sí mismo");
@@ -130,7 +125,6 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
             throw new AccessDeniedException("Rol no autorizado");
         }
 
-        // Crear el evento
         EventoVehicular evento = new EventoVehicular();
         evento.setTitulo(dto.titulo);
         evento.setDescripcion(dto.descripcion);
@@ -141,8 +135,7 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
         evento.setVehiculo(vehiculo);
         evento.setEstaEliminado(false);
 
-        //  calcular hash y setear campos on-chain
-        String vin = vehiculo.getVin(); // asegurate que Vehiculos tenga getVin()
+        String vin = vehiculo.getVin();
         if (vin == null || vin.isBlank()) {
             throw new IllegalArgumentException("El vehículo no tiene VIN cargado");
         }
@@ -154,15 +147,12 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
 
         this.eventoVehicularDAO.save(evento);
 
-        // Intentar registrar en blockchain (no rompas la transacción si falla)
         try {
-            boolean yaExiste = blockchainService.exists(vin, hash); // opcional, útil
+            boolean yaExiste = blockchainService.exists(vin, hash);
             if (!yaExiste) {
                 var resp = blockchainService.record(vin, hash);
                 if (resp != null && resp.isOk()) {
                     evento.setBlockchainRecordedAt(LocalDateTime.now());
-                    // si tu /record devolviera algo como txId dentro de payload, acá lo seteás
-                    // evento.setBlockchainTxId(extraerTxId(resp.getPayload()));
                 } else {
                     evento.setBlockchainError("record() no devolvió ok");
                 }
@@ -185,44 +175,31 @@ public class EventoVehicularServiceImpl implements IEventoVehicularService{
             throw new NotFoundError("Evento no encontrado: " + eventoId);
         }
 
-        // ===== Autorización =====
         var auth = org.springframework.security.core.context.SecurityContextHolder
                 .getContext().getAuthentication();
         if (auth == null || auth.getPrincipal() == null) {
             throw new org.springframework.security.access.AccessDeniedException("No autenticado");
         }
-        Long me = (Long) auth.getPrincipal(); // subject = id del usuario en tu token
+        Long me = (Long) auth.getPrincipal();
 
-        boolean esAdmin = auth.getAuthorities().stream()
-                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
-                .anyMatch("ROL_ADMIN"::equals);
+        boolean esAdmin = app.security.SecurityUtils.isAdmin();
 
         Long creadorId = (evento.getUsuario() != null) ? evento.getUsuario().getIdUsuario() : null;
 
-        // Permite: ADMIN, o (creador == usuario actual). No más chequeo de dueño del vehículo.
+
         boolean permitido = esAdmin || (creadorId != null && creadorId.equals(me));
         if (!permitido) {
             throw new org.springframework.security.access.AccessDeniedException(
                     "No autorizado para eliminar este evento");
         }
 
-        // Desasociar documentos (no borrarlos)
-//        List<DocVehiculo> docs = evento.getDocVehiculo();
-//        if (docs != null) {
-//            for (DocVehiculo d : docs) {
-//                d.setEventoVehicular(null);
-//                docVehiculoDAO.save(d); // o merge/persist según tu DAO
-//            }
-//        }
         List<DocVehiculo> docs = evento.getDocVehiculo();
         if (docs != null && !docs.isEmpty()) {
             for (DocVehiculo d : docs) {
-                docVehiculoDAO.delete(d);   // <-- borra cada documento
+                docVehiculoDAO.delete(d);
             }
-            //docs.clear(); // opcional: limpia la colección en memoria
         }
 
-        // Ahora sí, borrar el evento
         eventoVehicularDAO.delete(evento);
     }
 

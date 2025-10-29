@@ -16,9 +16,13 @@ public interface IConcesionariaTallerVerifService {
     public ConcesionarioTallerVerif findByUsuarioId(long usuarioId);
 
     void subirArchivo(MultipartFile file, Long usuarioId);
+
     void enviarValidacion(Long usuarioId, String domicilio);
+
     void validar(Long usuarioId);
+
     void rechazar(Long usuarioId);
+
     String getArchivoUrl(Long usuarioId);
 
 }

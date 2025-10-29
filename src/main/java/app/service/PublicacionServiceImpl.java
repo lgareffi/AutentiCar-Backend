@@ -78,7 +78,6 @@ public class PublicacionServiceImpl implements IPublicacionService{
     @Override
     @Transactional
     public void savePublicacionDesdeDTO(AddPublicacionDTO dto) {
-        // (Opcional) validación defensiva
         if (dto.vehiculoId == null) {
             throw new IllegalArgumentException("vehiculoId es obligatorio");
         }
@@ -89,10 +88,8 @@ public class PublicacionServiceImpl implements IPublicacionService{
 
         Long ownerId = vehiculo.getUsuario().getIdUsuario();
 
-        // Autorización: dueño o admin
         SecurityUtils.requireAdminOrSelf(ownerId);
 
-        // Crear publicación SIEMPRE con el dueño del vehículo
         Publicacion post = new Publicacion();
         post.setTitulo(dto.titulo);
         post.setDescripcion(dto.descripcion);
@@ -116,26 +113,33 @@ public class PublicacionServiceImpl implements IPublicacionService{
             throw new NotFoundError("Publicación no encontrada: " + publicacionId);
         }
 
-        // ===== Autorización =====
-        var auth = org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication();
-        if (auth == null || auth.getPrincipal() == null) {
-            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
-        }
-        Long me = (Long) auth.getPrincipal(); // subject = id en tu token
+//        var auth = org.springframework.security.core.context.SecurityContextHolder
+//                .getContext().getAuthentication();
+//        if (auth == null || auth.getPrincipal() == null) {
+//            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
+//        }
+//        Long me = (Long) auth.getPrincipal();
+//
+//        boolean esAdmin = auth.getAuthorities().stream()
+//                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+//                .anyMatch("ROL_ADMIN"::equals);
+//
+//        Long creadorId = (pub.getUsuario() != null) ? pub.getUsuario().getIdUsuario() : null;
+//        Long duenoVehiculoId = (pub.getVehiculo() != null && pub.getVehiculo().getUsuario() != null)
+//                ? pub.getVehiculo().getUsuario().getIdUsuario() : null;
 
-        boolean esAdmin = auth.getAuthorities().stream()
-                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
-                .anyMatch("ROL_ADMIN"::equals);
+        Long me    = app.security.SecurityUtils.currentUserId();
+        boolean esAdmin = app.security.SecurityUtils.isAdmin();
 
         Long creadorId = (pub.getUsuario() != null) ? pub.getUsuario().getIdUsuario() : null;
-        Long duenoVehiculoId = (pub.getVehiculo() != null && pub.getVehiculo().getUsuario() != null)
-                ? pub.getVehiculo().getUsuario().getIdUsuario() : null;
+        Long duenoVehiculoId =
+                (pub.getVehiculo() != null && pub.getVehiculo().getUsuario() != null)
+                        ? pub.getVehiculo().getUsuario().getIdUsuario()
+                        : null;
 
-        boolean permitido =
-                esAdmin
-                        || (creadorId != null && creadorId.equals(me))          // user = creador
-                        || (duenoVehiculoId != null && duenoVehiculoId.equals(me)); // user = dueño del auto
+        boolean permitido = esAdmin
+                || (creadorId != null && creadorId.equals(me))
+                || (duenoVehiculoId != null && duenoVehiculoId.equals(me));
 
         if (!permitido) {
             throw new org.springframework.security.access.AccessDeniedException(
@@ -153,26 +157,17 @@ public class PublicacionServiceImpl implements IPublicacionService{
             throw new NotFoundError("Publicación no encontrada: " + publicacionId);
         }
 
-        // ===== Autorización =====
-        var auth = org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication();
-        if (auth == null || auth.getPrincipal() == null) {
-            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
-        }
-        Long me = (Long) auth.getPrincipal(); // subject = id del usuario en tu token
-
-        boolean esAdmin = auth.getAuthorities().stream()
-                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
-                .anyMatch("ROL_ADMIN"::equals);
+        Long me = app.security.SecurityUtils.currentUserId();
+        boolean esAdmin = app.security.SecurityUtils.isAdmin();
 
         Long creadorId = (pub.getUsuario() != null) ? pub.getUsuario().getIdUsuario() : null;
         Long duenoVehiculoId = (pub.getVehiculo() != null && pub.getVehiculo().getUsuario() != null)
                 ? pub.getVehiculo().getUsuario().getIdUsuario() : null;
 
-        boolean permitido =
-                esAdmin
-                        || (creadorId != null && creadorId.equals(me))          // user creador
-                        || (duenoVehiculoId != null && duenoVehiculoId.equals(me)); // user dueño del auto
+
+        boolean permitido = esAdmin
+                || (creadorId != null && creadorId.equals(me))
+                || (duenoVehiculoId != null && duenoVehiculoId.equals(me));
 
         if (!permitido) {
             throw new org.springframework.security.access.AccessDeniedException(
@@ -260,17 +255,10 @@ public class PublicacionServiceImpl implements IPublicacionService{
         return publicacionDAO.findDistinctColoresActivos();
     }
 
-//    @Override
-//    @Transactional
-//    public List<Publicacion> findActivasByPrecioBetween(Integer min, Integer max) {
-//        if (min != null && min < 0) throw new IllegalArgumentException("Precio mínimo inválido");
-//        if (max != null && max < 0) throw new IllegalArgumentException("Precio máximo inválido");
-//        if (min != null && max != null && min > max) throw new IllegalArgumentException("Rango de precios inválido");
-//        return publicacionDAO.findActivasByPrecioBetween(min, max);
-//    }
-//
+
     private void requireText(String field, String val) {
-        if (val == null || val.trim().isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo '" + field + "' es obligatorio");
+        if (val == null || val.trim().isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El campo '" + field + "' es obligatorio");
     }
 
     @Override
@@ -303,7 +291,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
             List<Integer> maxKm,
             String queryLibre
     ) {
-        // normalizaciones
+
         var marcasN   = normalizeStrings(marcas);
         var coloresN  = normalizeStrings(colores);
         var aniosN    = emptyToNull(anios);
@@ -318,7 +306,7 @@ public class PublicacionServiceImpl implements IPublicacionService{
         );
     }
 
-    // ===== helpers =====
+
     private List<String> normalizeStrings(List<String> xs) {
         if (xs == null) return null;
         var out = xs.stream()

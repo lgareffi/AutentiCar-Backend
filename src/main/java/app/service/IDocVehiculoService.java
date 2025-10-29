@@ -12,8 +12,6 @@ public interface IDocVehiculoService {
 
     public void save(DocVehiculo docVehiculo);
 
-    //public void saveDocumentoDesdeDTO(AddDocumentoDTO dto);
-
     public DocVehiculoDTO subirDocumento(long vehiculoId,
                                   MultipartFile file,
                                   String nombre,

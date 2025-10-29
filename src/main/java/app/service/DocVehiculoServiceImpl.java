@@ -82,27 +82,16 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
             throw new NotFoundError("No se encontró el vehículo");
         }
 
-        var auth = org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication();
+        Long me = app.security.SecurityUtils.currentUserId();
+        boolean esAdmin = app.security.SecurityUtils.isAdmin();
+        boolean esTaller = app.security.SecurityUtils.isTaller();
 
-        if (auth == null || auth.getPrincipal() == null) {
-            throw new org.springframework.security.access.AccessDeniedException("No autenticado");
-        }
+        Long ownerId = (vehiculo.getUsuario() != null) ? vehiculo.getUsuario().getIdUsuario() : null;
 
-        Long me = (Long) auth.getPrincipal();
-
-        boolean esAdmin  = auth.getAuthorities().stream()
-                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
-                .anyMatch("ROL_ADMIN"::equals);
-        boolean esTaller = auth.getAuthorities().stream()
-                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
-                .anyMatch("ROL_TALLER"::equals);
-
-        Long ownerId = vehiculo.getUsuario().getIdUsuario();
-
-        if (!(esAdmin || esTaller || ownerId.equals(me))) {
+        if (!(esAdmin || esTaller || (ownerId != null && ownerId.equals(me)))) {
             throw new org.springframework.security.access.AccessDeniedException(
-                    "No estás autorizado para subir documentos a este vehículo");
+                    "No estás autorizado para subir documentos a este vehículo"
+            );
         }
 
         if (file == null || file.isEmpty()) {

@@ -75,9 +75,6 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
         Vehiculos vehiculo = vehiculosDAO.findById(vehiculoId);
         if (vehiculo == null) throw new NotFoundError("No se encontró el vehículo");
 
-//        long cantidad = imagenVehiculoDAO.countByVehiculo(vehiculo);
-//        if (cantidad >= 30) throw new RuntimeException("El vehículo ya tiene 30 imágenes");
-
         if (file == null || file.isEmpty()) throw new RuntimeException("Archivo vacío");
         if (file.getSize() > 10 * 1024 * 1024) throw new RuntimeException("La imagen excede 10MB");
 
@@ -95,7 +92,7 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
             );
 
             String secureUrl = (String) upload.get("secure_url");
-            String publicId  = (String) upload.get("public_id"); // <— NUEVO
+            String publicId  = (String) upload.get("public_id");
             if (secureUrl == null || publicId == null) throw new RuntimeException("Error al obtener datos de Cloudinary");
 
             ImagenVehiculo img = new ImagenVehiculo();
@@ -142,15 +139,13 @@ public class ImagenVehiculoServiceImpl implements IImagenVehiculoService {
     @Override
     @Transactional
     public void eliminarImagen(long imagenId) {
-        ImagenVehiculo img = imagenVehiculoDAO.findById(imagenId); // tu DAO lanza NotFound si no existe
+        ImagenVehiculo img = imagenVehiculoDAO.findById(imagenId);
 
         Long ownerId = img.getVehiculo().getUsuario().getIdUsuario();
         app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
 
         try {
-            // 1) Borrar en Cloudinary
             cloudinary.uploader().destroy(img.getPublicId(), ObjectUtils.emptyMap());
-            // 2) Borrar en BD
             imagenVehiculoDAO.delete(img);
         } catch (Exception e) {
             throw new RuntimeException("No se pudo eliminar la imagen: " + e.getMessage(), e);

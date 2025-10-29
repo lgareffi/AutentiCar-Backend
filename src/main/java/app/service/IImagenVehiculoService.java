@@ -12,8 +12,6 @@ public interface IImagenVehiculoService {
 
     public void save(ImagenVehiculo imagenVehiculo);
 
-//    public void saveImagenDesdeDTO(AddImagenDTO dto);
-
     public ImagenVehiculoDTO subirImagen(long vehiculoId, MultipartFile file);
 
     public List<ImagenVehiculoDTO> subirMultiples(long vehiculoId, List<MultipartFile> files);
@@ -23,7 +21,5 @@ public interface IImagenVehiculoService {
     public String subirImagenPerfil(long usuarioId, MultipartFile file);
 
     public void eliminarImagenPerfil(long usuarioId);
-
-//    public ImagenVehiculo findByUrl(String urlImagen);
     
 }
