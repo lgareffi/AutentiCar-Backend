@@ -189,30 +189,10 @@ public class VehiculosServiceImpl implements IVehiculosService{
         Long ownerId = vehiculo.getUsuario().getIdUsuario();
         app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
 
-        Publicacion pub = publicacionDAO.findByVehiculoId(vehiculoId);
-        if (pub != null) {
-            publicacionDAO.delete(pub);
-        }
-
-        if (vehiculo.getEventoVehicular() != null && !vehiculo.getEventoVehicular().isEmpty()) {
-            for (EventoVehicular ev : vehiculo.getEventoVehicular()) {
-                eventoVehicularService.eliminarEvento(ev.getIdEvento());
-            }
-            vehiculo.getEventoVehicular().clear();
-        }
-
-        List<ImagenVehiculo> imagenes = this.getImagenVehiculos(vehiculoId);
-        for (ImagenVehiculo img : imagenes) {
-            imagenVehiculoService.eliminarImagen(img.getIdImagen());
-        }
-
-        List<DocVehiculoDTO> documentos = docVehiculoService.listarPorVehiculo(vehiculoId);
-        for (DocVehiculoDTO d : documentos) {
-            docVehiculoService.eliminarDocumento(d.getIdDocVehiculo());
-        }
-
         vehiculosDAO.delete(vehiculo);
     }
+
+
 
     @Override
     @Transactional
