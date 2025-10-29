@@ -78,6 +78,9 @@ public class Usuarios {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     List<Publicacion> publicaciones = new java.util.ArrayList<>();
 
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ConcesionarioTallerVerif concesionarioTallerVerif;
+
 
     public Usuarios() {
         super();

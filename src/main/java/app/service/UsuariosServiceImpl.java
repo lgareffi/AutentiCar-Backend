@@ -135,48 +135,6 @@ public class UsuariosServiceImpl implements IUsuariosService {
         }
     }
 
-//    @Override
-//    @Transactional
-//    public void eliminarCuenta(long usuarioId) {
-//        Usuarios u = usuariosDAO.findById(usuarioId);
-//        if (u == null) throw new NotFoundError("Usuario no encontrado: " + usuarioId);
-//
-//        ConcesionariaVerif cv = concesionariaVerifDAO.findByUsuarioId(u.getIdUsuario());
-//        if (cv != null) {
-//            concesionariaVerifDAO.delete(cv);
-//        }
-//
-//        // 1) Vehículos
-//        if (u.getVehiculos() != null) {
-//            for (Vehiculos v : u.getVehiculos()) {
-//                vehiculosService.eliminarVehiculo(v.getIdVehiculo());  // ya borra imágenes/docs/pub
-//            }
-//            u.getVehiculos().clear();              // <<< importante
-//        }
-//
-//        // 2) Eventos
-//        if (u.getEventoVehicular() != null) {
-//            for (EventoVehicular ev : u.getEventoVehicular()) {
-//                eventoVehicularService.eliminarEvento(ev.getIdEvento());
-//            }
-//            u.getEventoVehicular().clear();        // <<< importante
-//        }
-//
-//        // 3) Publicaciones
-//        if (u.getPublicaciones() != null) {
-//            for (Publicacion p : u.getPublicaciones()) {
-//                publicacionService.eliminarPublicacion(p.getIdPublicacion());
-//            }
-//            u.getPublicaciones().clear();          // <<< importante
-//        }
-//
-//        // 5) Sincronizá el estado del usuario sin hijos antes de borrar
-//        usuariosDAO.save(u);   // hace merge del usuario con colecciones vacías
-//
-//        // 6) Ahora sí, eliminar el usuario
-//        usuariosDAO.delete(u);
-//    }
-
     @Override
     @Transactional
     public void eliminarCuenta(long usuarioId) {
