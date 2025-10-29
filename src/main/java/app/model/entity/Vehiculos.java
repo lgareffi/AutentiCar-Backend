@@ -70,13 +70,13 @@ public class Vehiculos {
     @JoinColumn(name = "usuarioId", referencedColumnName = "idUsuario",nullable = false)
     Usuarios usuario;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     List<DocVehiculo> docVehiculo;
 
     @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     List<EventoVehicular> eventoVehicular;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ImagenVehiculo> imagenVehiculos;
 
     @OneToOne(
@@ -92,18 +92,19 @@ public class Vehiculos {
         super();
     }
 
-    public Vehiculos(long idVehiculo, String vin, String marca, String modelo, int anio,
-                     int kilometraje, int puertas, double motor, String color,
-                     String tipoCombustible, String tipoTransmision, LocalDate fechaAlta,
-                     Estado estado, AllowedToSee allowedToSee, Usuarios usuario,
-                     List<DocVehiculo> docVehiculo, List<EventoVehicular> eventoVehicular,
-                     List<ImagenVehiculo> imagenVehiculos) {
+    public Vehiculos(long idVehiculo, String vin, String marca, String modelo,
+                     int kilometraje, int anio, int puertas, double motor,
+                     String color, String tipoCombustible, String tipoTransmision,
+                     LocalDate fechaAlta, Estado estado, AllowedToSee allowedToSee,
+                     Usuarios usuario, List<DocVehiculo> docVehiculo,
+                     List<EventoVehicular> eventoVehicular,
+                     List<ImagenVehiculo> imagenVehiculos, Publicacion publicacion) {
         this.idVehiculo = idVehiculo;
         this.vin = vin;
         this.marca = marca;
         this.modelo = modelo;
-        this.anio = anio;
         this.kilometraje = kilometraje;
+        this.anio = anio;
         this.puertas = puertas;
         this.motor = motor;
         this.color = color;
@@ -116,6 +117,7 @@ public class Vehiculos {
         this.docVehiculo = docVehiculo;
         this.eventoVehicular = eventoVehicular;
         this.imagenVehiculos = imagenVehiculos;
+        this.publicacion = publicacion;
     }
 
     @Override
@@ -139,6 +141,7 @@ public class Vehiculos {
                 ", docVehiculo=" + docVehiculo +
                 ", eventoVehicular=" + eventoVehicular +
                 ", imagenVehiculos=" + imagenVehiculos +
+                ", publicacion=" + publicacion +
                 '}';
     }
 
@@ -293,4 +296,5 @@ public class Vehiculos {
     public void setPublicacion(Publicacion publicacion) {
         this.publicacion = publicacion;
     }
+
 }

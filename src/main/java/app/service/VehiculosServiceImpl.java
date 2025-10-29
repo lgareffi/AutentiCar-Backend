@@ -92,21 +92,6 @@ public class VehiculosServiceImpl implements IVehiculosService{
         }
     }
 
-//    @Override
-//    @Transactional
-//    public List<EventoVehicular> getEventoVehicular(long id){
-//        try {
-//            Vehiculos v = this.vehiculosDAO.findById(id);
-//            if (v == null)
-//                throw new NotFoundError("No se encontro el vehiculo");
-//            if (v.getEventoVehicular().isEmpty())
-//                throw new Error("No se encontraron eventos hechos al auto");
-//            return v.getEventoVehicular();
-//        } catch(Throwable e) {
-//            throw new Error(e.getMessage());
-//        }
-//    }
-
     @Override
     @Transactional
     public List<EventoVehicular> getEventoVehicular(long id){
@@ -119,7 +104,6 @@ public class VehiculosServiceImpl implements IVehiculosService{
             if (eventos.isEmpty())
                 return eventos;
 
-            // 🔹 Filtrar solo los activos
             return eventos.stream()
                     .filter(e -> !e.isEstaEliminado())
                     .toList();
@@ -156,26 +140,22 @@ public class VehiculosServiceImpl implements IVehiculosService{
     @Override
     @Transactional
     public Long saveVehiculoDesdeDTO(AddVehiculoDTO dto) {
-        // 1) VIN único
+
         Vehiculos existente = this.vehiculosDAO.findByVin(dto.vin);
         if (existente != null) {
             throw new RuntimeException("Auto con VIN ya existente");
         }
 
-        // 2) Determinar el dueño objetivo (si no viene, es el usuario actual)
-        Long currentUserId = SecurityUtils.currentUserId(); // principal = ID (Long)
+        Long currentUserId = SecurityUtils.currentUserId();
         Long ownerId = (dto.usuarioId != null) ? dto.usuarioId : currentUserId;
 
-        // 3) Autorización: solo admin puede crear para otro usuario
-        SecurityUtils.requireAdminOrSelf(ownerId); // lanza 403 si no corresponde
+        SecurityUtils.requireAdminOrSelf(ownerId);
 
-        // 4) Cargar dueño desde BD
         Usuarios owner = this.usuariosDAO.findById(ownerId);
         if (owner == null) {
             throw new NotFoundError("No se encontró el usuario destino");
         }
 
-        // 5) Crear y guardar
         Vehiculos vehiculo = new Vehiculos();
         vehiculo.setVin(dto.vin);
         vehiculo.setMarca(dto.marca);
@@ -206,37 +186,31 @@ public class VehiculosServiceImpl implements IVehiculosService{
             throw new NotFoundError("Vehículo no encontrado: " + vehiculoId);
         }
 
-        // Autorización: dueño del vehículo o ADMIN
         Long ownerId = vehiculo.getUsuario().getIdUsuario();
         app.security.OwnershipGuard.requireOwnerOrAdmin(ownerId);
 
-        // 1) Eliminar publicación asociada (si existe)
         Publicacion pub = publicacionDAO.findByVehiculoId(vehiculoId);
         if (pub != null) {
             publicacionDAO.delete(pub);
         }
 
-        // 2) Eliminar eventos asociados al vehículo
         if (vehiculo.getEventoVehicular() != null && !vehiculo.getEventoVehicular().isEmpty()) {
             for (EventoVehicular ev : vehiculo.getEventoVehicular()) {
                 eventoVehicularService.eliminarEvento(ev.getIdEvento());
             }
-            vehiculo.getEventoVehicular().clear(); // mantener el contexto limpio
+            vehiculo.getEventoVehicular().clear();
         }
 
-        // 3) Eliminar imágenes asociadas
-        List<ImagenVehiculo> imagenes = this.getImagenVehiculos(vehiculoId); // ahora nunca tira NotFound
+        List<ImagenVehiculo> imagenes = this.getImagenVehiculos(vehiculoId);
         for (ImagenVehiculo img : imagenes) {
             imagenVehiculoService.eliminarImagen(img.getIdImagen());
         }
 
-        // 4) Eliminar documentos asociados
-        List<DocVehiculoDTO> documentos = docVehiculoService.listarPorVehiculo(vehiculoId); // ahora nunca tira NotFound
+        List<DocVehiculoDTO> documentos = docVehiculoService.listarPorVehiculo(vehiculoId);
         for (DocVehiculoDTO d : documentos) {
             docVehiculoService.eliminarDocumento(d.getIdDocVehiculo());
         }
 
-        // 5) Finalmente, eliminar el vehículo
         vehiculosDAO.delete(vehiculo);
     }
 
@@ -253,10 +227,8 @@ public class VehiculosServiceImpl implements IVehiculosService{
             throw new NotFoundError("No se encontró el nuevo titular con id " + nuevoTitularId);
         }
 
-        // Cambiar titular
         vehiculo.setUsuario(nuevoTitular);
 
-        // Actualizar también la publicación asociada
         Publicacion publicacion = vehiculo.getPublicacion();
         if (publicacion != null) {
             publicacion.setUsuario(nuevoTitular);

@@ -86,15 +86,18 @@ public class Usuarios {
         super();
     }
 
-    public Usuarios(String nombre, long idUsuario, int dni, String apellido, String mail, String password, String telefonoCelular,
-                    LocalDate fechaRegistro, boolean esConcesionariaTaller, boolean quiereOferta, String dniFrenteUrl,
-                    String dniDorsoUrl, String profilePicUrl, Rol rol, NivelUsuario nivelUsuario, List<Vehiculos> vehiculos,
-                    List<EventoVehicular> eventoVehicular,
-                    List<Publicacion> publicaciones) {
-        this.nombre = nombre;
+    public Usuarios(long idUsuario, String nombre, String apellido, int dni,
+                    String mail, String password, String telefonoCelular,
+                    LocalDate fechaRegistro, boolean esConcesionariaTaller,
+                    boolean quiereOferta, String dniFrenteUrl, String dniDorsoUrl,
+                    String profilePicUrl, Rol rol, NivelUsuario nivelUsuario,
+                    List<Vehiculos> vehiculos, List<EventoVehicular> eventoVehicular,
+                    List<Publicacion> publicaciones,
+                    ConcesionarioTallerVerif concesionarioTallerVerif) {
         this.idUsuario = idUsuario;
-        this.dni = dni;
+        this.nombre = nombre;
         this.apellido = apellido;
+        this.dni = dni;
         this.mail = mail;
         this.password = password;
         this.telefonoCelular = telefonoCelular;
@@ -109,6 +112,7 @@ public class Usuarios {
         this.vehiculos = vehiculos;
         this.eventoVehicular = eventoVehicular;
         this.publicaciones = publicaciones;
+        this.concesionarioTallerVerif = concesionarioTallerVerif;
     }
 
     @Override
@@ -132,6 +136,7 @@ public class Usuarios {
                 ", vehiculos=" + vehiculos +
                 ", eventoVehicular=" + eventoVehicular +
                 ", publicaciones=" + publicaciones +
+                ", concesionarioTallerVerif=" + concesionarioTallerVerif +
                 '}';
     }
 
@@ -277,5 +282,13 @@ public class Usuarios {
 
     public void setQuiereOferta(boolean quiereOferta) {
         this.quiereOferta = quiereOferta;
+    }
+
+    public ConcesionarioTallerVerif getConcesionarioTallerVerif() {
+        return concesionarioTallerVerif;
+    }
+
+    public void setConcesionarioTallerVerif(ConcesionarioTallerVerif concesionarioTallerVerif) {
+        this.concesionarioTallerVerif = concesionarioTallerVerif;
     }
 }
