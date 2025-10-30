@@ -46,6 +46,7 @@ public interface IPublicacionService {
             List<Integer> maxPrecioArs,
             List<Integer> minKm,
             List<Integer> maxKm,
+            List<String> roles,
             String queryLibre
     );
     

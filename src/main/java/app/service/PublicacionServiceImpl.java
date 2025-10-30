@@ -289,20 +289,37 @@ public class PublicacionServiceImpl implements IPublicacionService{
             List<Integer> maxPrecioArs,
             List<Integer> minKm,
             List<Integer> maxKm,
+            List<String> roles,
             String queryLibre
     ) {
 
-        var marcasN   = normalizeStrings(marcas);
-        var coloresN  = normalizeStrings(colores);
-        var aniosN    = emptyToNull(anios);
-        var minPrcN   = emptyToNull(minPrecioArs);
-        var maxPrcN   = emptyToNull(maxPrecioArs);
-        var minKmN    = emptyToNull(minKm);
-        var maxKmN    = emptyToNull(maxKm);
-        var ql        = (queryLibre != null && !queryLibre.isBlank()) ? queryLibre.trim() : null;
+        var marcasN = normalizeStrings(marcas);
+        var coloresN = normalizeStrings(colores);
+        var aniosN = emptyToNull(anios);
+        var minPrcN = emptyToNull(minPrecioArs);
+        var maxPrcN = emptyToNull(maxPrecioArs);
+        var minKmN  = emptyToNull(minKm);
+        var maxKmN  = emptyToNull(maxKm);
+        var ql = (queryLibre != null && !queryLibre.isBlank()) ? queryLibre.trim() : null;
+
+        List<Usuarios.Rol> rolesEnum = null;
+        if (roles != null) {
+            rolesEnum = roles.stream()
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .map(String::toUpperCase)
+                    .map(s -> {
+                        try { return Usuarios.Rol.valueOf(s); }
+                        catch (IllegalArgumentException ex) { return null; }
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
+            if (rolesEnum.isEmpty()) rolesEnum = null;
+        }
 
         return publicacionDAO.findActivasByFiltro(
-                marcasN, coloresN, aniosN, minPrcN, maxPrcN, minKmN, maxKmN, ql
+                marcasN, coloresN, aniosN, minPrcN, maxPrcN, minKmN, maxKmN, rolesEnum, ql
         );
     }
 

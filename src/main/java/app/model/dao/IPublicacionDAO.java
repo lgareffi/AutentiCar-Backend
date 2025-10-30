@@ -2,6 +2,7 @@ package app.model.dao;
 
 
 import app.model.entity.Publicacion;
+import app.model.entity.Usuarios;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -45,6 +46,7 @@ public interface IPublicacionDAO {
             List<Integer> maxPrecioArs,
             List<Integer> minKm,
             List<Integer> maxKm,
+            List<Usuarios.Rol> roles,
             String queryLibre
     );
 

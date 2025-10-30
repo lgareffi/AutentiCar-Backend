@@ -3,6 +3,7 @@ package app.model.dao;
 import app.Errors.NotFoundError;
 import app.model.entity.DocVehiculo;
 import app.model.entity.Publicacion;
+import app.model.entity.Usuarios;
 import app.model.entity.Vehiculos;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -311,19 +312,22 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
             List<Integer> maxPrecioArs,
             List<Integer> minKm,
             List<Integer> maxKm,
+            List<Usuarios.Rol> roles,
             String queryLibre
     ) {
         var s = s();
 
         StringBuilder sb = new StringBuilder("""
-        SELECT p FROM Publicacion p
-        JOIN p.vehiculo v
-        WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA
-    """);
+            SELECT p FROM Publicacion p
+            JOIN p.vehiculo v
+            JOIN p.usuario u
+            WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA
+        """);
 
         if (marcas != null && !marcas.isEmpty()) sb.append(" AND LOWER(v.marca) IN (:marcas) ");
         if (colores != null && !colores.isEmpty()) sb.append(" AND LOWER(v.color) IN (:colores) ");
-        if (anios   != null && !anios.isEmpty())   sb.append(" AND v.anio IN (:anios) ");
+        if (anios != null && !anios.isEmpty()) sb.append(" AND v.anio IN (:anios) ");
+        if (roles != null && !roles.isEmpty()) sb.append(" AND u.rol IN (:roles) ");
 
         String precioArsExpr = """
         (CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
@@ -414,6 +418,8 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
             q.setParameterList("colores", colores.stream().map(String::toLowerCase).toList());
         if (anios != null && !anios.isEmpty())
             q.setParameterList("anios", anios);
+        if (roles != null && !roles.isEmpty())
+            q.setParameterList("roles", roles);
 
         if (priceClauses > 0) q.setParameter("tasa", tasaUsdArs);
 

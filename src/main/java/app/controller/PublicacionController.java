@@ -261,16 +261,22 @@ public class PublicacionController {
     @GetMapping("/filtro")
     public ResponseEntity<?> filtro(
             @RequestParam(required = false) String q,
-            @RequestParam(name="marca",  required = false) List<String> marcas,
-            @RequestParam(name="color",  required = false) List<String> colores,
-            @RequestParam(name="anio",   required = false) List<Integer> anios,
+            @RequestParam(name="marca", required = false) List<String> marcas,
+            @RequestParam(name="color", required = false) List<String> colores,
+            @RequestParam(name="anio", required = false) List<Integer> anios,
             @RequestParam(name="minPrecio", required = false) List<Integer> minPrecios,
             @RequestParam(name="maxPrecio", required = false) List<Integer> maxPrecios,
-            @RequestParam(name="minKm",  required = false) List<Integer> minKms,
-            @RequestParam(name="maxKm",  required = false) List<Integer> maxKms
+            @RequestParam(name="minKm", required = false) List<Integer> minKms,
+            @RequestParam(name="maxKm", required = false) List<Integer> maxKms,
+            @RequestParam(name="rol", required = false) List<String> rolSingular,
+            @RequestParam(name="roles",    required = false)  List<String> rolPlural
     ) {
+        List<String> roles = new java.util.ArrayList<>();
+        if (rolSingular != null) roles.addAll(rolSingular);
+        if (rolPlural   != null) roles.addAll(rolPlural);
+
         var pubs = publicacionService.findActivasByFiltro(
-                marcas, colores, anios, minPrecios, maxPrecios, minKms, maxKms, q
+                marcas, colores, anios, minPrecios, maxPrecios, minKms, maxKms, roles, q
         );
         var dtos = pubs.stream().map(PublicacionDTO::new).toList();
         return ResponseEntity.ok(dtos);
