@@ -16,10 +16,18 @@ public interface IUsuariosDAO {
 
     public List<Usuarios> findByNombreApellido(String search);
 
+    public List<Usuarios> findTalleresBySearch(String search);
+
     public void save(Usuarios usuario);
 
     public void delete(Usuarios usuario);
 
     public long countPublicacionesByUsuarioId(long usuarioId);
+
+    public void agregarTallerAsignado(Long usuarioId, Long tallerId);
+
+    public void eliminarTallerAsignado(Long usuarioId, Long tallerId);
+
+    public List<Usuarios> findTalleresAsignadosDeUsuario(Long usuarioId);
 
 }

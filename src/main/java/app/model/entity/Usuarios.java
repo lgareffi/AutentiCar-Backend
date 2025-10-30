@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -81,19 +82,27 @@ public class Usuarios {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private ConcesionarioTallerVerif concesionarioTallerVerif;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "usuarios_talleres_asignados",
+            joinColumns = @JoinColumn(name = "usuario_id")
+    )
+    @Column(name = "taller_id")
+    private List<Long> talleresAsignados = new ArrayList<>();
+
 
     public Usuarios() {
         super();
     }
 
-    public Usuarios(long idUsuario, String nombre, String apellido, int dni,
-                    String mail, String password, String telefonoCelular,
-                    LocalDate fechaRegistro, boolean esConcesionariaTaller,
-                    boolean quiereOferta, String dniFrenteUrl, String dniDorsoUrl,
-                    String profilePicUrl, Rol rol, NivelUsuario nivelUsuario,
-                    List<Vehiculos> vehiculos, List<EventoVehicular> eventoVehicular,
-                    List<Publicacion> publicaciones,
-                    ConcesionarioTallerVerif concesionarioTallerVerif) {
+    public Usuarios(long idUsuario, String nombre, String apellido, int dni, String mail,
+                    String password, String telefonoCelular, LocalDate fechaRegistro,
+                    boolean esConcesionariaTaller, boolean quiereOferta, String dniFrenteUrl,
+                    String dniDorsoUrl, String profilePicUrl, Rol rol,
+                    NivelUsuario nivelUsuario, List<Vehiculos> vehiculos,
+                    List<EventoVehicular> eventoVehicular, List<Publicacion> publicaciones,
+                    ConcesionarioTallerVerif concesionarioTallerVerif,
+                    List<Long> talleresAsignados) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -113,6 +122,7 @@ public class Usuarios {
         this.eventoVehicular = eventoVehicular;
         this.publicaciones = publicaciones;
         this.concesionarioTallerVerif = concesionarioTallerVerif;
+        this.talleresAsignados = talleresAsignados;
     }
 
     @Override
@@ -137,6 +147,7 @@ public class Usuarios {
                 ", eventoVehicular=" + eventoVehicular +
                 ", publicaciones=" + publicaciones +
                 ", concesionarioTallerVerif=" + concesionarioTallerVerif +
+                ", talleresAsignados=" + talleresAsignados +
                 '}';
     }
 
@@ -290,5 +301,13 @@ public class Usuarios {
 
     public void setConcesionarioTallerVerif(ConcesionarioTallerVerif concesionarioTallerVerif) {
         this.concesionarioTallerVerif = concesionarioTallerVerif;
+    }
+
+    public List<Long> getTalleresAsignados() {
+        return talleresAsignados;
+    }
+
+    public void setTalleresAsignados(List<Long> talleresAsignados) {
+        this.talleresAsignados = talleresAsignados;
     }
 }

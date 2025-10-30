@@ -68,6 +68,29 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
     }
 
     @Override
+    @Transactional()
+    public List<Usuarios> findTalleresBySearch(String search) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        String queryStr = """
+        FROM Usuarios 
+        WHERE rol = 'TALLER'
+        AND (
+            LOWER(nombre) LIKE :search 
+            OR LOWER(apellido) LIKE :search 
+            OR LOWER(mail) LIKE :search 
+            OR LOWER(telefonoCelular) LIKE :search
+        )
+    """;
+
+        Query<Usuarios> query = currentSession.createQuery(queryStr, Usuarios.class);
+        query.setParameter("search", "%" + search.toLowerCase() + "%");
+        query.setMaxResults(5);
+
+        return query.getResultList();
+    }
+
+    @Override
     @Transactional
     public void save(Usuarios usuario) {
         Session s = entityManager.unwrap(Session.class);
@@ -96,6 +119,61 @@ public class UsuariosDAOImpl implements IUsuariosDAO {
         )
             .setParameter("uid", usuarioId)
             .getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public void agregarTallerAsignado(Long usuarioId, Long tallerId) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        Usuarios usuario = currentSession.get(Usuarios.class, usuarioId);
+        if (usuario == null) {
+            throw new NotFoundError("No se encontró el usuario con ID " + usuarioId);
+        }
+        if (usuario.getTalleresAsignados().contains(tallerId)) {
+            throw new IllegalStateException("El taller ya está asignado a este usuario.");
+        }
+
+        usuario.getTalleresAsignados().add(tallerId);
+        currentSession.merge(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void eliminarTallerAsignado(Long usuarioId, Long tallerId) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        Usuarios usuario = currentSession.get(Usuarios.class, usuarioId);
+        if (usuario == null) {
+            throw new NotFoundError("No se encontró el usuario con ID " + usuarioId);
+        }
+        if (!usuario.getTalleresAsignados().contains(tallerId)) {
+            throw new IllegalStateException("El taller no está asignado a este usuario.");
+        }
+
+        usuario.getTalleresAsignados().remove(tallerId);
+        currentSession.merge(usuario);
+    }
+
+    @Override
+    @Transactional()
+    public List<Usuarios> findTalleresAsignadosDeUsuario(Long usuarioId) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        String hql = """
+        FROM Usuarios v
+        WHERE v.rol = 'TALLER'
+        AND v.idUsuario IN (
+            SELECT t
+            FROM Usuarios u JOIN u.talleresAsignados t
+            WHERE u.idUsuario = :usuarioId
+        )
+    """;
+
+        Query<Usuarios> query = currentSession.createQuery(hql, Usuarios.class);
+        query.setParameter("usuarioId", usuarioId);
+
+        return query.getResultList();
     }
     
 }

@@ -3,6 +3,7 @@ package app.service;
 
 import app.Errors.NotFoundError;
 import app.model.dao.IConcesionariaTallerVerifDAO;
+import app.model.dao.IPublicacionDAO;
 import app.model.dao.IUsuariosDAO;
 import app.model.entity.*;
 import jakarta.transaction.Transactional;
@@ -14,6 +15,9 @@ import java.util.List;
 public class UsuariosServiceImpl implements IUsuariosService {
     @Autowired
     private IUsuariosDAO usuariosDAO;
+
+    @Autowired
+    private IPublicacionDAO publicacionDAO;
 
     @Autowired
     private IVehiculosService vehiculosService;
@@ -91,6 +95,16 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional()
+    public List<Usuarios> findTalleresBySearch(String search) {
+        List<Usuarios> talleres = usuariosDAO.findTalleresBySearch(search);
+        if (talleres.isEmpty()) {
+            throw new NotFoundError("No se encontraron talleres que coincidan con la búsqueda: " + search);
+        }
+        return talleres;
+    }
+
+    @Override
     @Transactional
     public List<Vehiculos> getVehiculos(long id){
         try {
@@ -136,6 +150,12 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
+    @Transactional()
+    public List<Publicacion> getPublicacionesTaller(Long tallerId) {
+        return publicacionDAO.findByTallerAsignado(tallerId);
+    }
+
+    @Override
     @Transactional
     public void eliminarCuenta(long usuarioId) {
         Usuarios u = usuariosDAO.findById(usuarioId);
@@ -166,6 +186,32 @@ public class UsuariosServiceImpl implements IUsuariosService {
     @Transactional
     public long contarPublicaciones(long usuarioId) {
         return usuariosDAO.countPublicacionesByUsuarioId(usuarioId);
+    }
+
+    @Override
+    @Transactional
+    public void agregarTallerAsignado(Long usuarioId, Long tallerId) {
+        usuariosDAO.agregarTallerAsignado(usuarioId, tallerId);
+    }
+
+    @Override
+    @Transactional
+    public void eliminarTallerAsignado(Long usuarioId, Long tallerId) {
+        try {
+            usuariosDAO.eliminarTallerAsignado(usuarioId, tallerId);
+        } catch (NotFoundError e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new RuntimeException("Error al eliminar taller asignado del usuario: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional()
+    public List<Usuarios> listarTalleresAsignados(Long usuarioId) {
+        List<Usuarios> talleres = usuariosDAO.findTalleresAsignadosDeUsuario(usuarioId);
+        if (talleres.isEmpty()) throw new NotFoundError("El usuario no tiene talleres asignados.");
+        return talleres;
     }
 
 }

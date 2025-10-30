@@ -119,6 +119,38 @@ public class UsuariosController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_ADMIN','ROL_CONCESIONARIO','ROL_TALLER')")
+    @GetMapping("/usuarios/{usuarioId}/publicacionesTaller")
+    public ResponseEntity<?> getPublicacionesTaller(@PathVariable long usuarioId) {
+        try {
+            // IMPORTANTE: 'usuarioId' acá es el ID del TALLER logueado
+            List<Publicacion> publicaciones = this.usuariosService.getPublicacionesTaller(usuarioId);
+            List<PublicacionDTO> publicacionDTO = publicaciones.stream()
+                    .map(PublicacionDTO::new)
+                    .toList();
+            return new ResponseEntity<>(publicacionDTO, HttpStatus.OK);
+        } catch (Throwable e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @GetMapping("/usuarios/talleres/buscar")
+    public ResponseEntity<?> buscarTalleres(@RequestParam("q") String search) {
+        try {
+            List<Usuarios> talleres = usuariosService.findTalleresBySearch(search);
+            List<UsuariosDTO> talleresDTO = talleres.stream()
+                    .map(UsuariosDTO::new)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(talleresDTO, HttpStatus.OK);
+        } catch (NotFoundError e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Throwable e) {
+            String msj = "Error al buscar talleres.";
+            return new ResponseEntity<>(msj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PutMapping("/usuarios/{usuarioId}")
     public ResponseEntity<?> update(@PathVariable long usuarioId, @RequestBody Usuarios datos) {
         try {
@@ -224,6 +256,87 @@ public class UsuariosController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al procesar la solicitud");
+        }
+    }
+
+//    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN')")
+//    @PostMapping("/usuarios/{usuarioId}/talleres/{tallerId}")
+//    public ResponseEntity<?> agregarTallerAsignado(
+//            @PathVariable Long usuarioId,
+//            @PathVariable Long tallerId) {
+//        try {
+//            usuariosService.agregarTallerAsignado(usuarioId, tallerId);
+//            String msj = "Taller asignado correctamente al usuario con ID " + usuarioId;
+//            return new ResponseEntity<>(msj, HttpStatus.OK);
+//        } catch (NotFoundError e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        } catch (IllegalStateException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+//        } catch (Exception  e) {
+//            e.printStackTrace();
+//            String msj = "Error al asignar el taller.";
+//            return new ResponseEntity<>(msj, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @PostMapping("/usuarios/{usuarioId}/talleres/{tallerId}")
+    public ResponseEntity<?> agregarTallerAsignado(
+            @PathVariable Long usuarioId,
+            @PathVariable Long tallerId) {
+        try {
+            usuariosService.agregarTallerAsignado(usuarioId, tallerId);
+            return new ResponseEntity<>("Taller asignado correctamente al usuario con ID " + usuarioId, HttpStatus.OK);
+
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+
+        } catch (NotFoundError e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IllegalStateException) {
+                return new ResponseEntity<>(cause.getMessage(), HttpStatus.CONFLICT);
+            }
+            e.printStackTrace();
+            return new ResponseEntity<>("Error al asignar el taller.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN')")
+    @DeleteMapping("/usuarios/{usuarioId}/talleres/{tallerId}")
+    public ResponseEntity<?> eliminarTallerAsignado(
+            @PathVariable Long usuarioId,
+            @PathVariable Long tallerId) {
+        try {
+            usuariosService.eliminarTallerAsignado(usuarioId, tallerId);
+            String msj = "Taller eliminado correctamente del usuario con ID " + usuarioId;
+            return new ResponseEntity<>(msj, HttpStatus.OK);
+        } catch (NotFoundError e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (Throwable e) {
+            String msj = "Error al eliminar el taller asignado.";
+            return new ResponseEntity<>(msj, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROL_USER','ROL_CONCESIONARIO','ROL_ADMIN','ROL_TALLER')")
+    @GetMapping("/usuarios/{usuarioId}/talleres")
+    public ResponseEntity<?> listarTalleresAsignados(@PathVariable Long usuarioId) {
+        try {
+            List<Usuarios> talleres = usuariosService.listarTalleresAsignados(usuarioId);
+            List<UsuariosDTO> talleresDTO = talleres.stream()
+                    .map(UsuariosDTO::new)
+                    .toList();
+            return new ResponseEntity<>(talleresDTO, HttpStatus.OK);
+        } catch (NotFoundError e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Throwable e) {
+            String msj = "Error al listar talleres asignados.";
+            return new ResponseEntity<>(msj, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -17,16 +17,26 @@ public interface IUsuariosService {
 
     public List<Usuarios> findByNombreApellido(String search);
 
+    public List<Usuarios> findTalleresBySearch(String search);
+
     public List<Vehiculos> getVehiculos(long id);
 
     public List<EventoVehicular> getEventoVehicular(long id);
 
     public List<Publicacion> getPublicaciones(long id);
 
+    public List<Publicacion> getPublicacionesTaller(Long tallerId);
+
     public void eliminarCuenta(long usuarioId);
 
     public void update(long id, Usuarios datos); 
 
     public long contarPublicaciones(long usuarioId);
+
+    public void agregarTallerAsignado(Long usuarioId, Long tallerId);
+
+    public void eliminarTallerAsignado(Long usuarioId, Long tallerId);
+
+    public List<Usuarios> listarTalleresAsignados(Long usuarioId);
 
 }

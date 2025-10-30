@@ -19,6 +19,8 @@ public interface IPublicacionDAO {
 
     public Publicacion findByVehiculoId(long vehiculoId);
 
+    List<Publicacion> findByTallerAsignado(Long tallerId);
+
     List<Publicacion> findActivas();
 
     List<Publicacion> findActivasByMarca(String marca);

@@ -78,6 +78,26 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
     }
 
     @Override
+    @Transactional()
+    public List<Publicacion> findByTallerAsignado(Long tallerId) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        String hql = """
+        SELECT p FROM Publicacion p
+        WHERE p.usuario.idUsuario IN (
+            SELECT u.idUsuario
+            FROM Usuarios u JOIN u.talleresAsignados t
+            WHERE t = :tallerId
+        )
+    """;
+
+        Query<Publicacion> query = currentSession.createQuery(hql, Publicacion.class);
+        query.setParameter("tallerId", tallerId);
+
+        return query.getResultList();
+    }
+
+    @Override
     @Transactional
     public List<Publicacion> findActivas() {
         var session = entityManager.unwrap(org.hibernate.Session.class);
