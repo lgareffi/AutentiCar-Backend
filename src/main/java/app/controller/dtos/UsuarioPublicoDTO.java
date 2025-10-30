@@ -9,6 +9,7 @@ public class UsuarioPublicoDTO {
     private String email;
     private String telefono;
     private String fotoPerfilUrl;
+    private Usuarios.Rol rol;
 
     public UsuarioPublicoDTO(Usuarios u) {
         super();
@@ -18,6 +19,7 @@ public class UsuarioPublicoDTO {
         this.email = u.getMail();
         this.telefono = u.getTelefonoCelular();
         this.fotoPerfilUrl = u.getProfilePicUrl();
+        this.rol = u.getRol();
     }
 
     public UsuarioPublicoDTO() {
@@ -70,5 +72,13 @@ public class UsuarioPublicoDTO {
 
     public void setFotoPerfilUrl(String fotoPerfilUrl) {
         this.fotoPerfilUrl = fotoPerfilUrl;
+    }
+
+    public Usuarios.Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Usuarios.Rol rol) {
+        this.rol = rol;
     }
 }
