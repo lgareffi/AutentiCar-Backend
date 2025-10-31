@@ -124,7 +124,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
         try {
-            // Validaciones básicas
             if (req.getMail() == null || req.getMail().isBlank())
                 return ResponseEntity.badRequest().body(new ErrorResponse("El mail es obligatorio"));
             if (req.getPassword() == null || req.getPassword().isBlank())
@@ -140,7 +139,7 @@ public class AuthController {
             try {
                 emailEnUso = (usuariosService.findByMail(req.getMail()) != null);
             } catch (NotFoundError nf) {
-                emailEnUso = false; // no existe -> OK para crear
+                emailEnUso = false;
             }
             if (emailEnUso) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -158,7 +157,7 @@ public class AuthController {
                         .body(new ErrorResponse("Ya existe una cuenta registrada con ese DNI"));
             }
 
-            String telefono = req.getTelefonoCelular().replaceAll("\\D", ""); // eliminar espacios, guiones, etc.
+            String telefono = req.getTelefonoCelular().replaceAll("\\D", "");
             if (!telefono.startsWith("549")) {
                 telefono = "549" + telefono;
             }

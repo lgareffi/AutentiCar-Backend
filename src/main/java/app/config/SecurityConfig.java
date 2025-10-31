@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true) // reemplaza EnableGlobalMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtTokenProvider jwt;
@@ -26,7 +26,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // === CORS ===
                 .cors(cors -> {
                     var cfg = new org.springframework.web.cors.CorsConfiguration();
                     cfg.setAllowedOrigins(java.util.List.of(
@@ -35,9 +34,9 @@ public class SecurityConfig {
                             "http://localhost:3000"
                     ));
                     cfg.setAllowedMethods(java.util.List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
-                    // Acepta cualquier header que envíe el browser (incluye Authorization, etc.)
+
                     cfg.setAllowedHeaders(java.util.List.of("*"));
-                    // Por si en algún momento devolvés el header Authorization y querés leerlo del lado cliente
+
                     cfg.setExposedHeaders(java.util.List.of("Authorization"));
                     cfg.setAllowCredentials(true);
 
@@ -49,9 +48,9 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(
                         org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // IMPORTANTE: permitir el preflight OPTIONS para todas las rutas
+
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        // Públicos
+                        // Usuarios Públicos
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/usuarios/publico/*").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/usuarios/*/publicaciones/count").permitAll()
@@ -60,20 +59,20 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/usuarios/*/oferta/toggle")
                         .hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
 
-                        // Publicaciones (lista + detalle)
+                        // Publicaciones
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/publicaciones/**").permitAll()
 
-                        // Vehículos (detalle + recursos públicos del vehículo)
+                        // Vehículos
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/documentos").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/imagenes").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/eventos").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/vehiculos/*/eventos/eliminados").permitAll()
 
-                        // Documentos (detalle)
+                        // Documentos
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/documentos/**").permitAll()
 
-                        // Eventos (detalle)
+                        // Eventos
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/eventos/*").permitAll()
 
                         // Verificación concesionaria y taller
@@ -90,7 +89,7 @@ public class SecurityConfig {
                                 "/usuarios/validacion/dorso-url")
                         .hasAnyAuthority("ROL_USER","ROL_ADMIN")
 
-                        // Admin: ver urls de cualquier usuario + validar/rechazar
+                        // Admin validar / rechazar particulares
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/usuarios/validacion/*/dni")
                         .hasAuthority("ROL_ADMIN")
@@ -104,18 +103,18 @@ public class SecurityConfig {
                                 "/usuarios/validacion/enviarValidacion/*")
                         .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN","ROL_USER")
 
-                        // Obtener URL del archivo (taller/concesionario o admin)
+                        // Obtener URL del archivo
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/usuarios/validacion/*/archivo")
                         .hasAnyAuthority("ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN","ROL_USER")
 
-                        // Admin: aprobar / rechazar verificación de taller/concesionaria
+                        // Admin validar / rechazar particulares
                         .requestMatchers(org.springframework.http.HttpMethod.POST,
                                 "/usuarios/validacion/*/validarTallerConcesionaria",
                                 "/usuarios/validacion/*/rechazarTallerConcesionaria")
                         .hasAuthority("ROL_ADMIN")
 
-                        // Usuarios - Fotos de perfil
+                        // fotos de perfil de usuarios
                         .requestMatchers(HttpMethod.GET, "/usuarios/*/fotoPerfil").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios/*/fotoPerfil").hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/usuarios/*/fotoPerfil").hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
@@ -131,7 +130,7 @@ public class SecurityConfig {
                                 "/usuarios/*/favoritos/**")
                         .hasAnyAuthority("ROL_USER","ROL_TALLER","ROL_CONCESIONARIO","ROL_ADMIN")
 
-                        // Privados (requieren token)
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuth(),

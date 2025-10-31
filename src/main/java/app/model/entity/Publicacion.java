@@ -3,7 +3,6 @@ package app.model.entity;
 import app.service.CapitalizeFirstConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "Publicacion")

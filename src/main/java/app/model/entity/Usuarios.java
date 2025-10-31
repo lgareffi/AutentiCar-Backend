@@ -1,8 +1,6 @@
 package app.model.entity;
 
 import app.service.CapitalizeFirstConverter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

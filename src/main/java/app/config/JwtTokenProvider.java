@@ -27,11 +27,9 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Mapea tus roles de entidad a las autoridades que usa @PreAuthorize
     private String mapAuthority(Usuarios u) {
         if (u.getRol() == Usuarios.Rol.ADMIN) return "ROL_ADMIN";
         if (u.getRol() == Usuarios.Rol.TALLER) return "ROL_TALLER";
-        // PARTICULAR y CONCESIONARIO comparten permisos => ROL_USER
         return "ROL_USER";
     }
 
@@ -40,7 +38,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(String.valueOf(u.getIdUsuario()))
                 .claim("mail", u.getMail())
-                .claim("rol", mapAuthority(u))         // <- lo lee tu JwtAuthFilter
+                .claim("rol", mapAuthority(u))
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plus(expMinutes, ChronoUnit.MINUTES)))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)

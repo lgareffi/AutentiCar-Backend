@@ -22,14 +22,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
-/**
- * Filtro JWT:
- * - Lee el header Authorization: Bearer <token>
- * - Valida firma y expiración con la misma SecretKey que usa JwtTokenProvider
- * - Extrae subject (username) y claim "rol" -> GrantedAuthority("ROL_*")
- * - Pone la Authentication en el SecurityContext para que funcionen @PreAuthorize(...)
- */
 public class JwtAuthFilter extends OncePerRequestFilter{
     private final SecretKey secretKey;
 
@@ -45,7 +37,6 @@ public class JwtAuthFilter extends OncePerRequestFilter{
     ) throws ServletException, IOException {
 
         try {
-            // Permite preflight CORS sin validar token
             if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 filterChain.doFilter(request, response);
                 return;
@@ -53,13 +44,11 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 
             String bearer = request.getHeader("Authorization");
             if (bearer == null || !bearer.startsWith("Bearer ")) {
-                // No hay token -> seguir (para endpoints permitAll)
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            String token = bearer.substring(7); // saca "Bearer "
-            // Valida firma + expiración (lanzará excepción si es inválido/expirado)
+            String token = bearer.substring(7);
             Jws<Claims> jws = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
@@ -68,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
             Claims claims = jws.getBody();
             String sub = claims.getSubject();
             Long userId = (sub != null) ? Long.parseLong(sub) : null;
-            String rol = claims.get("rol", String.class);     // p.ej. "ROL_ADMIN", "ROL_TALLER", "ROL_USER"
+            String rol = claims.get("rol", String.class);
 
             if (userId != null && rol != null
                     && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -76,7 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter{
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority(rol));
 
-                // principal = userId (Long)
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(userId, null, authorities);
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

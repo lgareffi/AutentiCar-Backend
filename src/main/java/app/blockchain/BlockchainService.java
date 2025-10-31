@@ -22,11 +22,11 @@ public class BlockchainService {
                     .build())
                 .retrieve()
                 .bodyToMono(ExistsResponse.class)
-                .map(ExistsResponse::isExists)     // Mono<Boolean>
-                .onErrorReturn(false)  // si falla la llamada, devolvé false
-                .block();                          // retorna Boolean (puede ser null)
+                .map(ExistsResponse::isExists)
+                .onErrorReturn(false)
+                .block();
 
-        return Boolean.TRUE.equals(result);      // nunca nullea ni hace unboxing
+        return Boolean.TRUE.equals(result);
     }
 
     public RecordResponse record(String vehicleId, String eventHash){

@@ -2,9 +2,6 @@ package app.security;
 
 import org.springframework.security.access.AccessDeniedException;
 
-import app.model.entity.*;
-import app.model.dao.*;
-
 public final class OwnershipGuard {
     private OwnershipGuard() {}
 

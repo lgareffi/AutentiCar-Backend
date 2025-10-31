@@ -269,11 +269,11 @@ public class PublicacionController {
             @RequestParam(name="minKm", required = false) List<Integer> minKms,
             @RequestParam(name="maxKm", required = false) List<Integer> maxKms,
             @RequestParam(name="rol", required = false) List<String> rolSingular,
-            @RequestParam(name="roles",    required = false)  List<String> rolPlural
+            @RequestParam(name="roles", required = false)  List<String> rolPlural
     ) {
         List<String> roles = new java.util.ArrayList<>();
         if (rolSingular != null) roles.addAll(rolSingular);
-        if (rolPlural   != null) roles.addAll(rolPlural);
+        if (rolPlural != null) roles.addAll(rolPlural);
 
         var pubs = publicacionService.findActivasByFiltro(
                 marcas, colores, anios, minPrecios, maxPrecios, minKms, maxKms, roles, q

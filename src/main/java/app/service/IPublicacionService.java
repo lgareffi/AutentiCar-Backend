@@ -34,7 +34,6 @@ public interface IPublicacionService {
     public List<String> findDistinctColoresActivos();
     public List<Integer> findDistinctAniosActivos();
 
-    //public List<Publicacion> findActivasByPrecioBetween(Integer min, Integer max);
     public List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm);
     public List<Publicacion> findActivasByPrecioArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs);
 
