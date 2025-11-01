@@ -23,22 +23,10 @@ public interface IPublicacionDAO {
 
     List<Publicacion> findActivas();
 
-    List<Publicacion> findActivasByMarca(String marca);
-    List<Publicacion> findActivasByMarcaAndModelo(String marca, String modelo);
-    List<Publicacion> findActivasByColor(String color);
-    List<Publicacion> findActivasByAnio(int anio);
-
-    List<Publicacion> findActivasByMarcaModeloColor(String marca, String modelo, String color);
-
-    List<Publicacion> searchActivasTextoLibre(String queryLibre);
-
     List<String> findDistinctMarcasActivas();
     List<String> findDistinctModelosActivosByMarca(String marca);
     List<String> findDistinctColoresActivos();
     List<Integer> findDistinctAniosActivos();
-
-    List<Publicacion> findActivasByPrecioEnArs(Integer minArs, Integer maxArs, BigDecimal tasaUsdArs);
-    List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm);
 
     List<Publicacion> findActivasByFiltro(
             List<String> marcas,
@@ -53,29 +41,5 @@ public interface IPublicacionDAO {
             Long usuarioId,
             Long tallerId
     );
-
-//    List<Publicacion> findActivasByFiltroYUsuario(
-//            Long usuarioId,
-//            List<String> marcas,
-//            List<String> colores,
-//            List<Integer> anios,
-//            List<Integer> minPrecioArs,
-//            List<Integer> maxPrecioArs,
-//            List<Integer> minKm,
-//            List<Integer> maxKm,
-//            String queryLibre
-//    );
-//
-//    List<Publicacion> findActivasByFiltroYTaller(
-//            Long tallerId,
-//            List<String> marcas,
-//            List<String> colores,
-//            List<Integer> anios,
-//            List<Integer> minPrecioArs,
-//            List<Integer> maxPrecioArs,
-//            List<Integer> minKm,
-//            List<Integer> maxKm,
-//            String queryLibre
-//    );
 
 }

@@ -113,106 +113,6 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
 
     @Override
     @Transactional
-    public List<Publicacion> findActivasByMarca(String marca) {
-        var q = s().createQuery(
-                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
-                        "WHERE p.estadoPublicacion = :activa AND lower(v.marca) = :marca " +
-                        "ORDER BY p.fechaPublicacion DESC",
-                Publicacion.class
-        );
-        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
-        q.setParameter("marca", marca.toLowerCase());
-        return q.getResultList();
-    }
-
-    @Override
-    @Transactional
-    public List<Publicacion> findActivasByMarcaAndModelo(String marca, String modelo) {
-        var q = s().createQuery(
-                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
-                        "WHERE p.estadoPublicacion = :activa " +
-                        "AND lower(v.marca) = :marca AND lower(v.modelo) = :modelo " +
-                        "ORDER BY p.fechaPublicacion DESC",
-                Publicacion.class
-        );
-        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
-        q.setParameter("marca", marca.toLowerCase());
-        q.setParameter("modelo", modelo.toLowerCase());
-        return q.getResultList();
-    }
-
-    @Override
-    @Transactional
-    public List<Publicacion> findActivasByColor(String color) {
-        var q = s().createQuery(
-                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
-                        "WHERE p.estadoPublicacion = :activa AND lower(v.color) = :color " +
-                        "ORDER BY p.fechaPublicacion DESC",
-                Publicacion.class
-        );
-        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
-        q.setParameter("color", color.toLowerCase());
-        return q.getResultList();
-    }
-
-    @Override
-    @Transactional
-    public List<Publicacion> findActivasByAnio(int anio) {
-        var q = s().createQuery(
-                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
-                        "WHERE p.estadoPublicacion = :activa AND v.anio = :anio " +
-                        "ORDER BY p.fechaPublicacion DESC",
-                Publicacion.class
-        );
-        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
-        q.setParameter("anio", anio);
-        return q.getResultList();
-    }
-
-    @Override
-    @Transactional
-    public List<Publicacion> findActivasByMarcaModeloColor(String marca, String modelo, String color) {
-        var q = s().createQuery(
-                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
-                        "WHERE p.estadoPublicacion = :activa " +
-                        "AND lower(v.marca) = :marca AND lower(v.modelo) = :modelo AND lower(v.color) = :color " +
-                        "ORDER BY p.fechaPublicacion DESC",
-                Publicacion.class
-        );
-        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
-        q.setParameter("marca", marca.toLowerCase());
-        q.setParameter("modelo", modelo.toLowerCase());
-        q.setParameter("color", color.toLowerCase());
-        return q.getResultList();
-    }
-
-    @Override
-    @Transactional
-    public List<Publicacion> searchActivasTextoLibre(String queryLibre) {
-        List<String> tokens = normalizarTokens(queryLibre);
-        StringBuilder sb = new StringBuilder(
-                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
-                        "WHERE p.estadoPublicacion = :activa "
-        );
-        for (int i = 0; i < tokens.size(); i++) {
-            sb.append("AND (")
-                    .append("lower(v.marca) LIKE :t").append(i).append(" OR ")
-                    .append("lower(v.modelo) LIKE :t").append(i).append(" OR ")
-                    .append("lower(v.color) LIKE :t").append(i).append(" OR ")
-                    .append("lower(p.titulo) LIKE :t").append(i).append(" OR ")
-                    .append("lower(p.descripcion) LIKE :t").append(i)
-                    .append(") ");
-        }
-        sb.append("ORDER BY p.fechaPublicacion DESC");
-
-        var q = s().createQuery(sb.toString(), Publicacion.class);
-        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
-        for (int i = 0; i < tokens.size(); i++) q.setParameter("t"+i, "%"+tokens.get(i)+"%");
-        return q.getResultList();
-    }
-
-    @Override
-    @Transactional
     public List<String> findDistinctMarcasActivas() {
         var q = s().createQuery(
                 "SELECT DISTINCT v.marca " +
@@ -268,58 +168,10 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         return q.getResultList();
     }
 
-
-
     private List<String> normalizarTokens(String q) {
         if (q == null) return List.of();
         return Arrays.stream(q.toLowerCase().trim().split("\\s+"))
                 .filter(t -> !t.isBlank()).toList();
-    }
-
-    @Override
-    @Transactional
-    public List<Publicacion> findActivasByPrecioEnArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs) {
-        var s = entityManager.unwrap(org.hibernate.Session.class);
-
-        long min = (minArs != null) ? minArs : 0L;
-        long max = (maxArs != null) ? maxArs : Long.MAX_VALUE;
-
-        var q = s.createQuery(
-                "SELECT p FROM Publicacion p " +
-                        "WHERE p.estadoPublicacion = app.model.entity.Publicacion.EstadoPublicacion.ACTIVA " +
-                        "AND ( " +
-                        "  (p.moneda = app.model.entity.Publicacion.Moneda.PESOS   AND p.precio BETWEEN :min AND :max) " +
-                        "  OR " +
-                        "  (p.moneda = app.model.entity.Publicacion.Moneda.DOLARES AND (p.precio * :tasa) BETWEEN :min AND :max) " +
-                        ") " +
-                        "ORDER BY p.fechaPublicacion DESC",
-                Publicacion.class
-        );
-        q.setParameter("min", min);
-        q.setParameter("max", max);
-        q.setParameter("tasa", tasaUsdArs);
-
-        return q.getResultList();
-    }
-
-    @Override
-    @Transactional
-    public List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm) {
-        String base =
-                "SELECT p FROM Publicacion p JOIN p.vehiculo v " +
-                        "WHERE p.estadoPublicacion = :activa ";
-
-        if (minKm != null) base += "AND v.kilometraje >= :minKm ";
-        if (maxKm != null) base += "AND v.kilometraje <= :maxKm ";
-
-        base += "ORDER BY p.fechaPublicacion DESC";
-
-        var q = s().createQuery(base, Publicacion.class);
-        q.setParameter("activa", Publicacion.EstadoPublicacion.ACTIVA);
-        if (minKm != null) q.setParameter("minKm", minKm);
-        if (maxKm != null) q.setParameter("maxKm", maxKm);
-
-        return q.getResultList();
     }
 
     @Override
@@ -488,56 +340,5 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
 
         return q.getResultList();
     }
-
-//    @Override
-//    @Transactional
-//    public List<Publicacion> findActivasByFiltroYUsuario(
-//            Long usuarioId,
-//            List<String> marcas,
-//            List<String> colores,
-//            List<Integer> anios,
-//            List<Integer> minPrecioArs,
-//            List<Integer> maxPrecioArs,
-//            List<Integer> minKm,
-//            List<Integer> maxKm,
-//            String queryLibre
-//    ) {
-//        var publicaciones = findActivasByFiltro(marcas, colores, anios, minPrecioArs, maxPrecioArs, minKm, maxKm, null, queryLibre);
-//        return publicaciones.stream()
-//                .filter(p -> p.getUsuario() != null && Objects.equals(p.getUsuario().getIdUsuario(), usuarioId))
-//                .toList();
-//    }
-//
-//    @Override
-//    @Transactional
-//    public List<Publicacion> findActivasByFiltroYTaller(
-//            Long tallerId,
-//            List<String> marcas,
-//            List<String> colores,
-//            List<Integer> anios,
-//            List<Integer> minPrecioArs,
-//            List<Integer> maxPrecioArs,
-//            List<Integer> minKm,
-//            List<Integer> maxKm,
-//            String queryLibre
-//    ) {
-//        var s = s();
-//
-//        // primero, obtener los IDs de usuarios que asignaron al taller
-//        var usuariosAsignantes = s.createQuery("""
-//        SELECT u.idUsuario FROM Usuario u
-//        WHERE :tallerId IN ELEMENTS(u.talleresAsignados)
-//    """, Long.class)
-//                .setParameter("tallerId", tallerId)
-//                .getResultList();
-//
-//        if (usuariosAsignantes.isEmpty()) return List.of();
-//
-//        // luego filtramos solo publicaciones de esos usuarios
-//        var publicaciones = findActivasByFiltro(marcas, colores, anios, minPrecioArs, maxPrecioArs, minKm, maxKm, null, queryLibre);
-//        return publicaciones.stream()
-//                .filter(p -> p.getUsuario() != null && usuariosAsignantes.contains(p.getUsuario().getIdUsuario()))
-//                .toList();
-//    }
 
 }

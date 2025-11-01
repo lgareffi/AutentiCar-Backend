@@ -21,21 +21,10 @@ public interface IPublicacionService {
 
     public void alternarEstado(long publicacionId);
 
-    public List<Publicacion> findActivasByMarca(String marca);
-    public List<Publicacion> findActivasByMarcaAndModelo(String marca, String modelo);
-    public List<Publicacion> findActivasByColor(String color);
-    public List<Publicacion> findActivasByAnio(int anio);
-    public List<Publicacion> findActivasByMarcaModeloColor(String marca, String modelo, String color);
-
-    public List<Publicacion> searchActivasTextoLibre(String queryLibre);
-
     public List<String> findDistinctMarcasActivas();
     public List<String> findDistinctModelosActivosByMarca(String marca);
     public List<String> findDistinctColoresActivos();
     public List<Integer> findDistinctAniosActivos();
-
-    public List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm);
-    public List<Publicacion> findActivasByPrecioArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs);
 
     List<Publicacion> findActivasByFiltro(
             List<String> marcas,
