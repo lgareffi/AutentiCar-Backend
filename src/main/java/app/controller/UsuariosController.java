@@ -317,15 +317,20 @@ public class UsuariosController {
     public ResponseEntity<?> listarTalleresAsignados(@PathVariable Long usuarioId) {
         try {
             List<Usuarios> talleres = usuariosService.listarTalleresAsignados(usuarioId);
+            if (talleres == null || talleres.isEmpty()) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+
             List<UsuariosDTO> talleresDTO = talleres.stream()
                     .map(UsuariosDTO::new)
                     .toList();
-            return new ResponseEntity<>(talleresDTO, HttpStatus.OK);
+            return ResponseEntity.ok(talleresDTO);
+
         } catch (NotFoundError e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Throwable e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        } catch (Exception e) {
             String msj = "Error al listar talleres asignados.";
-            return new ResponseEntity<>(msj, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msj);
         }
     }
 
