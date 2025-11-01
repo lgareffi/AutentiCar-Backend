@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,12 +97,20 @@ public class UsuariosController {
     public ResponseEntity<?> getEventoVehicular(@PathVariable long usuarioId) {
         try {
             List<EventoVehicular> eventosVehicular = this.usuariosService.getEventoVehicular(usuarioId);
+            if (eventosVehicular == null || eventosVehicular.isEmpty()) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+
             List<EventoVehicularDTO> eventosDTO = eventosVehicular.stream()
                     .map(EventoVehicularDTO::new)
                     .toList();
             return new ResponseEntity<>(eventosDTO, HttpStatus.OK);
-        } catch (Throwable e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        } catch (NotFoundError e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener los eventos del usuario: " + e.getMessage());
         }
     }
 

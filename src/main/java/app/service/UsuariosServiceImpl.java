@@ -120,17 +120,24 @@ public class UsuariosServiceImpl implements IUsuariosService {
     }
 
     @Override
-    @Transactional
-    public List<EventoVehicular> getEventoVehicular(long id){
+    @Transactional()
+    public List<EventoVehicular> getEventoVehicular(long id) {
         try {
             Usuarios u = this.usuariosDAO.findById(id);
-            if (u == null)
-                throw new NotFoundError("No se encontro al usuario");
-            if (u.getEventoVehicular().isEmpty())
-                throw new Error("No se encontraron eventos hechos por este usuario");
-            return u.getEventoVehicular();
-        } catch(Throwable e) {
-            throw new Error(e.getMessage());
+            if (u == null) {
+                throw new NotFoundError("No se encontró el usuario");
+            }
+
+            List<EventoVehicular> eventos = u.getEventoVehicular()
+                    .stream()
+                    .filter(ev -> ev != null && !ev.isEstaEliminado())
+                    .toList();
+
+            return eventos;
+        } catch (NotFoundError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener eventos del usuario " + id, e);
         }
     }
 
