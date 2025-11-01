@@ -333,7 +333,9 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
             List<Integer> minKm,
             List<Integer> maxKm,
             List<Usuarios.Rol> roles,
-            String queryLibre
+            String queryLibre,
+            Long usuarioId,
+            Long tallerId
     ) {
         var s = s();
 
@@ -348,6 +350,13 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         if (colores != null && !colores.isEmpty()) sb.append(" AND LOWER(v.color) IN (:colores) ");
         if (anios != null && !anios.isEmpty()) sb.append(" AND v.anio IN (:anios) ");
         if (roles != null && !roles.isEmpty()) sb.append(" AND u.rol IN (:roles) ");
+
+        if (usuarioId != null) {
+            sb.append(" AND u.id = :usuarioId ");
+        }
+        if (tallerId != null) {
+            sb.append(" AND :tallerId MEMBER OF u.talleresAsignados ");
+        }
 
         String precioArsExpr = """
         (CASE WHEN p.moneda = app.model.entity.Publicacion.Moneda.DOLARES
@@ -441,6 +450,11 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
         if (roles != null && !roles.isEmpty())
             q.setParameterList("roles", roles);
 
+        if (usuarioId != null)
+            q.setParameter("usuarioId", usuarioId);
+        if (tallerId != null)
+            q.setParameter("tallerId", tallerId);
+
         if (priceClauses > 0) q.setParameter("tasa", tasaUsdArs);
 
         if (priceClauses > 0) {
@@ -474,5 +488,56 @@ public class PublicacionDAOImpl implements IPublicacionDAO {
 
         return q.getResultList();
     }
+
+//    @Override
+//    @Transactional
+//    public List<Publicacion> findActivasByFiltroYUsuario(
+//            Long usuarioId,
+//            List<String> marcas,
+//            List<String> colores,
+//            List<Integer> anios,
+//            List<Integer> minPrecioArs,
+//            List<Integer> maxPrecioArs,
+//            List<Integer> minKm,
+//            List<Integer> maxKm,
+//            String queryLibre
+//    ) {
+//        var publicaciones = findActivasByFiltro(marcas, colores, anios, minPrecioArs, maxPrecioArs, minKm, maxKm, null, queryLibre);
+//        return publicaciones.stream()
+//                .filter(p -> p.getUsuario() != null && Objects.equals(p.getUsuario().getIdUsuario(), usuarioId))
+//                .toList();
+//    }
+//
+//    @Override
+//    @Transactional
+//    public List<Publicacion> findActivasByFiltroYTaller(
+//            Long tallerId,
+//            List<String> marcas,
+//            List<String> colores,
+//            List<Integer> anios,
+//            List<Integer> minPrecioArs,
+//            List<Integer> maxPrecioArs,
+//            List<Integer> minKm,
+//            List<Integer> maxKm,
+//            String queryLibre
+//    ) {
+//        var s = s();
+//
+//        // primero, obtener los IDs de usuarios que asignaron al taller
+//        var usuariosAsignantes = s.createQuery("""
+//        SELECT u.idUsuario FROM Usuario u
+//        WHERE :tallerId IN ELEMENTS(u.talleresAsignados)
+//    """, Long.class)
+//                .setParameter("tallerId", tallerId)
+//                .getResultList();
+//
+//        if (usuariosAsignantes.isEmpty()) return List.of();
+//
+//        // luego filtramos solo publicaciones de esos usuarios
+//        var publicaciones = findActivasByFiltro(marcas, colores, anios, minPrecioArs, maxPrecioArs, minKm, maxKm, null, queryLibre);
+//        return publicaciones.stream()
+//                .filter(p -> p.getUsuario() != null && usuariosAsignantes.contains(p.getUsuario().getIdUsuario()))
+//                .toList();
+//    }
 
 }

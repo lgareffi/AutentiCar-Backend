@@ -49,7 +49,33 @@ public interface IPublicacionDAO {
             List<Integer> minKm,
             List<Integer> maxKm,
             List<Usuarios.Rol> roles,
-            String queryLibre
+            String queryLibre,
+            Long usuarioId,
+            Long tallerId
     );
+
+//    List<Publicacion> findActivasByFiltroYUsuario(
+//            Long usuarioId,
+//            List<String> marcas,
+//            List<String> colores,
+//            List<Integer> anios,
+//            List<Integer> minPrecioArs,
+//            List<Integer> maxPrecioArs,
+//            List<Integer> minKm,
+//            List<Integer> maxKm,
+//            String queryLibre
+//    );
+//
+//    List<Publicacion> findActivasByFiltroYTaller(
+//            Long tallerId,
+//            List<String> marcas,
+//            List<String> colores,
+//            List<Integer> anios,
+//            List<Integer> minPrecioArs,
+//            List<Integer> maxPrecioArs,
+//            List<Integer> minKm,
+//            List<Integer> maxKm,
+//            String queryLibre
+//    );
 
 }

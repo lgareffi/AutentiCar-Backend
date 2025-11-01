@@ -37,7 +37,7 @@ public interface IPublicacionService {
     public List<Publicacion> findActivasByKilometrajeBetween(Integer minKm, Integer maxKm);
     public List<Publicacion> findActivasByPrecioArs(Integer minArs, Integer maxArs, java.math.BigDecimal tasaUsdArs);
 
-    public List<Publicacion> findActivasByFiltro(
+    List<Publicacion> findActivasByFiltro(
             List<String> marcas,
             List<String> colores,
             List<Integer> anios,
@@ -47,6 +47,32 @@ public interface IPublicacionService {
             List<Integer> maxKm,
             List<String> roles,
             String queryLibre
+    );
+
+    List<Publicacion> findActivasByFiltroMisPublicaciones(
+            List<String> marcas,
+            List<String> colores,
+            List<Integer> anios,
+            List<Integer> minPrecioArs,
+            List<Integer> maxPrecioArs,
+            List<Integer> minKm,
+            List<Integer> maxKm,
+            List<String> roles,
+            String queryLibre,
+            Long usuarioId
+    );
+
+    List<Publicacion> findActivasByFiltroPublicacionesTaller(
+            List<String> marcas,
+            List<String> colores,
+            List<Integer> anios,
+            List<Integer> minPrecioArs,
+            List<Integer> maxPrecioArs,
+            List<Integer> minKm,
+            List<Integer> maxKm,
+            List<String> roles,
+            String queryLibre,
+            Long tallerId
     );
     
 }

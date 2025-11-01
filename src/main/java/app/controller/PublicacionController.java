@@ -269,7 +269,7 @@ public class PublicacionController {
             @RequestParam(name="minKm", required = false) List<Integer> minKms,
             @RequestParam(name="maxKm", required = false) List<Integer> maxKms,
             @RequestParam(name="rol", required = false) List<String> rolSingular,
-            @RequestParam(name="roles", required = false)  List<String> rolPlural
+            @RequestParam(name="roles", required = false) List<String> rolPlural
     ) {
         List<String> roles = new java.util.ArrayList<>();
         if (rolSingular != null) roles.addAll(rolSingular);
@@ -281,5 +281,45 @@ public class PublicacionController {
         var dtos = pubs.stream().map(PublicacionDTO::new).toList();
         return ResponseEntity.ok(dtos);
     }
-    
+
+    @GetMapping("/filtro/misPublicaciones")
+    public ResponseEntity<?> filtroMisPublicaciones(
+            @RequestParam Long usuarioId,
+            @RequestParam(required = false) String q,
+            @RequestParam(name="marca", required = false) List<String> marcas,
+            @RequestParam(name="color", required = false) List<String> colores,
+            @RequestParam(name="anio", required = false) List<Integer> anios,
+            @RequestParam(name="minPrecio", required = false) List<Integer> minPrecios,
+            @RequestParam(name="maxPrecio", required = false) List<Integer> maxPrecios,
+            @RequestParam(name="minKm", required = false) List<Integer> minKms,
+            @RequestParam(name="maxKm", required = false) List<Integer> maxKms,
+            @RequestParam(name="rol", required = false) List<String> roles
+    ) {
+        var pubs = publicacionService.findActivasByFiltroMisPublicaciones(
+                marcas, colores, anios, minPrecios, maxPrecios, minKms, maxKms, roles, q, usuarioId
+        );
+        var dtos = pubs.stream().map(PublicacionDTO::new).toList();
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/filtro/publicacionesTaller")
+    public ResponseEntity<?> filtroPublicacionesTaller(
+            @RequestParam Long tallerId,
+            @RequestParam(required = false) String q,
+            @RequestParam(name="marca", required = false) List<String> marcas,
+            @RequestParam(name="color", required = false) List<String> colores,
+            @RequestParam(name="anio", required = false) List<Integer> anios,
+            @RequestParam(name="minPrecio", required = false) List<Integer> minPrecios,
+            @RequestParam(name="maxPrecio", required = false) List<Integer> maxPrecios,
+            @RequestParam(name="minKm", required = false) List<Integer> minKms,
+            @RequestParam(name="maxKm", required = false) List<Integer> maxKms,
+            @RequestParam(name="rol", required = false) List<String> roles
+    ) {
+        var pubs = publicacionService.findActivasByFiltroPublicacionesTaller(
+                marcas, colores, anios, minPrecios, maxPrecios, minKms, maxKms, roles, q, tallerId
+        );
+        var dtos = pubs.stream().map(PublicacionDTO::new).toList();
+        return ResponseEntity.ok(dtos);
+    }
+
 }
