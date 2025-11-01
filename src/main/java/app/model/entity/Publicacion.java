@@ -16,7 +16,7 @@ public class Publicacion {
     @Convert(converter = CapitalizeFirstConverter.class)
     private String titulo;
 
-    @Column(nullable = false,length = 300)
+    @Column(nullable = false,length = 4000)
     @Convert(converter = CapitalizeFirstConverter.class)
     private String descripcion;
 
