@@ -333,4 +333,5 @@ public class UsuariosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msj);
         }
     }
+
 }
