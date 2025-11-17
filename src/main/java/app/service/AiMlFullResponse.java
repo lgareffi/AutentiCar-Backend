@@ -121,4 +121,5 @@ public class AiMlFullResponse {
     public void setValidadoIA(Boolean validadoIA) {
         this.validadoIA = validadoIA;
     }
+    
 }
