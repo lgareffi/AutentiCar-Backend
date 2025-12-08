@@ -14,6 +14,7 @@ public class DocVehiculoDTO {
     private boolean validadoIA;
     private LocalDate fechaSubida;
     private String tipoDoc;
+    private boolean estaEliminado;
 
     private Long idVehiculo;
     private Long idEventoVehicular;
@@ -28,6 +29,7 @@ public class DocVehiculoDTO {
         this.validadoIA = doc.isValidadoIA();
         this.fechaSubida = doc.getFechaSubida();
         this.tipoDoc = doc.getTipoDoc().name();
+        this.estaEliminado = doc.isEstaEliminado();
         this.idVehiculo = doc.getVehiculo().getIdVehiculo();
         this.mimeType = doc.getMimeType();
         this.idEventoVehicular = (doc.getEventoVehicular() != null)
@@ -117,6 +119,14 @@ public class DocVehiculoDTO {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public boolean isEstaEliminado() {
+        return estaEliminado;
+    }
+
+    public void setEstaEliminado(boolean estaEliminado) {
+        this.estaEliminado = estaEliminado;
     }
 }
 

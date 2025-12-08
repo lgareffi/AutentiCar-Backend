@@ -45,6 +45,9 @@ public class DocVehiculo {
         TITULO, CEDULA, VTV, SEGURO, INFORME, SERVICE, OTRO
     }
 
+    @Column(nullable = false)
+    private boolean estaEliminado = false;
+
     @ManyToOne
     @JoinColumn(name = "vehiculoId", referencedColumnName = "idVehiculo",nullable = false)
     Vehiculos vehiculo;
@@ -57,10 +60,9 @@ public class DocVehiculo {
         super();
     }
 
-    public DocVehiculo(long idDocVehiculo, String nombre, String urlDoc, int nivelRiesgo,
-                       boolean validadoIA, LocalDate fechaSubida, String publicId,
-                       String resourceType, String mimeType, TipoDoc tipoDoc,
-                       Vehiculos vehiculo, EventoVehicular eventoVehicular) {
+    public DocVehiculo(long idDocVehiculo, String nombre, String urlDoc, int nivelRiesgo, boolean validadoIA,
+                       LocalDate fechaSubida, String publicId, String resourceType, String mimeType, TipoDoc tipoDoc,
+                       boolean estaEliminado, Vehiculos vehiculo, EventoVehicular eventoVehicular) {
         this.idDocVehiculo = idDocVehiculo;
         this.nombre = nombre;
         this.urlDoc = urlDoc;
@@ -71,6 +73,7 @@ public class DocVehiculo {
         this.resourceType = resourceType;
         this.mimeType = mimeType;
         this.tipoDoc = tipoDoc;
+        this.estaEliminado = estaEliminado;
         this.vehiculo = vehiculo;
         this.eventoVehicular = eventoVehicular;
     }
@@ -88,6 +91,7 @@ public class DocVehiculo {
                 ", resourceType='" + resourceType + '\'' +
                 ", mimeType='" + mimeType + '\'' +
                 ", tipoDoc=" + tipoDoc +
+                ", estaEliminado=" + estaEliminado +
                 ", vehiculo=" + vehiculo +
                 ", eventoVehicular=" + eventoVehicular +
                 '}';
@@ -190,4 +194,11 @@ public class DocVehiculo {
         this.mimeType = mimeType;
     }
 
+    public boolean isEstaEliminado() {
+        return estaEliminado;
+    }
+
+    public void setEstaEliminado(boolean estaEliminado) {
+        this.estaEliminado = estaEliminado;
+    }
 }

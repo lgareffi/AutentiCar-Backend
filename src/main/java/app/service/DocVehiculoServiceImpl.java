@@ -176,7 +176,10 @@ public class DocVehiculoServiceImpl implements IDocVehiculoService {
         if (docs == null || docs.isEmpty()) {
             return java.util.Collections.emptyList();
         }
-        return docs.stream().map(DocVehiculoDTO::new).toList();
+        return docs.stream()
+                .filter(d -> !d.isEstaEliminado())
+                .map(DocVehiculoDTO::new)
+                .toList();
     }
 
     @Override

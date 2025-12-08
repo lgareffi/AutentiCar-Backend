@@ -103,6 +103,13 @@ public class EventoVehicularController {
             }
 
             eventoVehicular.setEstaEliminado(true);
+
+            if (eventoVehicular.getDocVehiculo() != null) {
+                for (DocVehiculo doc : eventoVehicular.getDocVehiculo()) {
+                    doc.setEstaEliminado(true);
+                }
+            }
+
             eventoVehicularDAO.save(eventoVehicular);
 
             return ResponseEntity.ok("Evento marcado como eliminado correctamente");
